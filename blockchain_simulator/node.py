@@ -15,6 +15,9 @@ if TYPE_CHECKING:
 # ABSTRACT NODE CLASS
 # ============================
 
+# TODO: Call step() when node joins the network
+# TODO: Update select_best_block to get the block with the highest weight (or latest block) to be the parent of a new mined block
+# TODO: New function will actually call the consensus protocol
 class NodeBase(ABC):
     """Abstract base class for defining a blockchain node."""
 
@@ -27,12 +30,26 @@ class NodeBase(ABC):
         self.consensus_protocol = consensus_protocol
         self.blockchain = blockchain
         self.head = blockchain.genesis
-        self.received_blocks: Dict[int, float] = {}  # Stores when blocks were received
+        self.proposed_blocks: set['BlockBase'] = set()  # Stores when blocks were received
 
     def add_peer(self, peer: 'NodeBase'):
         """Connects this node to a peer."""
         if peer not in self.peers:
             self.peers.append(peer)
+            
+    def remove_peer(self, peer: 'NodeBase'):
+        """Disconnects this node from a peer."""
+        if peer in self.peers:
+            self.peers.remove(peer)
+    
+    # TODO: Have the simulator call this method on all nodes to start consensus after consensus_after_delay timesteps
+    def consensus_step(self):
+        """Executes a step in the consensus protocol."""
+        # TODO: Do we broadcast the consensus block? is that protocol specific?
+        new_block = self.consensus_protocol.select_best_block(self, self.proposed_blocks)
+        self.blockchain.add_block(new_block, self)
+        self.proposed_blocks = set()
+        self.head = new_block
 
     @abstractmethod
     def mine_block(self):
@@ -48,6 +65,11 @@ class NodeBase(ABC):
     def receive_block(self, block: 'BlockBase', delay: float, sender_id: int):
         """Abstract method for processing an incoming block."""
         pass
+    
+    @abstractmethod
+    def step(self):
+        """Abstract method for executing a timestep in the simulation."""
+        pass
 
 # ============================
 # BASIC NODE CLASS
@@ -58,17 +80,20 @@ class BasicNode(NodeBase):
 
     def mine_block(self):
         """Mines a new block and broadcasts it."""
-        new_block_id = len(self.blockchain.blocks)
+        # TODO: Randomize to see if a block is mined at all
+        
+        # set new_block_id to a randomized 256bit hash
+        new_block_id = hash((self.node_id, self.env.now, random.getrandbits(256)))
+        # TODO: Change this to be in the consensus protocol and pass the blockchain
+        parents = self.blockchain.get_last_block()
+        
         new_block = self.blockchain.block_class(
-            block_id=new_block_id, 
-            parents=self.head, 
-            miner_id=self.node_id, 
+            block_id=new_block_id,
+            parents=parents,
+            miner_id=self.node_id,
             timestamp=self.env.now
         )
-
-        self.blockchain.add_block(new_block, self)
-        self.head = self.consensus_protocol.select_best_block(self)
-
+        
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block_id}")
         self.network.metrics["total_blocks_mined"] += 1
 
@@ -76,22 +101,40 @@ class BasicNode(NodeBase):
 
     def broadcast_block(self, block: 'BlockBase') -> None:
         """Broadcasts a block to all connected peers with a random network delay."""
+        # The above property would depend on the exact consensus protocol we are talking about right? For ex, in Algorand, the block is broadcasted multiple times.
         for peer in self.peers:
-            delay = random.uniform(1, self.network.max_delay)
+            delay = random.uniform(1, self.network.max_delay) #TODO: make this a parameter for different tolerances
             self.env.process(peer.receive_block(block, delay, self.node_id))
 
     def receive_block(self, block: 'BlockBase', delay: float, sender_id: int):
         """Processes an incoming block after a delay."""
-        yield self.env.timeout(delay)
-
+        yield self.env.timeout(delay)        
+        
+        if delay > self.network.consensus_after_delay:
+            return
+        
         # Log block propagation time
-        if block.block_id not in self.received_blocks:
-            self.received_blocks[block.block_id] = self.env.now
+        if block.block_id not in self.proposed_blocks:
+            self.proposed_blocks.add(block)
             self.network.metrics["block_propagation_times"].append(self.env.now - block.timestamp)
-
-        # Add block if it's not already in the blockchain
-        if block.block_id not in self.blockchain.blocks:
-            self.blockchain.add_block(block, self)
-            self.head = self.consensus_protocol.select_best_block(self)
-            logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {sender_id}")
             self.broadcast_block(block)
+            
+    def step(self):
+        """Executes a timestep in the simulation.
+        Called when node is joined to network
+        runs continousto broadcast all proposed nodes 
+        and decide if consensus is needed
+        """
+        
+        if self.env.now % self.network.consensus_after_delay == 0:
+            self.consensus_step()
+            
+        self.mine_block()
+        
+        # Propogate all the proposed blocks this node has seen to its peers
+        for block in self.proposed_blocks:
+            self.broadcast_block(block)
+            
+        yield self.env.timeout(1)
+        self.step()
+        

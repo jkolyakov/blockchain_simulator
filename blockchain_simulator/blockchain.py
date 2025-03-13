@@ -17,7 +17,7 @@ class BlockchainBase(ABC):
         self.blocks: Dict[int, 'BlockBase'] = {}  # Maps block_id to Block object
         self.block_class: Type['BlockBase'] = block_class
         self.genesis: 'BlockBase' = self.create_genesis_block()
-
+        
     @abstractmethod
     def create_genesis_block(self) -> 'BlockBase':
         """Creates the genesis block."""
@@ -26,6 +26,11 @@ class BlockchainBase(ABC):
     @abstractmethod
     def add_block(self, block: 'BlockBase', node: 'NodeBase'):
         """Adds a block to the blockchain."""
+        pass
+
+    @abstractmethod
+    def get_last_block(self) -> 'BlockBase':
+        """Returns the last block in the blockchain."""
         pass
 
 # ============================
@@ -40,13 +45,19 @@ class BasicBlockchain(BlockchainBase):
 
     def create_genesis_block(self) -> 'BlockBase':
         """Creates a genesis block."""
-        genesis = self.block_class(block_id=0, parents=None, miner_id=-1, timestamp=0)
+        genesis = self.block_class(block_id=0, parents=[], miner_id=1, timestamp=0)
         self.blocks[0] = genesis
         return genesis
 
     def add_block(self, block: 'BlockBase', node: 'NodeBase'):
-        """Adds a block and updates the weight."""
+        """Adds a block and updates the weight.
+        Assumes parents are properly linked to block
+        """
         self.blocks[block.block_id] = block
+        
         for parent in block.parents:
             parent.children.append(block)
-            parent.update_weight()
+    
+    def get_last_block(self) -> list['BlockBase']:
+        """Returns the last block in the blockchain."""
+        return [max(self.blocks.values(), key=lambda b: b.timestamp)] #TODO: inefficient

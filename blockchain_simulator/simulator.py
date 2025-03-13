@@ -22,6 +22,7 @@ class BlockchainSimulator:
         num_nodes: int = 10,
         avg_peers: int = 3,
         max_delay: int = 5,
+        consensus_after_delay: int = 5,
         consensus_protocol: Optional[Type['ConsensusProtocol']] = None,
         blockchain_impl: Optional[Type['BlockchainBase']] = None,
         block_class: Optional[Type['BlockBase']] = None,
@@ -41,6 +42,7 @@ class BlockchainSimulator:
         self.env: simpy.Environment = simpy.Environment()
         self.num_nodes: int = num_nodes
         self.max_delay: int = max_delay
+        self.consensus_after_delay: int = consensus_after_delay
         self.consensus_protocol: Optional['ConsensusProtocol'] = consensus_protocol() if consensus_protocol else None
         self.blockchain: Optional['BlockchainBase'] = blockchain_impl(block_class) if blockchain_impl else None
         self.nodes: List['NodeBase'] = [

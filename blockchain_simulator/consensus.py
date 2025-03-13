@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from abc import ABC, abstractmethod
 from typing import Type, TYPE_CHECKING
 
@@ -15,7 +14,7 @@ class ConsensusProtocol(ABC):
     """Abstract class for defining custom consensus protocols."""
     
     @abstractmethod
-    def select_best_block(self, node: 'NodeBase') -> 'BlockBase':
+    def select_best_block(self, node: 'NodeBase', proposed_blocks: list['BlockBase']) -> 'BlockBase':
         """
         Selects the best block for a node based on the consensus protocol.
 
