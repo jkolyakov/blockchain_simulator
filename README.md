@@ -1,2 +1,9 @@
-# blockchain_simulator
-A network simulator that helps simulate different network scenarios for different blockchain consensus protocols
+# Blockchain Simulator
+
+A Python-based blockchain network simulator with GHOST consensus and analytics.
+
+## 📦 Installation
+
+```bash
+pip install blockchain-simulator
+```
