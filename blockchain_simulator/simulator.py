@@ -8,68 +8,141 @@ from abc import ABC, abstractmethod
 # Set up logging
 logging.basicConfig(filename="blockchain_simulation.log", level=logging.INFO, format="%(message)s")
 
-class Block:
-    """Represents a blockchain block."""
+# ============================
+# ABSTRACT BASE CLASSES
+# ============================
+
+class BlockBase(ABC):
+    """Abstract base class for defining a custom block structure."""
+
     def __init__(self, block_id, parent, miner_id, timestamp):
         self.block_id = block_id
         self.parent = parent
         self.miner_id = miner_id
         self.children = []
-        self.weight = 1  # Used for consensus rule
         self.timestamp = timestamp  # Block creation time
 
-    def add_child(self, child):
-        """Add a child block and update weight recursively."""
-        self.children.append(child)
+    @abstractmethod
+    def update_weight(self):
+        """Abstract method to update block weight based on consensus rules."""
+        pass
+
+class BlockchainBase(ABC):
+    """Abstract class for defining custom blockchain implementations."""
+    
+    def __init__(self, block_class):
+        self.blocks = {}  # Maps block_id to Block object
+        self.block_class = block_class  # Custom block class
+        self.genesis = self.create_genesis_block()
+    
+    @abstractmethod
+    def create_genesis_block(self):
+        """Creates the genesis block."""
+        pass
+    
+    @abstractmethod
+    def add_block(self, block, node):
+        """Adds a block to the blockchain."""
+        pass
 
 class ConsensusProtocol(ABC):
-    """Abstract base class for defining a custom blockchain consensus protocol."""
+    """Abstract class for defining custom consensus protocols."""
     
     @abstractmethod
     def select_best_block(self, node):
-        """Select the best block for a node based on the consensus algorithm."""
+        """Select the best block for a node."""
         pass
+
+# ============================
+# BUILT-IN BLOCK IMPLEMENTATIONS
+# ============================
+
+class BasicBlock(BlockBase):
+    """A simple block structure with basic weight calculation."""
+
+    def __init__(self, block_id, parent, miner_id, timestamp):
+        super().__init__(block_id, parent, miner_id, timestamp)
+        self.weight = 1  # Default weight
+
+    def update_weight(self):
+        """Updates weight based on number of children."""
+        self.weight = 1 + sum(child.weight for child in self.children)
+
+# ============================
+# BUILT-IN CONSENSUS PROTOCOLS
+# ============================
 
 class GHOSTProtocol(ConsensusProtocol):
     """Implements the GHOST consensus protocol."""
     
     def select_best_block(self, node):
         """Selects the heaviest subtree using GHOST."""
-        current = node.blockchain[0]  # Start at the genesis block
+        current = node.blockchain.blocks[0]  # Start at genesis
         while current.children:
             current = max(current.children, key=lambda b: b.weight)
         return current
 
+class LongestChainProtocol(ConsensusProtocol):
+    """Implements the Longest Chain consensus protocol (Bitcoin-style)."""
+    
+    def select_best_block(self, node):
+        """Selects the longest chain's tip as the best block."""
+        current = node.blockchain.blocks[0]  # Start at genesis
+        while current.children:
+            current = max(current.children, key=lambda b: len(b.children))
+        return current
+
+# ============================
+# BUILT-IN BLOCKCHAIN IMPLEMENTATIONS
+# ============================
+
+class BasicBlockchain(BlockchainBase):
+    """Basic blockchain implementation."""
+    
+    def __init__(self, block_class):
+        super().__init__(block_class)
+
+    def create_genesis_block(self):
+        """Creates a genesis block."""
+        genesis = self.block_class(block_id=0, parent=None, miner_id=-1, timestamp=0)
+        self.blocks[0] = genesis
+        return genesis
+    
+    def add_block(self, block, node):
+        """Adds a block and updates the weight."""
+        self.blocks[block.block_id] = block
+        block.parent.add_child(block)
+        block.parent.update_weight()
+
+# ============================
+# NODE IMPLEMENTATION
+# ============================
+
 class Node:
     """Represents a blockchain node."""
-    def __init__(self, env, node_id, network, consensus_protocol):
+    
+    def __init__(self, env, node_id, network, consensus_protocol, blockchain):
         self.env = env
         self.node_id = node_id
         self.network = network
         self.peers = []
-        self.blockchain = {}
-        self.head = None
+        self.consensus_protocol = consensus_protocol
+        self.blockchain = blockchain
+        self.head = blockchain.genesis
         self.received_blocks = {}
-        self.consensus_protocol = consensus_protocol  # Use a provided consensus protocol
-
-        # Initialize with Genesis Block
-        genesis = Block(block_id=0, parent=None, miner_id=-1, timestamp=0)
-        self.blockchain[0] = genesis
-        self.head = genesis
 
     def add_peer(self, peer):
-        """Connect this node to another node."""
+        """Connects this node to a peer."""
         if peer not in self.peers:
             self.peers.append(peer)
 
     def mine_block(self):
-        """Mine a new block and broadcast it."""
-        new_block_id = len(self.blockchain)
-        new_block = Block(block_id=new_block_id, parent=self.head, miner_id=self.node_id, timestamp=self.env.now)
+        """Mines a new block and broadcasts it."""
+        new_block_id = len(self.blockchain.blocks)
+        new_block = self.blockchain.block_class(block_id=new_block_id, parent=self.head, miner_id=self.node_id, timestamp=self.env.now)
 
-        self.blockchain[new_block_id] = new_block
-        self.head.add_child(new_block)
-        self.head = new_block
+        self.blockchain.add_block(new_block, self)
+        self.head = self.consensus_protocol.select_best_block(self)
 
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block_id}")
         self.network.metrics["total_blocks_mined"] += 1
@@ -77,39 +150,39 @@ class Node:
         self.broadcast_block(new_block)
 
     def broadcast_block(self, block):
-        """Broadcast a block to peers."""
+        """Broadcasts a block to peers."""
         for peer in self.peers:
             delay = random.uniform(1, self.network.max_delay)
             self.env.process(peer.receive_block(block, delay, self.node_id))
 
     def receive_block(self, block, delay, sender_id):
-        """Process an incoming block after a delay."""
+        """Processes an incoming block after a delay."""
         yield self.env.timeout(delay)
 
-        # Log block propagation time
         if block.block_id not in self.received_blocks:
             self.received_blocks[block.block_id] = self.env.now
             self.network.metrics["block_propagation_times"].append(self.env.now - block.timestamp)
 
-        if block.block_id not in self.blockchain:
-            self.blockchain[block.block_id] = block
-            block.parent.add_child(block)
-
-            # Apply custom consensus protocol
+        if block.block_id not in self.blockchain.blocks:
+            self.blockchain.add_block(block, self)
             self.head = self.consensus_protocol.select_best_block(self)
-
             logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {sender_id}")
             self.broadcast_block(block)
 
+# ============================
+# BLOCKCHAIN SIMULATOR
+# ============================
+
 class BlockchainSimulator:
-    """API for running blockchain network simulations with custom consensus protocols."""
+    """API for running blockchain network simulations with custom implementations."""
     
-    def __init__(self, num_nodes=10, avg_peers=3, max_delay=5, consensus_protocol=GHOSTProtocol):
+    def __init__(self, num_nodes=10, avg_peers=3, max_delay=5, consensus_protocol=GHOSTProtocol, blockchain_impl=BasicBlockchain, block_class=BasicBlock):
         self.env = simpy.Environment()
         self.num_nodes = num_nodes
         self.max_delay = max_delay
         self.consensus_protocol = consensus_protocol()
-        self.nodes = [Node(self.env, i, self, self.consensus_protocol) for i in range(num_nodes)]
+        self.blockchain = blockchain_impl(block_class)
+        self.nodes = [Node(self.env, i, self, self.consensus_protocol, self.blockchain) for i in range(num_nodes)]
         self.metrics = {
             "total_blocks_mined": 0,
             "block_propagation_times": [],
@@ -119,7 +192,7 @@ class BlockchainSimulator:
         self.create_random_topology(avg_peers)
 
     def create_random_topology(self, avg_peers):
-        """Randomly connect nodes to form a network."""
+        """Randomly connects nodes to form a network."""
         for node in self.nodes:
             num_peers = min(random.randint(1, avg_peers), self.num_nodes - 1)
             possible_peers = [n for n in self.nodes if n != node]
@@ -129,62 +202,19 @@ class BlockchainSimulator:
                 peer.add_peer(node)
 
     def start_mining(self, node_id):
-        """Trigger mining at a specific node."""
+        """Triggers mining at a specific node."""
         if 0 <= node_id < self.num_nodes:
             self.env.process(self.nodes[node_id].mine_block())
 
     def run(self, duration=20):
-        """Run the simulation."""
+        """Runs the simulation."""
         self.env.run(until=duration)
-        self.calculate_metrics()
-        self.visualize_metrics()
 
-    def calculate_metrics(self):
-        """Analyze blockchain performance metrics."""
-        orphaned_blocks = 0
-        for node in self.nodes:
-            for block in node.blockchain.values():
-                if block.block_id != 0 and block.weight == 1:
-                    orphaned_blocks += 1
+# ============================
+# TESTING THE MODULAR API
+# ============================
 
-        self.metrics["orphaned_blocks"] = orphaned_blocks
-        logging.info(f"Total Blocks Mined: {self.metrics['total_blocks_mined']}")
-        logging.info(f"Total Orphaned Blocks: {self.metrics['orphaned_blocks']}")
-
-    def visualize_metrics(self):
-        """Plot key blockchain metrics."""
-        df = pd.DataFrame({"block_propagation_time": self.metrics["block_propagation_times"]})
-
-        plt.figure(figsize=(8, 5))
-        plt.hist(df["block_propagation_time"], bins=10, alpha=0.75)
-        plt.xlabel("Block Propagation Time (seconds)")
-        plt.ylabel("Frequency")
-        plt.title("Block Propagation Times")
-        plt.show()
-
-# ===========================
-# EXAMPLE: CUSTOM CONSENSUS PROTOCOL
-# ===========================
-class LongestChainProtocol(ConsensusProtocol):
-    """A simple longest-chain consensus protocol (like Bitcoin)."""
-    
-    def select_best_block(self, node):
-        """Select the longest chain's tip as the best block."""
-        current = node.blockchain[0]  # Start at genesis
-        while current.children:
-            current = max(current.children, key=lambda b: len(b.children))
-        return current
-
-# ===========================
-# TESTING THE ENHANCED API
-# ===========================
 if __name__ == "__main__":
-    # Using default GHOST consensus
-    sim1 = BlockchainSimulator(num_nodes=10, avg_peers=3, max_delay=3, consensus_protocol=GHOSTProtocol)
-    sim1.start_mining(node_id=0)
-    sim1.run(duration=50)
-
-    # Using Longest-Chain (Bitcoin-style) consensus
-    sim2 = BlockchainSimulator(num_nodes=10, avg_peers=3, max_delay=3, consensus_protocol=LongestChainProtocol)
-    sim2.start_mining(node_id=0)
-    sim2.run(duration=50)
+    sim = BlockchainSimulator(num_nodes=10, avg_peers=3, max_delay=3, consensus_protocol=GHOSTProtocol, blockchain_impl=BasicBlockchain, block_class=BasicBlock)
+    sim.start_mining(node_id=0)
+    sim.run(duration=50)
