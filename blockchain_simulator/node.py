@@ -1,12 +1,16 @@
+from __future__ import annotations
 import logging
 import random
 import simpy
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional, Type
-from blockchain_simulator.block import BlockBase
-from blockchain_simulator.blockchain import BlockchainBase
-from blockchain_simulator.consensus import ConsensusProtocol
-from blockchain_simulator.simulator import BlockchainSimulator
+from typing import List, Dict, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from blockchain_simulator.block import BlockBase
+    from blockchain_simulator.blockchain import BlockchainBase
+    from blockchain_simulator.consensus import ConsensusProtocol
+    from blockchain_simulator.simulator import BlockchainSimulator
+
 # ============================
 # ABSTRACT NODE CLASS
 # ============================
@@ -14,34 +18,34 @@ from blockchain_simulator.simulator import BlockchainSimulator
 class NodeBase(ABC):
     """Abstract base class for defining a blockchain node."""
 
-    def __init__(self, env: simpy.Environment, node_id: int, network: "BlockchainSimulator", 
-                 consensus_protocol: ConsensusProtocol, blockchain: BlockchainBase):
+    def __init__(self, env: simpy.Environment, node_id: int, network: 'BlockchainSimulator', 
+                 consensus_protocol: 'ConsensusProtocol', blockchain: 'BlockchainBase'):
         self.env = env
         self.node_id = node_id
         self.network = network
-        self.peers: List["NodeBase"] = []
+        self.peers: List['NodeBase'] = []
         self.consensus_protocol = consensus_protocol
         self.blockchain = blockchain
         self.head = blockchain.genesis
         self.received_blocks: Dict[int, float] = {}  # Stores when blocks were received
 
-    def add_peer(self, peer: "NodeBase"):
+    def add_peer(self, peer: 'NodeBase'):
         """Connects this node to a peer."""
         if peer not in self.peers:
             self.peers.append(peer)
 
     @abstractmethod
-    def mine_block(self) -> None:
+    def mine_block(self):
         """Abstract method for mining a block."""
         pass
 
     @abstractmethod
-    def broadcast_block(self, block: BlockBase):
+    def broadcast_block(self, block: 'BlockBase'):
         """Abstract method for broadcasting a block to peers."""
         pass
 
     @abstractmethod
-    def receive_block(self, block: BlockBase, delay: float, sender_id: int):
+    def receive_block(self, block: 'BlockBase', delay: float, sender_id: int):
         """Abstract method for processing an incoming block."""
         pass
 
@@ -70,13 +74,13 @@ class BasicNode(NodeBase):
 
         self.broadcast_block(new_block)
 
-    def broadcast_block(self, block: BlockBase) -> None:
+    def broadcast_block(self, block: 'BlockBase') -> None:
         """Broadcasts a block to all connected peers with a random network delay."""
         for peer in self.peers:
             delay = random.uniform(1, self.network.max_delay)
             self.env.process(peer.receive_block(block, delay, self.node_id))
 
-    def receive_block(self, block: BlockBase, delay: float, sender_id: int):
+    def receive_block(self, block: 'BlockBase', delay: float, sender_id: int):
         """Processes an incoming block after a delay."""
         yield self.env.timeout(delay)
 

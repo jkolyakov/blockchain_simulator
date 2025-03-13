@@ -3,12 +3,14 @@ import random
 import logging
 import pandas as pd
 import matplotlib.pyplot as plt
-from typing import Type, Optional, List, Dict
-from blockchain_simulator.node import NodeBase, BasicNode
-from blockchain_simulator.blockchain import BlockchainBase
-from blockchain_simulator.block import BlockBase
-from blockchain_simulator.consensus import ConsensusProtocol
+from typing import Type, Optional, List, Dict, TYPE_CHECKING
+if TYPE_CHECKING:
+    from blockchain_simulator.node import NodeBase
+    from blockchain_simulator.blockchain import BlockchainBase
+    from blockchain_simulator.block import BlockBase
+    from blockchain_simulator.consensus import ConsensusProtocol
 
+from blockchain_simulator.node import BasicNode
 # Configure logging
 logging.basicConfig(filename="blockchain_simulation.log", level=logging.INFO, format="%(message)s")
 
@@ -20,10 +22,10 @@ class BlockchainSimulator:
         num_nodes: int = 10,
         avg_peers: int = 3,
         max_delay: int = 5,
-        consensus_protocol: Optional[Type[ConsensusProtocol]] = None,
-        blockchain_impl: Optional[Type[BlockchainBase]] = None,
-        block_class: Optional[Type[BlockBase]] = None,
-        node_class: Type[NodeBase] = BasicNode
+        consensus_protocol: Optional[Type['ConsensusProtocol']] = None,
+        blockchain_impl: Optional[Type['BlockchainBase']] = None,
+        block_class: Optional[Type['BlockBase']] = None,
+        node_class: Type['NodeBase'] = BasicNode
     ):
         """
         Initializes the blockchain simulator.
@@ -39,9 +41,9 @@ class BlockchainSimulator:
         self.env: simpy.Environment = simpy.Environment()
         self.num_nodes: int = num_nodes
         self.max_delay: int = max_delay
-        self.consensus_protocol: Optional[ConsensusProtocol] = consensus_protocol() if consensus_protocol else None
-        self.blockchain: Optional[BlockchainBase] = blockchain_impl(block_class) if blockchain_impl else None
-        self.nodes: List[NodeBase] = [
+        self.consensus_protocol: Optional['ConsensusProtocol'] = consensus_protocol() if consensus_protocol else None
+        self.blockchain: Optional['BlockchainBase'] = blockchain_impl(block_class) if blockchain_impl else None
+        self.nodes: List['NodeBase'] = [
             node_class(self.env, i, self, self.consensus_protocol, self.blockchain)
             for i in range(num_nodes)
         ]
@@ -60,8 +62,8 @@ class BlockchainSimulator:
         """
         for node in self.nodes:
             num_peers: int = min(random.randint(1, avg_peers), self.num_nodes - 1)
-            possible_peers: List[NodeBase] = [n for n in self.nodes if n != node]
-            connected_peers: List[NodeBase] = random.sample(possible_peers, num_peers)
+            possible_peers: List['NodeBase'] = [n for n in self.nodes if n != node]
+            connected_peers: List['NodeBase'] = random.sample(possible_peers, num_peers)
             for peer in connected_peers:
                 node.add_peer(peer)
                 peer.add_peer(node)
