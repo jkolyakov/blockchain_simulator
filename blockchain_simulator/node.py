@@ -44,12 +44,30 @@ class NodeBase(ABC):
     
     # TODO: Have the simulator call this method on all nodes to start consensus after consensus_after_delay timesteps
     def consensus_step(self):
-        """Executes a step in the consensus protocol."""
-        # TODO: Do we broadcast the consensus block? is that protocol specific?
-        new_block = self.consensus_protocol.select_best_block(self, self.proposed_blocks)
-        self.blockchain.add_block(new_block, self)
-        self.proposed_blocks = set()
-        self.head = new_block
+        """Executes the consensus protocol."""
+        self.consensus_protocol.execute_consensus(self)
+
+    def receive_consensus_block(self, block: 'BlockBase', delay: float, sender_id: int):
+        """
+        Processes an incoming consensus-finalized block and updates the chain if necessary.
+
+        :param block: The finalized block chosen by consensus.
+        :param delay: Network delay before processing the block.
+        :param sender_id: The ID of the node that sent the block.
+        """
+        yield self.env.timeout(delay)
+
+        # If block already exists in the blockchain, ignore it
+        if block.block_id in self.blockchain.blocks:
+            return  
+
+        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received finalized block {block.block_id} from Node {sender_id}")
+
+        # Let the consensus protocol decide how to handle it (chain switching, etc.)
+        self.consensus_protocol.accept_consensus_block(self, block)
+        
+        # IMPORTANT: Recompute the best chain after receiving a consensus block
+        self.head = self.consensus_protocol.select_best_block(self.blockchain)
 
     @abstractmethod
     def mine_block(self):
@@ -84,19 +102,20 @@ class BasicNode(NodeBase):
         
         # set new_block_id to a randomized 256bit hash
         new_block_id = hash((self.node_id, self.env.now, random.getrandbits(256)))
-        # TODO: Change this to be in the consensus protocol and pass the blockchain
-        parents = self.blockchain.get_last_block()
+        
+        # Ensures the head is the best block before mining a new block
+        self.head = self.consensus_protocol.select_best_block()
         
         new_block = self.blockchain.block_class(
             block_id=new_block_id,
-            parents=parents,
+            parent=self.head,
             miner_id=self.node_id,
             timestamp=self.env.now
         )
         
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block_id}")
         self.network.metrics["total_blocks_mined"] += 1
-
+        self.proposed_blocks.add(new_block) # Add the block to its own proposed blocks
         self.broadcast_block(new_block)
 
     def broadcast_block(self, block: 'BlockBase') -> None:

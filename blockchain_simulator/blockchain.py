@@ -28,11 +28,6 @@ class BlockchainBase(ABC):
         """Adds a block to the blockchain."""
         pass
 
-    @abstractmethod
-    def get_last_block(self) -> 'BlockBase':
-        """Returns the last block in the blockchain."""
-        pass
-
 # ============================
 # BLOCKCHAIN IMPLEMENTATION
 # ============================
@@ -45,7 +40,7 @@ class BasicBlockchain(BlockchainBase):
 
     def create_genesis_block(self) -> 'BlockBase':
         """Creates a genesis block."""
-        genesis = self.block_class(block_id=0, parents=[], miner_id=1, timestamp=0)
+        genesis = self.block_class(block_id=0, miner_id=1, timestamp=0)
         self.blocks[0] = genesis
         return genesis
 
@@ -54,10 +49,4 @@ class BasicBlockchain(BlockchainBase):
         Assumes parents are properly linked to block
         """
         self.blocks[block.block_id] = block
-        
-        for parent in block.parents:
-            parent.children.append(block)
-    
-    def get_last_block(self) -> list['BlockBase']:
-        """Returns the last block in the blockchain."""
-        return [max(self.blocks.values(), key=lambda b: b.timestamp)] #TODO: inefficient
+        block.parent.children.append(block) # Assume all parents have blocks because genesis block must have been created already
