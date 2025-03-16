@@ -23,17 +23,31 @@ class BlockBase(ABC):
         """Abstract method to update block weight based on consensus rules."""
         pass
 
+    def add_child(self, block: 'BlockBase'):
+        self.children.append(block)
+        block.parent = self
+
 # ============================
 # BLOCK IMPLEMENTATION
 # ============================
 
-class BasicBlock(BlockBase):
-    """A simple block structure with basic weight calculation."""
+class GhostBlock(BlockBase):
+    """A simple block structure with basic weight calculation for the GHOST Protocol"""
     
     def __init__(self, block_id: int, parent: Optional['BlockBase'], miner_id: int, timestamp: float):
         super().__init__(block_id, parent, miner_id, timestamp)
         self.weight: int = 1  # Default weight
+        self.tree_weight = self.weight
 
     def update_weight(self) -> None:
         """Updates weight based on number of children."""
-        self.weight = 1 + sum(child.weight for child in self.children)
+        self.tree_weight = self.weight + sum(child.weight for child in self.children)
+
+    def add_child(self, block):
+        super().add_child(block)
+
+        node = self
+        while(node):
+            node.update_weight(self)
+            node = node.parent
+

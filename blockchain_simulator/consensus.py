@@ -5,7 +5,7 @@ import random
 
 if TYPE_CHECKING:
     from blockchain_simulator.node import NodeBase
-    from blockchain_simulator.block import BlockBase
+    from blockchain_simulator.block import BlockBase,GhostBlock
     from blockchain_simulator.blockchain import BlockchainBase
 
 # ============================
@@ -57,16 +57,19 @@ class ConsensusProtocol(ABC):
         if self.requires_broadcast():
             self.broadcast_consensus_block(node, best_block)
     
-    def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> None:
+    def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase', is_proposer: bool) -> None:
         """
         Accepts a block into the blockchain.
 
         :param node: The node running the protocol.
         :param block: The block to accept.
+        :param is_proposer: indicates if the node was the proposer of the block or not
         """
-        node.blockchain.add_block(block, node)
-        node.head = block
-        node.proposed_blocks.clear()
+        node.blockchain.add_received_block(block,is_proposer)
+        for node_block in node.proposed_block_queue:
+            if node_block.block_id == block.block_id:
+                node.proposed_block_queue.remove(node_block)            #delete the block from proposed block list if it is the same as the output of consensus since it has already been added to the main chain
+
     
     def requires_broadcast(self) -> bool:
         """
@@ -93,7 +96,7 @@ class ConsensusProtocol(ABC):
 class GHOSTProtocol(ConsensusProtocol):
     """Implements the GHOST (Greedy Heaviest Observed Subtree) consensus protocol."""
 
-    def select_best_block(self, chain: 'BlockchainBase') -> 'BlockBase':
+    def select_best_block(self, blockchain: 'BlockchainBase') -> 'GhostBlock':
         """
         Selects the heaviest subtree using the GHOST protocol.
         The best block is the one with the most cumulative weight.
@@ -101,7 +104,7 @@ class GHOSTProtocol(ConsensusProtocol):
         :param chain: The blockchain instance.
         :return: The block with the highest weight.
         """
-        current = chain.genesis  # Start from genesis
+        current = blockchain.genesis  # Start from genesis
         while current.children:
             current = max(current.children, key=lambda b: b.weight)
         return current
@@ -113,10 +116,12 @@ class GHOSTProtocol(ConsensusProtocol):
         :param node: The node running the protocol.
         :return: The block with the highest weight.
         """
-        if not node.proposed_blocks:
-            return node.head  # If no proposed blocks, continue extending the current chain
+        # if not node.proposed_blocks:
+            # return node.head  # If no proposed blocks, continue extending the current chain
 
-        return max(node.proposed_blocks, key=lambda b: b.weight, default=node.head)
+        # return max(node.proposed_blocks, key=lambda b: b.weight, default=node.head)
+
+        return node.get_proposed_block(self)
 
     def requires_broadcast(self) -> bool:
         """
