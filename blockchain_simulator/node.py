@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from blockchain_simulator.blockchain import BlockchainBase
     from blockchain_simulator.consensus import ConsensusProtocol
     from blockchain_simulator.simulator import BlockchainSimulator
+    from blockchain_simulator.broadcastMessage import BroadcastMessage
 
 # ============================
 # ABSTRACT NODE CLASS
@@ -28,16 +29,28 @@ class NodeBase(ABC):
         self.consensus_protocol = consensus_protocol
         self.blockchain = blockchain
         self.head: 'BlockBase' = blockchain.genesis
-        self.proposed_block_queue: List['BlockBase'] = []  # Stores when blocks were received
+        self.block_queue: List['BlockBase'] = []  # Stores when blocks were received
         self.active = True
         self.last_consensus_time = 0
         self.mining_difficulty = 4 # Default difficulty for PoW
-        
 
+
+        random.seed(node_id)
+        self.private_key = random.random()
 
         self.mining_time: int = 10                               #mining_time stores the time after which a new block is mined
         self.is_mining: bool = False                              #is_mining = False -> the node is not mining blocks currently.
         asyncio.run(self.async_mining())
+
+    def add_to_blockqueue(self, block: 'BlockBase'):
+        """Add block to its queue of blocks"""
+        self.block_queue.append(block)
+
+    def remove_from_blockqueue(self, block_id: int):
+        """Remove block_id from the queue of blocks"""
+        for block in self.block_queue:
+            if block.block_id == block_id:
+                self.block_queue.remove(block)
 
     def add_peer(self, peer: 'NodeBase'):
         """Connects this node to a peer."""
@@ -76,24 +89,29 @@ class NodeBase(ABC):
         if not self.is_mining:
             logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} stopped mining")
             return        
-        # Ensure the block meets PoW validity before adding it
-        if not self.blockchain.add_block(new_block, self):
-            logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} failed mining block {new_block.block_id}")
-            return
+        # Ensure the block meets PoW validity before adding it. This validity is checked when the consensus protocol is executed, not when mining.
+        # if not self.blockchain.add_block(new_block, self):
+        #     logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} failed mining block {new_block.block_id}")
+        #     return
         # Increment the total blocks mined
         self.network.metrics["total_blocks_mined"] += 1
         self.network.metrics["blocks_by_node"][self.node_id] += 1
         
         # Handle block proposal based on the consensus protocol
-        self.consensus_protocol.propose_block(self, new_block)
-        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block.block_id}")
-        self.broadcast_block(new_block)
-        yield self.env.timeout(0)  # Yield to make this a generator
+        #Mining a block is a completely different process from consensus protocol. Should not couple their logic in one function
+        # self.consensus_protocol.propose_block(self, new_block)
+        # logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block.block_id}")
+        # self.broadcast_block(new_block)
+        # yield self.env.timeout(0)  # Yield to make this a generator
 
+    # Differentiating between two types of broadcast (1) related to intermediate steps consensus protocol, and (2) broadcasting the final consensus 
     def broadcast_block(self, block: 'BlockBase'):
         """Broadcasts a block to all connected peers with a random network delay."""
         if block.block_id in self.blockchain.blocks:
             return
+        
+        messsage_paylo
+        broadcast_message = BroadcastMessage(self.node_id,)
 
         for peer in self.peers:
             delay = self.network.get_network_delay(self.node_id, peer.node_id)
@@ -107,7 +125,10 @@ class NodeBase(ABC):
         yield self.env.timeout(delay)
 
         if block.block_id in self.blockchain.blocks:
-            return  # Block already known, ignore it
+            return  # Block already in the node's local copy ofblockchain, ignore it
+        
+        if block.block_id in self.block_queue:
+            return # Block already in the list of blocks mined by the node
 
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {sender_id}")
         # Handle block proposal based on the consensus protocol
@@ -124,7 +145,7 @@ class NodeBase(ABC):
 
         if self.env.now >= self.last_consensus_time + self.network.consensus_interval:
             logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} executing consensus")
-            if len(self.proposed_blocks) > 0:
+            if len(self.block_queue) > 0:
                 self.consensus_step()
 
         yield self.env.timeout(1)
@@ -187,8 +208,8 @@ class BasicNode(NodeBase):
         
             return
         
-        if block.block_id not in self.proposed_blocks:
+        if block.block_id not in self.block_queue:
         # Log block propagation time
-            self.proposed_blocks.add(block)
+            self.block_queue.add(block)
             self.broadcast_block(block)
             self.network.metrics["block_propagation_times"].append(self.env.now - block.timestamp)
