@@ -13,9 +13,7 @@ if TYPE_CHECKING:
 # ============================
 
 class ConsensusProtocol(ABC):
-    global FINAL_CONSENSUS = 1
-    global INTERMEDIATE_CONSENSUS = 2
-    global TENTATIVE_CONSENSUS = 3
+    
     """Abstract class for defining custom consensus protocols."""
     
     @abstractmethod
