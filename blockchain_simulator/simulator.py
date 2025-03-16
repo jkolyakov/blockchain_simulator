@@ -213,7 +213,7 @@ class BlockchainSimulator:
         
         # Run the simulation
         # Create a progress bar
-        with tqdm(total=duration, desc="⏳ Simulation Progress", unit="s") as pbar:
+        with tqdm(total=duration, desc="⏳ Simulation Progress", unit="s", ascii=" ▖▘▝▗▚▞█") as pbar:
             last_time = self.env.now 
             while self.env.now < duration:
                 pbar.set_postfix_str(next(frame_cycle))

@@ -75,7 +75,6 @@ class NodeBase(ABC):
             return
         # Increment the total blocks mined
         self.network.metrics["total_blocks_mined"] += 1
-        print(self.network.metrics["total_blocks_mined"])
         self.network.metrics["blocks_by_node"][self.node_id] += 1
         
         # Handle block proposal based on the consensus protocol
