@@ -2,3 +2,4 @@ simpy
 pandas
 matplotlib
 rich
+tdqm
