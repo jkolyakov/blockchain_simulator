@@ -106,7 +106,7 @@ class GHOSTProtocol(ConsensusProtocol):
         """
         current = blockchain.genesis  # Start from genesis
         while current.children:
-            current = max(current.children, key=lambda b: b.weight)
+            current = max(current.children, key=lambda b: b.tree_weight)
         return current
 
     def select_from_proposed(self, node: 'NodeBase') -> 'BlockBase':
