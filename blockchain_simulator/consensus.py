@@ -51,7 +51,7 @@ class ConsensusProtocol(ABC):
             return
 
         # Accept the block into the blockchain
-        self.accept_consensus_block(node, best_block)
+        self.accept_consensus_block(node, best_block, True)
 
         # If the protocol requires broadcasting, send it to peers
         if self.requires_broadcast():

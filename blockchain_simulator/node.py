@@ -3,6 +3,7 @@ import logging
 import random
 import time
 import simpy
+import asyncio
 from abc import ABC, abstractmethod
 from typing import List, Dict, TYPE_CHECKING
 
@@ -36,6 +37,7 @@ class NodeBase(ABC):
 
         self.mining_time: int = 10                               #mining_time stores the time after which a new block is mined
         self.is_mining: bool = False                              #is_mining = False -> the node is not mining blocks currently.
+        asyncio.run(self.async_mining())
 
     def add_peer(self, peer: 'NodeBase'):
         """Connects this node to a peer."""
@@ -69,7 +71,7 @@ class NodeBase(ABC):
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received finalized block {block.block_id} from Node {sender_id}")
 
         # Let the consensus protocol decide how to handle it (chain switching, etc.)
-        self.consensus_protocol.accept_consensus_block(self, block)
+        self.consensus_protocol.accept_consensus_block(self, block, False)
         
         # IMPORTANT: Recompute the best chain after receiving a consensus block. This should be handled by the accept_consensus_block() function
         # self.head = self.consensus_protocol.select_best_block(self.blockchain)
@@ -113,13 +115,15 @@ class NodeBase(ABC):
         """Abstract method for executing a timestep in the simulation."""
         pass
 
-    async def start_mining(self):       #TODO: decide when to invoke this function
+    async def async_mining(self):       #TODO: decide when to invoke this function
         """This function checks if is_mining is set to be true. If not, it sets it to true and starts mining blocks after """
-        if not self.is_mining:
-            self.is_mining = True
-            while(self.is_mining):
-                time.sleep(self.mining_time)
-                self.mine_block()
+        
+        while(self.is_mining):
+            time.sleep(self.mining_time)
+            self.mine_block()
+
+    def start_mining(self):
+        self.is_mining = True
 
     def stop_mining(self):
         """This function stop the node from mining further"""
