@@ -5,7 +5,7 @@ import time
 import simpy
 import asyncio
 from abc import ABC, abstractmethod
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Dict
 
 if TYPE_CHECKING:
     from blockchain_simulator.block import BlockBase
@@ -105,24 +105,29 @@ class NodeBase(ABC):
         # yield self.env.timeout(0)  # Yield to make this a generator
 
     # Differentiating between two types of broadcast (1) related to intermediate steps consensus protocol, and (2) broadcasting the final consensus 
-    def broadcast_block(self, block: 'BlockBase'):
+    def broadcast_block(self, block: 'BlockBase', consensus_type: int):
         """Broadcasts a block to all connected peers with a random network delay."""
         if block.block_id in self.blockchain.blocks:
             return
         
-        messsage_paylo
-        broadcast_message = BroadcastMessage(self.node_id,)
+        message_payload = {}
+        message_payload['block'] = block
+        message_payload['consensus_type'] = consensus_type
+        broadcast_message = BroadcastMessage(self.node_id,message_payload, self.private_key)
 
         for peer in self.peers:
             delay = self.network.get_network_delay(self.node_id, peer.node_id)
-            self.env.process(peer.receive_block(block, delay, self.node_id))
+            self.env.process(peer.receive_block(broadcast_message, delay, self.node_id))
 
         self.network.metrics["broadcasts"] += 1
         yield(self.env.timeout(0))  # Yield to make this a generator
 
-    def receive_block(self, block: 'BlockBase', delay: float, sender_id: int):
+    def receive_block(self, message_payload: Dict, delay: float, sender_id: int):
         """Processes an incoming block after a delay."""
         yield self.env.timeout(delay)
+
+        block = message_payload['block']
+        consensus_type = block['consensus_type']
 
         if block.block_id in self.blockchain.blocks:
             return  # Block already in the node's local copy ofblockchain, ignore it
@@ -130,7 +135,7 @@ class NodeBase(ABC):
         if block.block_id in self.block_queue:
             return # Block already in the list of blocks mined by the node
 
-        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {sender_id}")
+        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} with consensus_type {consensus_type} from Node {sender_id}")
         # Handle block proposal based on the consensus protocol
         self.consensus_protocol.propose_block(self, block)
         self.network.metrics["block_propagation_times"].append(self.env.now - block.timestamp)

@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 # ============================
 
 class ConsensusProtocol(ABC):
+    global FINAL_CONSENSUS = 1
+    global INTERMEDIATE_CONSENSUS = 2
+    global TENTATIVE_CONSENSUS = 3
     """Abstract class for defining custom consensus protocols."""
     
     @abstractmethod
@@ -26,48 +29,24 @@ class ConsensusProtocol(ABC):
         pass
     
     @abstractmethod
-    def select_from_proposed(self, node: 'NodeBase') -> 'BlockBase':
+    def select_proposed_block(self, node: 'NodeBase') -> 'BlockBase':
         """
-        Selects a block from the proposed blocks via the consensus protocol.
+        Selects a block from its list of blocks to serve as the proposed block for the consensus protocol.
 
         :param node: The node running the protocol.
         :return: The selected block.
         """
         pass
     
-    def execute_consensus(self, node: 'NodeBase') -> None:
+    @abstractmethod
+    def execute_consensus(self, node: 'NodeBase') -> 'BlockBase':
         """
         Executes a step in the consensus protocol.
 
         :param node: The node running the protocol.
+        :return: return the block that is the output of consensus protocol
         """
-        if not node.proposed_blocks:
-            return  # No blocks proposed
         
-        selected_blocks = self.select_from_proposed(node)
-        if isinstance(selected_blocks, list): # If the best block is a list of blocks we should try to accept all of them
-            for block in selected_blocks:
-                self.accept_consensus_block(node, block)
-        elif selected_blocks.block_id in node.blockchain.blocks:
-            return  # Block already part of the chain
-        else:
-            self.accept_consensus_block(node, selected_blocks)
-            
-        # Track the number of consensus executions
-        node.network.metrics["consensus_executions"] += 1
-
-        best_block = self.select_from_proposed(node)
-
-        # If the best block is already in the chain, do nothing
-        if best_block.block_id in node.blockchain.blocks:
-            return
-
-        # Accept the block into the blockchain
-        self.accept_consensus_block(node, best_block)
-
-        # If the protocol requires broadcasting, send it to peers
-        if self.requires_broadcast():
-            self.broadcast_consensus_block(node, best_block)
     
     def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> None:
         """
@@ -77,9 +56,13 @@ class ConsensusProtocol(ABC):
         :param block: The block to accept.
         :param is_proposer: indicates if the node was the proposer of the block or not
         """
-        node.blockchain.add_block(block, node)
-        node.head = block
-        node.proposed_blocks.clear()
+        is_proposer = False
+
+        if block.miner_id == node.node_id:
+            is_proposer = True
+
+        node.blockchain.add_block(block, node, is_proposer)
+        node.proposed_blocks.clear()    #
     
     def requires_broadcast(self) -> bool:
         """
@@ -105,14 +88,15 @@ class ConsensusProtocol(ABC):
         """Processes an incoming consensus-finalized block."""
         pass
     
-    @abstractmethod
-    def update_weights(self, block: 'BlockBase') -> None:
-        """
-        Updates the weight of all ancestor blocks in the tree.
+    # @abstractmethod
+    # def update_weights(self, block: 'BlockBase') -> None: 
+    #     """
+    #     SID_NOTE: This is supposed to be a property of block.py and not the consensus
+    #     Updates the weight of all ancestor blocks in the tree.
 
-        :param block: The block to update weights from.
-        """
-        pass
+    #     :param block: The block to update weights from.
+    #     """
+    #     pass
     
     @abstractmethod
     def propose_block(self, node: NodeBase, block: BlockBase):
@@ -163,7 +147,7 @@ class GHOSTProtocol(ConsensusProtocol):
             current = max(current.children, key=lambda b: (b.tree_weight, -b.block_id)) # Break ties by smallest block ID (hence the negative)
         return current
 
-    def select_from_proposed(self, node: 'NodeBase') -> list['BlockBase']:
+    def select_proposed_block(self, node: 'NodeBase') -> list['BlockBase']:
         """
         For GHOST, all blocks proposed blocks should be added to the blockchain.
 
@@ -185,11 +169,6 @@ class GHOSTProtocol(ConsensusProtocol):
         """
         return True
     
-    def update_weights(self, block: 'BlockBase'):
-        """Updates the weight of all ancestor blocks in the tree."""
-        while block:
-            block.weight = 1 + sum(child.weight for child in block.children)
-            block = block.parent  # Move up the chain
             
     def receive_consensus_block(self, node: NodeBase, block: BlockBase, delay: float):
         """Processes an incoming consensus-finalized block in GHOST."""
