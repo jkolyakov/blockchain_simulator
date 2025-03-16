@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-import itertools
 from typing import Type, Optional, List, Dict, Any, Callable, TYPE_CHECKING
 if TYPE_CHECKING:
     from blockchain_simulator.node import NodeBase
@@ -19,14 +18,6 @@ from blockchain_simulator.validator import BlockchainValidator  # Import the val
 
 # Configure logging
 logging.basicConfig(filename="blockchain_simulation.log", level=logging.WARNING, format="%(asctime)s - %(message)s")
-
-# Define hourglass frames for animation
-hourglass_frames = [
-    " ⏳  ",  # Initial
-    " ⏳  ",  # Tilt Left
-    " ⌛  ",  # Flipped
-    " ⏳  ",  # Tilt Right
-]
 
 class BlockchainSimulator:
     """API for running blockchain network simulations with custom implementations."""
@@ -209,14 +200,12 @@ class BlockchainSimulator:
         
         # Setup metrics collection process
         self.env.process(self._collect_metrics(collect_interval))
-        frame_cycle = itertools.cycle(hourglass_frames)  # Loop through frames
         
         # Run the simulation
         # Create a progress bar
         with tqdm(total=duration, desc="⏳ Simulation Progress", unit="s", ascii=" ▖▘▝▗▚▞█") as pbar:
             last_time = self.env.now 
             while self.env.now < duration:
-                pbar.set_postfix_str(next(frame_cycle))
                 self.env.step()          
                 # Update pbar with the actual time that has passed
                 time_advanced = self.env.now - last_time
