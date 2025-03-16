@@ -61,27 +61,25 @@ class NodeBase(ABC):
     def mine_block(self):
         """Mines a new block and submits it according to the consensus protocol."""
         self.head = self.consensus_protocol.select_best_block(self.blockchain)
-        if not self.head in self.blockchain.blocks:
+        if self.head.block_id not in self.blockchain.blocks.keys():
             logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} head block not in blockchain")
         new_block = self.blockchain.create_block(self.head, self.node_id, self.env.now)
-        new_block.mine(self, self.mining_difficulty)
-        
+        yield self.env.process(new_block.mine(self, self.mining_difficulty))
         # Allows for simulation to stop mining
         if not self.is_mining:
-            return 
-        
+            logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} stopped mining")
+            return        
         # Ensure the block meets PoW validity before adding it
         if not self.blockchain.add_block(new_block, self):
             logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} failed mining block {new_block.block_id}")
-            return        
-        
+            return
         # Increment the total blocks mined
         self.network.metrics["total_blocks_mined"] += 1
+        print(self.network.metrics["total_blocks_mined"])
         self.network.metrics["blocks_by_node"][self.node_id] += 1
         
         # Handle block proposal based on the consensus protocol
         self.consensus_protocol.propose_block(self, new_block)
-
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block.block_id}")
         self.broadcast_block(new_block)
         yield self.env.timeout(0)  # Yield to make this a generator

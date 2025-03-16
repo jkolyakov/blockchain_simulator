@@ -31,8 +31,12 @@ class BlockchainBase(ABC):
         
         if block.block_id not in self.blocks:
             self.blocks[block.block_id] = block
+            logging.warning(f"Block {block.block_id} added to the blockchain!")
             return True
+        
+        logging.warning(f"Block {block.block_id} already exists!")
         return False
+    
     # For testing purposes
     def get_block(self, block_id: int) -> Optional['BlockBase']:
         """Get a block by its ID."""
@@ -48,7 +52,7 @@ class BlockchainBase(ABC):
         # TODO: Note no parent block is needed because blocks are being proposed in batches? note sure why but ensuring parent exists and is in the chain already fails
         if not block.parent:
             return False  # Has no parent
-        if block.verify_block():
+        if not block.verify_block():
             return False  # PoW block is invalid
         
         return True
@@ -67,10 +71,12 @@ class BasicBlockchain(BlockchainBase):
         """Adds a block and updates the weight.
         Assumes parents are properly linked to block
         """
+        logging.warning(f"Adding block {block.block_id} to the blockchain")
         if not self.is_valid_block(block):
             return False
         
         if block.block_id in self.blocks:
+            logging.warning(f"Block {block.block_id} already exists!")
             return False # Block already exists
         
         # Add the block to the blockchain

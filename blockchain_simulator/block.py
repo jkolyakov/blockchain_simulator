@@ -72,16 +72,20 @@ class PoWBlock(BlockBase):
         self.nonce: Optional[int] = None  # Stores the successful nonce
         self.hash: Optional[str] = None  # Hash of the block
         
-    def mine(self, node: 'NodeBase', difficulty: int = 4) -> None:
+    def mine(self, node: 'NodeBase', difficulty: int = 4):
         """Proof-of-work mining algorithm."""
         self.nonce = 0
+        hash_attempts = 0
         target_prefix = "0" * difficulty
         while node.is_mining:
             self.hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
+            hash_attempts += 1
             if self.hash.startswith(target_prefix):
                 break
             self.nonce += 1
-        print(f"⛏️  Mined PoW Block {self.block_id} with nonce {self.nonce}")
+            if hash_attempts % 1000 == 0:
+                yield node.env.timeout(0.01)
+        # print(f"⛏️  Mined PoW Block {self.block_id} with nonce {self.nonce}")
 
     def update_weight(self) -> None:
         """Updates weight based on mining difficulty."""

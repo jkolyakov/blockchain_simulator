@@ -214,14 +214,18 @@ class BlockchainSimulator:
         # Run the simulation
         # Create a progress bar
         with tqdm(total=duration, desc="⏳ Simulation Progress", unit="s") as pbar:
+            last_time = self.env.now 
             while self.env.now < duration:
                 pbar.set_postfix_str(next(frame_cycle))
-                self.env.step()
-                pbar.update(1)  # Increment progress bar by 1 second 
+                self.env.step()          
+                # Update pbar with the actual time that has passed
+                time_advanced = self.env.now - last_time
+                pbar.update(time_advanced)
+                last_time = self.env.now  # Update last_time to current
+
             # Stop mining at all nodes
             for node in self.nodes:
                 node.stop_mining()
-            print("STOPPED ALL NODES MINING" * 100)
             
         # Collect final metrics
         self._collect_final_metrics()
