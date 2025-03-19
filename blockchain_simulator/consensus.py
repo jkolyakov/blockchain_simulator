@@ -26,25 +26,24 @@ class ConsensusProtocol(ABC):
         """
         pass
     
-    @abstractmethod
-    def select_proposed_block(self, node: 'NodeBase') -> 'BlockBase':
+    
+    def get_candidate_block(self, node: 'NodeBase') -> 'BlockBase':
         """
-        Selects a block from its list of blocks to serve as the proposed block for the consensus protocol.
+        Selects a block from its list of blocks that will act as the candidate block of node in the consensus protocol.
 
         :param node: The node running the protocol.
         :return: The selected block.
         """
-        pass
+        return node.get_from_blockqueue(self)
+
     
     @abstractmethod
-    def execute_consensus(self, node: 'NodeBase') -> 'BlockBase':
+    def execute_consensus(self,node: 'NodeBase') -> 'BlockBase':
         """
-        Executes a step in the consensus protocol.
-
-        :param node: The node running the protocol.
+        Executes the consensus protocol.
         :return: return the block that is the output of consensus protocol
         """
-        
+        pass
     
     def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> None:
         """
@@ -54,13 +53,9 @@ class ConsensusProtocol(ABC):
         :param block: The block to accept.
         :param is_proposer: indicates if the node was the proposer of the block or not
         """
-        is_proposer = False
 
-        if block.miner_id == node.node_id:
-            is_proposer = True
-
-        node.blockchain.add_block(block, node, is_proposer)
-        node.proposed_blocks.clear()    #
+        node.blockchain.add_block(block)
+        node.remove_from_blockqueue(block.block_id)
     
     def requires_broadcast(self) -> bool:
         """
@@ -82,22 +77,10 @@ class ConsensusProtocol(ABC):
             node.env.process(self.receive_consensus_block(peer, block, delay))
             
     @abstractmethod
-    def receive_consensus_block(self, node: NodeBase, block: BlockBase, delay: float, sender_id: int):
+    def receive_consensus_block(self, node: NodeBase, block: BlockBase, delay: float):
         """Processes an incoming consensus-finalized block."""
         pass
     
-    # @abstractmethod
-    # def update_weights(self, block: 'BlockBase') -> None: 
-    #     """
-    #     SID_NOTE: This is supposed to be a property of block.py and not the consensus
-    #     Updates the weight of all ancestor blocks in the tree.
-
-    #     :param block: The block to update weights from.
-    #     """
-    #     pass
-    
-    @abstractmethod
-    def propose_block(self, node: NodeBase, block: BlockBase):
         """Handles how blocks are proposed based on the consensus protocol."""
         pass
     
@@ -145,20 +128,6 @@ class GHOSTProtocol(ConsensusProtocol):
             current = max(current.children, key=lambda b: (b.tree_weight, -b.block_id)) # Break ties by smallest block ID (hence the negative)
         return current
 
-    def select_proposed_block(self, node: 'NodeBase') -> list['BlockBase']:
-        """
-        For GHOST, all blocks proposed blocks should be added to the blockchain.
-
-        :param node: The node running the protocol.
-        :return: The block with the highest weight.
-        """
-        return node.get_proposed_block(self)
-
-    def propose_block(self, node: NodeBase, block: BlockBase):
-        """In GHOST, all blocks are added to the blockchain immediately."""
-        if node.blockchain.is_valid_block(block): # Ensure the block is valid
-            node.proposed_blocks.add(block)
-
     def requires_broadcast(self) -> bool:
         """
         GHOST requires broadcasting the chosen block since it ensures chain synchronization.
@@ -192,7 +161,7 @@ class LongestChainProtocol(ConsensusProtocol):
         current: 'BlockBase' = node.blockchain.blocks[0]
         while current.children:
             current = max(current.children, key=lambda b: len(b.children))
-        return current
+        
 
 class PoSProtocol(ConsensusProtocol):
     """Implements Proof-of-Stake (PoS) consensus."""

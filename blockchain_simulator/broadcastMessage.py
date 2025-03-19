@@ -12,8 +12,13 @@ class BroadcastMessage:
         """
         self.sender = sender
         self.data = data
+        self.nodes_visited: List[int] = []
+        self.nodes_visited.append(sender)
         self.timestamp = time.time()
         self.signature = self.sign_message(private_key)
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict())
 
     def sign_message(self, private_key: SigningKey) -> str:
         message_hash = self.hash_message()
@@ -43,3 +48,27 @@ class BroadcastMessage:
         except Exception as e:
             print(f"Verification failed: {e}")
             return False
+        
+    async def send_message_to_peers(self,node):
+        for peer in node.peers:
+            if peer.node_id not in self.nodes_visited:
+                delay = node.network.get_network_delay(node, peer)
+                node.env.process(self.receive_message_from_peers(peer, delay))
+                self.network.metrics["broadcasts"] += 1
+
+    async def receive_message_from_peers(self, node, delay):
+        await node.env.timeout(delay)
+        self.nodes_visited.append(node.node_id)
+        if node.receive_broadcast_message(self):
+            self.send_message_to_peers(self,node)
+        
+class ConsensusBroadcast(BroadcastMessage):
+    
+    CONSENSUS_TYPE = {
+        'final': 1,
+        'tentative': 2,
+        'inProgress': 3
+    }
+    
+    def __init__(self, sender: int, data: Dict, private_key: SigningKey):
+        super.__init__(sender,data,private_key)
