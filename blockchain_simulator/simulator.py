@@ -17,7 +17,7 @@ from blockchain_simulator.node import BasicNode
 from blockchain_simulator.validator import BlockchainValidator  # Import the validator
 
 # Configure logging
-logging.basicConfig(filename="blockchain_simulation.log", level=logging.WARNING, format="%(asctime)s - %(message)s")
+logging.basicConfig(filename="blockchain_simulation.log", level=logging.WARNING, format="%(asctime)s - %(message)s", filemode="w")
 
 class BlockchainSimulator:
     """API for running blockchain network simulations with custom implementations."""
@@ -28,7 +28,7 @@ class BlockchainSimulator:
         avg_peers: int = 3,
         max_delay: float = 5.0,
         min_delay: float = 0.1,
-        consensus_interval: float = 0.1,
+        consensus_interval: float = 10,
         consensus_protocol: Optional[Type['ConsensusProtocol']] = None,
         blockchain_impl: Optional[Type['BlockchainBase']] = None,
         block_class: Optional[Type['BlockBase']] = None,
@@ -70,10 +70,9 @@ class BlockchainSimulator:
             "blocks_by_node": {i: 0 for i in range(num_nodes)},
             "block_propagation_times": [],
             "consensus_executions": 0,
-            "fork_resolutions": 0,
+            "forks": 0,
             "broadcasts": 0,
             "chain_lengths": [],
-            "fork_counts": [],
             "block_validation_results": [],
             "chain_convergence": [],
             "orphaned_blocks": [],
@@ -246,9 +245,6 @@ class BlockchainSimulator:
             orphaned_blocks = [self.consensus_protocol.count_orphaned_blocks(node) for node in self.nodes]
             self.metrics["orphaned_blocks"] = orphaned_blocks
             
-            # Count forks
-            self.metrics["fork_counts"].append(self._count_forks())
-            
             # Measure chain convergence (% of nodes that agree on the main chain)
             self.metrics["chain_convergence"].append(self._measure_convergence())
             
@@ -272,7 +268,10 @@ class BlockchainSimulator:
             return
 
         # Randomly select a node
-        node = random.choice(self.nodes)
+        #node = random.choice(self.nodes)
+
+        node = self.nodes[0]  #assuming this is the genesis node
+
         print(f"\n📜 Blockchain Tree for Node {node.node_id}\n")
 
         def print_tree(block: 'BlockBase', indent=0):
@@ -297,7 +296,7 @@ class BlockchainSimulator:
             print(f"🔹 Average Block Propagation Time: {avg_prop_time:.2f} seconds")
         
         print(f"🔹 Consensus Executions: {self.metrics['consensus_executions']}")
-        print(f"🔹 Fork Resolutions: {self.metrics['fork_resolutions']}")
+        print(f"🔹 Fork Resolutions: {self.metrics['forks']}")
         print(f"🔹 Longest Chain Length: {max(self.metrics["chain_lengths"])}")
         
         # Calculate average number of orphaned blocks
@@ -316,6 +315,7 @@ class BlockchainSimulator:
             print(f"🔹 Average PoW Nonce: {avg_nonce:.2f}")
         
         print("-" * 60)
+        # self._print_blockchain_tree()
             
     def validate_simulation(self) -> Dict[str, Dict[str, Any]]:
         """

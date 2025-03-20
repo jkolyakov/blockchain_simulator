@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Type, TYPE_CHECKING
 import random
+import logging
 
 if TYPE_CHECKING:
     from blockchain_simulator.node import NodeBase
@@ -16,7 +17,7 @@ class ConsensusProtocol(ABC):
     """Abstract class for defining custom consensus protocols."""
     
     @abstractmethod
-    def select_best_block(self, chain: 'BlockchainBase') -> 'BlockBase':
+    def select_main_chain(self, chain: 'BlockchainBase') -> 'BlockBase':
         """
         Selects the best block for a mined node's parent based on the consensus protocol.
 
@@ -44,28 +45,34 @@ class ConsensusProtocol(ABC):
         if not node.proposed_blocks:
             return  # No blocks proposed
         
+        logging.warning(f"Time {node.env.now:.2f}: Trying to select from proposed blocks", repr([block.block_id for block in node.proposed_blocks]))
         selected_blocks = self.select_from_proposed(node)
+
+
         if isinstance(selected_blocks, list): # If the best block is a list of blocks we should try to accept all of them
             for block in selected_blocks:
-                self.accept_consensus_block(node, block)
-        elif selected_blocks.block_id in node.blockchain.blocks:
-            return  # Block already part of the chain
+                # logging.warning(f"Time {node.env.now:.2f}: Node {node.node_id} trying to propose block in loop {block.block_id}")
+                if block.block_id not in node.blockchain.blocks:
+                    # logging.warning(f"Time {node.env.now:.2f}: block {block.block_id} not in blockchain. THIS IS GOOD")
+                    self.accept_consensus_block(node, block)
+                    node.network.metrics["consensus_executions"] += 1  
+                    self.broadcast_consensus_block(node, block)
+                else:
+                    # logging.warning(f"Time {node.env.now:.2f}: block {block.block_id} is in blockchain. THIS IS BAD")
+                    pass
+                    
         else:
-            self.accept_consensus_block(node, selected_blocks)
-            
-        # Track the number of consensus executions
-        node.network.metrics["consensus_executions"] += 1
-
-        # If a fork was resolved, increment fork resolutions
-        if len(node.blockchain.blocks) > 1:
-            node.network.metrics["fork_resolutions"] += 1
+            # logging.warning(f"Time {node.env.now:.2f}: Node {node.node_id} trying to propose block else {block.block_id}")
+            if block.block_id not in node.blockchain.blocks:
+                # logging.warning(f"Time {node.env.now:.2f}: block {block.block_id} not in blockchain. THIS IS GOOD")
+                self.accept_consensus_block(node, selected_blocks)
+                node.network.metrics["consensus_executions"] += 1
+                self.broadcast_consensus_block(node, selected_blocks)
+            else:
+                logging.warning(f"Time {node.env.now:.2f}: block {block.block_id} is in blockchain. THIS IS BAD")
+                pass
+                
         
-        # Done after metrics to ensure logs are correct
-        if isinstance(selected_blocks, list): # If the best block is a list of blocks we should broadcast all of them
-            for block in selected_blocks:
-                self.broadcast_consensus_block(node, block)
-        else:
-            self.broadcast_consensus_block(node, selected_blocks)
     
     def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> bool:
         """
@@ -78,8 +85,12 @@ class ConsensusProtocol(ABC):
         node.proposed_blocks.discard(block)  # Remove from proposed blocks (doesn't matter if not present)
         # Ensure the block weight updates correctly
         self.update_weights(block)
-        node.head = self.select_best_block(node.blockchain)  # Update the head
-    
+        old_head = node.head
+        node.head = self.select_main_chain(node.blockchain)  # Update the head
+        if (node.head.parent != old_head): # If the head has changed, we have a fork
+            node.network.metrics["forks"] += 1
+
+
     def requires_broadcast(self) -> bool:
         """
         Returns whether the consensus protocol requires broadcasting.
@@ -114,7 +125,7 @@ class ConsensusProtocol(ABC):
         pass
     
     @abstractmethod
-    def propose_block(self, node: NodeBase, block: BlockBase):
+    def add_to_block_queue(self, node: NodeBase, block: BlockBase):
         """Handles how blocks are proposed based on the consensus protocol."""
         pass
     
@@ -137,7 +148,7 @@ class ConsensusProtocol(ABC):
         :return: The length of the chain.
         """
         length = 0
-        current = self.select_best_block(node.blockchain)
+        current = self.select_main_chain(node.blockchain)
         while current:
             length += 1
             current = current.parent
@@ -149,7 +160,7 @@ class ConsensusProtocol(ABC):
 class GHOSTProtocol(ConsensusProtocol):
     """Implements the GHOST (Greedy Heaviest Observed Subtree) consensus protocol."""
 
-    def select_best_block(self, chain: 'BlockchainBase') -> 'BlockBase':
+    def select_main_chain(self, chain: 'BlockchainBase') -> 'BlockBase':
         """
         Selects the heaviest subtree using the GHOST protocol.
         The best block is the one with the most cumulative weight.
@@ -170,10 +181,11 @@ class GHOSTProtocol(ConsensusProtocol):
         :return: The block with the highest weight.
         """
         return list(node.proposed_blocks)
+    
 
-    def propose_block(self, node: NodeBase, block: BlockBase):
+    def add_to_block_queue(self, node: NodeBase, block: BlockBase):
         """In GHOST, all blocks are added to the blockchain immediately."""
-        if node.blockchain.is_valid_block(block): # Ensure the block is valid
+        if node.blockchain.is_valid_block(block):
             node.proposed_blocks.add(block)
 
     def requires_broadcast(self) -> bool:
@@ -192,19 +204,16 @@ class GHOSTProtocol(ConsensusProtocol):
             
     def receive_consensus_block(self, node: NodeBase, block: BlockBase, delay: float):
         """Processes an incoming consensus-finalized block in GHOST."""
-        yield node.env.timeout(delay)
 
         if block.block_id in node.blockchain.blocks:
             return  # Block already part of the chain
 
-        self.propose_block(node, block)
-
-        node.network.metrics["fork_resolutions"] += 1
+        self.add_to_block_queue(node, block)
     
 class LongestChainProtocol(ConsensusProtocol):
     """Implements the Longest Chain consensus protocol (Bitcoin-style)."""
     
-    def select_best_block(self, node: 'NodeBase') -> 'BlockBase':
+    def select_main_chain(self, node: 'NodeBase') -> 'BlockBase':
         """
         Selects the longest chain's tip.
 
@@ -219,7 +228,7 @@ class LongestChainProtocol(ConsensusProtocol):
 class PoSProtocol(ConsensusProtocol):
     """Implements Proof-of-Stake (PoS) consensus."""
     
-    def select_best_block(self, node: 'NodeBase') -> 'BlockBase':
+    def select_main_chain(self, node: 'NodeBase') -> 'BlockBase':
         """
         Selects the block with the highest stake contribution.
 
@@ -234,7 +243,7 @@ class PoSProtocol(ConsensusProtocol):
 class DAGProtocol(ConsensusProtocol):
     """Implements GHOSTDAG for DAG-based blockchains."""
     
-    def select_best_block(self, node: 'NodeBase') -> 'BlockBase':
+    def select_main_chain(self, node: 'NodeBase') -> 'BlockBase':
         """
         Selects the block with the highest weight in the DAG.
 

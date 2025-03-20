@@ -7,7 +7,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from blockchain_simulator.block import BasicBlock, PoWBlock
+from blockchain_simulator.block import BlockBase, PoWBlock
 from blockchain_simulator.blockchain import BasicBlockchain
 from blockchain_simulator.node import BasicNode
 from blockchain_simulator.simulator import BlockchainSimulator
@@ -15,7 +15,7 @@ from blockchain_simulator.consensus import GHOSTProtocol, LongestChainProtocol, 
 
 if __name__ == "__main__":
     sim = BlockchainSimulator(
-        num_nodes=10,  # Increased node count for a larger simulation
+        num_nodes=10,
         avg_peers=4,
         max_delay=10,
         consensus_protocol=GHOSTProtocol,
@@ -27,4 +27,4 @@ if __name__ == "__main__":
 
     print("🚀 Starting Blockchain Simulation...")
     sim.start_mining(node_ids=[0, 1, 2])  # Start mining on multiple nodes
-    sim.run(duration=100)  # Run the simulation for 50 seconds
+    sim.run(duration=30)  # Run the simulation for 50 seconds

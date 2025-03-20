@@ -30,7 +30,7 @@ class NodeBase(ABC):
         self.is_mining = True
         self.active = True
         self.last_consensus_time = 0
-        self.mining_difficulty = 4 # Default difficulty for PoW
+        self.mining_difficulty = 4 # Default difficulty for PoW #TODO: Set in simulator per node
 
     def add_peer(self, peer: 'NodeBase'):
         """Connects this node to a peer."""
@@ -56,29 +56,30 @@ class NodeBase(ABC):
         """Executes the consensus protocol."""
         self.consensus_protocol.execute_consensus(self)
         self.last_consensus_time = self.env.now
-        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} executed consensus, head: {self.head.block_id}")
+        # logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} executed consensus, head: {self.head.block_id}")
 
     def mine_block(self):
         """Mines a new block and submits it according to the consensus protocol."""
-        self.head = self.consensus_protocol.select_best_block(self.blockchain)
+        self.head = self.consensus_protocol.select_main_chain(self.blockchain)
         if self.head.block_id not in self.blockchain.blocks.keys():
-            logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} head block not in blockchain")
+            # logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} head block not in blockchain")
+            pass
         new_block = self.blockchain.create_block(self.head, self.node_id, self.env.now)
         yield self.env.process(new_block.mine(self, self.mining_difficulty))
         # Allows for simulation to stop mining
         if not self.is_mining:
-            logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} stopped mining")
-            return        
-        # Ensure the block meets PoW validity before adding it
-        if not self.blockchain.add_block(new_block, self):
-            logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} failed mining block {new_block.block_id}")
-            return
+            # logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} stopped mining")
+            return       
+
+        if not self.blockchain.is_valid_block(new_block):
+            return 
+        
         # Increment the total blocks mined
         self.network.metrics["total_blocks_mined"] += 1
         self.network.metrics["blocks_by_node"][self.node_id] += 1
         
         # Handle block proposal based on the consensus protocol
-        self.consensus_protocol.propose_block(self, new_block)
+        self.consensus_protocol.add_to_block_queue(self, new_block)
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block.block_id}")
         self.broadcast_block(new_block)
         yield self.env.timeout(0)  # Yield to make this a generator
@@ -104,7 +105,7 @@ class NodeBase(ABC):
 
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {sender_id}")
         # Handle block proposal based on the consensus protocol
-        self.consensus_protocol.propose_block(self, block)
+        self.consensus_protocol.add_to_block_queue(self, block)
         self.network.metrics["block_propagation_times"].append(self.env.now - block.timestamp)
 
         # Rebroadcast the block
@@ -116,9 +117,7 @@ class NodeBase(ABC):
             return
 
         if self.env.now >= self.last_consensus_time + self.network.consensus_interval:
-            logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} executing consensus")
-            if len(self.proposed_blocks) > 0:
-                self.consensus_step()
+            self.consensus_step()
 
         yield self.env.timeout(1)
         self.env.process(self.step())

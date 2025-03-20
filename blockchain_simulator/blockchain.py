@@ -31,10 +31,7 @@ class BlockchainBase(ABC):
         
         if block.block_id not in self.blocks:
             self.blocks[block.block_id] = block
-            logging.warning(f"Block {block.block_id} added to the blockchain!")
             return True
-        
-        logging.warning(f"Block {block.block_id} already exists!")
         return False
     
     # For testing purposes
@@ -71,18 +68,18 @@ class BasicBlockchain(BlockchainBase):
         """Adds a block and updates the weight.
         Assumes parents are properly linked to block
         """
-        logging.warning(f"Adding block {block.block_id} to the blockchain")
         if not self.is_valid_block(block):
             return False
         
         if block.block_id in self.blocks:
-            logging.warning(f"Block {block.block_id} already exists!")
+            # logging.warning(f"Block {block.block_id} already exists!")
             return False # Block already exists
         
         # Add the block to the blockchain
         self.blocks[block.block_id] = block
         if not block.parent and not block.parent in self.blocks:
-            logging.warning(f"Parent block {block.parent.block_id} of {block.block_id} is missing!")
+            # logging.warning(f"Parent block {block.parent.block_id} of {block.block_id} is missing!")
+            pass
             
         # Connect to parent if it exists
         if block.parent and block.parent.block_id in self.blocks:
