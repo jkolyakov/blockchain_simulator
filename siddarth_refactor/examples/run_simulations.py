@@ -1,0 +1,31 @@
+import sys
+import os
+
+# Get the parent directory of blockchain simulator
+parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+# Append the parent directory to sys.path
+sys.path.append(parent_dir)
+print(parent_dir)
+
+from siddarth_refactor.block import BlockBase, PoWBlock
+from siddarth_refactor.blockchain import BasicBlockchain
+from siddarth_refactor.node import BasicNode
+from siddarth_refactor.simulator import BlockchainSimulator
+from siddarth_refactor.consensus import GHOSTProtocol, LongestChainProtocol, PoSProtocol, DAGProtocol
+
+if __name__ == "__main__":
+    sim = BlockchainSimulator(
+        num_nodes=10,
+        avg_peers=4,
+        max_delay=10,
+        consensus_protocol=GHOSTProtocol,
+        blockchain_impl=BasicBlockchain,
+        block_class=PoWBlock,
+        node_class=BasicNode,
+        network_topology="random"
+    )
+
+    print("🚀 Starting Blockchain Simulation...")
+    sim.start_mining(node_ids=[0, 1, 2])  # Start mining on multiple nodes
+    sim.run(duration=30)  # Run the simulation for 50 seconds

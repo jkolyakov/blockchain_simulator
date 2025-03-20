@@ -1,0 +1,344 @@
+import simpy
+import random
+import logging
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from tqdm import tqdm
+from typing import Type, Optional, List, Dict, Any, Callable, TYPE_CHECKING
+if TYPE_CHECKING:
+    from siddarth_refactor.node import NodeBase
+    from siddarth_refactor.blockchain import BlockchainBase
+    from siddarth_refactor.block import BlockBase
+    from siddarth_refactor.consensus import ConsensusProtocol
+
+from siddarth_refactor.block import PoWBlock
+from siddarth_refactor.node import BasicNode
+from siddarth_refactor.validator import BlockchainValidator  # Import the validator
+
+# Configure logging
+logging.basicConfig(filename="blockchain_simulation.log", level=logging.WARNING, format="%(asctime)s - %(message)s")
+
+class BlockchainSimulator:
+    """API for running blockchain network simulations with custom implementations."""
+
+    def __init__(
+        self,
+        num_nodes: int = 10,
+        avg_peers: int = 3,
+        max_delay: float = 5.0,
+        min_delay: float = 0.1,
+        consensus_interval: float = 0.1,
+        consensus_protocol: Optional[Type['ConsensusProtocol']] = None,
+        blockchain_impl: Optional[Type['BlockchainBase']] = None,
+        block_class: Optional[Type['BlockBase']] = None,
+        node_class: Type['NodeBase'] = BasicNode,
+        network_topology: str = "random",
+        stakes: Optional[Dict[int, float]] = None,
+    ):
+        """
+        Initializes the blockchain simulator.
+
+        :param num_nodes: Number of nodes in the simulation
+        :param avg_peers: Average number of peers per node
+        :param max_delay: Maximum network delay in seconds
+        :param min_delay: Minimum network delay in seconds
+        :param consensus_interval: How often consensus is run (in simulation seconds)
+        :param consensus_protocol: Consensus protocol class
+        :param blockchain_impl: Blockchain implementation class
+        :param block_class: Block class
+        :param node_class: Node class (default: BasicNode)
+        :param network_topology: Network topology type ("random", "ring", "star", "fully_connected")
+        :param stakes: Dictionary mapping node_id to stake amount (for PoS protocols)
+        """
+        self.env: simpy.Environment = simpy.Environment()
+        self.num_nodes: int = num_nodes
+        self.max_delay: float = max_delay
+        self.min_delay: float = min_delay
+        self.consensus_interval: int = consensus_interval
+        self.consensus_protocol: Optional['ConsensusProtocol'] = consensus_protocol() if consensus_protocol else None
+        self.blockchain: Optional['BlockchainBase'] = blockchain_impl(block_class) if blockchain_impl and block_class else None
+        self.network_topology: str = network_topology
+        self.stakes: Dict[int, float] = stakes or {i: 1.0 for i in range(num_nodes)}
+        
+        # Ensure proper delay matrix setup
+        self.delay_matrix = self._generate_symmetric_delay_matrix()
+        
+        # Initialize metrics dictionary
+        self.metrics: Dict[str, Any] = {
+            "total_blocks_mined": 0,
+            "blocks_by_node": {i: 0 for i in range(num_nodes)},
+            "block_propagation_times": [],
+            "consensus_executions": 0,
+            "forks": 0,
+            "broadcasts": 0,
+            "chain_lengths": [],
+            "block_validation_results": [],
+            "chain_convergence": [],
+            "orphaned_blocks": [],
+            "PoW_nonces": []
+        }
+        
+        # Create nodes
+        self.nodes: List['NodeBase'] = [
+            node_class(self.env, i, self, self.consensus_protocol, self.blockchain)
+            for i in range(num_nodes)
+        ]
+        
+        # Create network topology
+        self._create_network_topology()
+        
+        # Initialize validator
+        self.validator = BlockchainValidator(self)
+    
+    def _generate_symmetric_delay_matrix(self) -> np.ndarray:
+        """
+        Generates a symmetric delay matrix ensuring network latency is bidirectional.
+        
+        :return: A symmetric matrix with delays between nodes.
+        """
+        return [[random.uniform(self.min_delay, self.max_delay) for _ in range(self.num_nodes)] 
+            for _ in range(self.num_nodes)]
+
+    def _create_network_topology(self):
+        """Creates the network topology based on the specified type."""
+        if self.network_topology == "random":
+            self._create_random_topology()
+        elif self.network_topology == "ring":
+            self._create_ring_topology()
+        elif self.network_topology == "star":
+            self._create_star_topology()
+        elif self.network_topology == "fully_connected":
+            self._create_fully_connected_topology()
+        else:
+            raise ValueError(f"Unknown network topology: {self.network_topology}")
+
+    def _create_random_topology(self):
+        """Creates a random network topology where each node has a random number of peers."""
+        for i, node in enumerate(self.nodes):
+            # Determine number of peers for this node
+            num_peers = min(random.randint(1, int(self.num_nodes/2)), self.num_nodes - 1)
+            
+            # Select random peers
+            possible_peers = [n for n in self.nodes if n.node_id != i]
+            selected_peers = random.sample(possible_peers, num_peers)
+            
+            # Connect peers bidirectionally
+            for peer in selected_peers:
+                node.add_peer(peer)
+                peer.add_peer(node)
+
+    def _create_ring_topology(self):
+        """Creates a ring topology where each node is connected to its neighbors."""
+        for i, node in enumerate(self.nodes):
+            next_idx = (i + 1) % self.num_nodes
+            prev_idx = (i - 1) % self.num_nodes
+            
+            node.add_peer(self.nodes[next_idx])
+            node.add_peer(self.nodes[prev_idx])
+
+    def _create_star_topology(self):
+        """Creates a star topology with one central node connected to all others."""
+        central_node = self.nodes[0]
+        
+        # Connect all nodes to the central node
+        for i, node in enumerate(self.nodes):
+            if i != 0:  # Skip the central node itself
+                node.add_peer(central_node)
+                central_node.add_peer(node)
+
+    def _create_fully_connected_topology(self):
+        """Creates a fully connected network where every node is connected to every other node."""
+        for i, node in enumerate(self.nodes):
+            for j, peer in enumerate(self.nodes):
+                if i != j:  # Don't connect to self
+                    node.add_peer(peer)
+
+    def get_network_delay(self, from_node: 'BasicNode', to_node: 'BasicNode') -> float:
+        """Get the network delay between two nodes."""
+        return float(self.delay_matrix[from_node.node_id][to_node.node_id])  # Use list-of-lists indexing
+
+
+    def start_mining(self, node_ids: Optional[List[int]] = None) -> None:
+        """
+        Triggers mining at specified nodes or all nodes if not specified.
+
+        :param node_ids: List of node IDs to start mining, or None for all nodes.
+        """
+        if node_ids is None:
+            node_ids = list(range(self.num_nodes))
+        
+        for node_id in node_ids:
+            if 0 <= node_id < self.num_nodes:
+                self.nodes[node_id].start_mining()
+                # Start the node's step process
+                self.env.process(self.nodes[node_id].step())
+
+    def stop_mining(self, node_ids: Optional[List[int]] = None) -> None:
+        """
+        Stops mining at specified nodes or all nodes if not specified.
+
+        :param node_ids: List of node IDs to stop mining, or None for all nodes.
+        """
+        if node_ids is None:
+            node_ids = list(range(self.num_nodes))
+        
+        for node_id in node_ids:
+            if 0 <= node_id < self.num_nodes:
+                self.nodes[node_id].stop_mining()
+
+    def run(self, duration: int = 100, collect_interval: int = 5) -> Dict[str, Any]:
+        """
+        Runs the simulation for a given duration and returns the metrics.
+
+        :param duration: Duration of the simulation in seconds.
+        :param collect_interval: Interval for collecting metrics.
+        :return: Dictionary containing all collected metrics.
+        """
+        print(f"🚀 Running blockchain simulation for {duration} seconds...\n")
+        
+        # Setup metrics collection process
+        self.env.process(self._collect_metrics(collect_interval))
+        
+        # Run the simulation
+        # Create a progress bar
+        with tqdm(total=duration, desc="⏳ Simulation Progress", unit="s", ascii=" ▖▘▝▗▚▞█") as pbar:
+            last_time = self.env.now 
+            while self.env.now < duration:
+                self.env.step()          
+                # Update pbar with the actual time that has passed
+                time_advanced = self.env.now - last_time
+                pbar.update(time_advanced)
+                last_time = self.env.now  # Update last_time to current
+
+            # Stop mining at all nodes
+            for node in self.nodes:
+                node.stop_mining()
+            
+        # Collect final metrics
+        self._collect_final_metrics()
+        
+        # Display results
+        self.display_metrics()
+        
+        # Validate the simulation
+        validation_results = self.validate_simulation()
+        
+        # Return metrics for further analysis
+        return {
+            "metrics": self.metrics,
+            "validation": validation_results
+        }
+
+    def _collect_metrics(self, interval: int):
+        """
+        Collects metrics at regular intervals during the simulation.
+
+        :param interval: Interval in seconds between metrics collection.
+        """
+        while True:
+            # Collect chain lengths
+            chain_lengths = [node.consensus_protocol.chain_length(node) for node in self.nodes]
+            self.metrics["chain_lengths"] = chain_lengths
+            
+            # Collect orphaned blocks
+            orphaned_blocks = [self.consensus_protocol.count_orphaned_blocks(node) for node in self.nodes]
+            self.metrics["orphaned_blocks"] = orphaned_blocks
+            
+            # Measure chain convergence (% of nodes that agree on the main chain)
+            self.metrics["chain_convergence"].append(self._measure_convergence())
+            
+            # Wait for the next collection interval
+            yield self.env.timeout(interval)
+
+    def _collect_final_metrics(self):
+        """Collects final metrics at the end of the simulation."""
+        # Count orphaned blocks        
+        for node in self.nodes:
+            # Collect PoW nonces for PoW-based simulations
+            if self.blockchain.blocks and isinstance(next(iter(self.blockchain.blocks.values())), PoWBlock):
+                pow_nonces = [block.nonce for block in self.blockchain.blocks.values() if block.nonce is not None]
+                average_nonce = sum(pow_nonces) / len(pow_nonces) if pow_nonces else 0
+                self.metrics["PoW_nonces"].append(average_nonce)
+
+    def _print_blockchain_tree(self):
+        """Selects a random node and prints its blockchain in tree format."""
+        if not self.nodes:
+            print("No nodes in the network.")
+            return
+
+        # Randomly select a node
+        #node = random.choice(self.nodes)
+
+        node = self.nodes[0]  #assuming this is the genesis node
+
+        print(f"\n📜 Blockchain Tree for Node {node.node_id}\n")
+
+        def print_tree(block: 'BlockBase', indent=0):
+            """Recursive function to print the blockchain tree structure."""
+            print("    " * indent + f"🔗 Block {block.block_id} (Miner: {block.miner_id}, Weight: {block.weight})")
+            for child in sorted(block.children, key=lambda b: b.block_id):  # Sort to maintain order
+                print_tree(child, indent + 1)
+
+        # Start printing from the genesis block
+        print_tree(node.blockchain.genesis)
+
+    def display_metrics(self) -> None:
+        """
+        Prints a summary of blockchain metrics after the simulation.
+        """
+        print("\n📊 Blockchain Simulation Summary")
+        print("-" * 60)
+        print(f"🔹 Total Blocks Mined: {self.metrics['total_blocks_mined']}")
+        
+        if self.metrics["block_propagation_times"]:
+            avg_prop_time = sum(self.metrics["block_propagation_times"]) / len(self.metrics["block_propagation_times"])
+            print(f"🔹 Average Block Propagation Time: {avg_prop_time:.2f} seconds")
+        
+        print(f"🔹 Consensus Executions: {self.metrics['consensus_executions']}")
+        print(f"🔹 Fork Resolutions: {self.metrics['forks']}")
+        print(f"🔹 Longest Chain Length: {max(self.metrics["chain_lengths"])}")
+        
+        # Calculate average number of orphaned blocks
+        if self.metrics["orphaned_blocks"]:
+            avg_orphaned = sum(self.metrics["orphaned_blocks"]) / len(self.metrics["orphaned_blocks"])
+            print(f"🔹 Average Orphaned Blocks: {avg_orphaned:.2f}")
+        
+        # Calculate average chain length
+        if self.metrics["chain_lengths"]:
+            avg_chain_length = sum(self.metrics["chain_lengths"]) / len(self.metrics["chain_lengths"])
+            print(f"🔹 Average Chain Length: {avg_chain_length:.2f}")
+        
+        # Calculate average PoW nonce
+        if self.metrics["PoW_nonces"]:
+            avg_nonce = sum(self.metrics["PoW_nonces"]) / len(self.metrics["PoW_nonces"])
+            print(f"🔹 Average PoW Nonce: {avg_nonce:.2f}")
+        
+        print("-" * 60)
+        self._print_blockchain_tree()
+            
+    def validate_simulation(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Validates the simulation using the BlockchainValidator.
+        
+        :return: Dictionary containing validation results.
+        """
+        return self.validator.validate_all()
+    
+    def _count_forks(self) -> int:
+        """
+        Count the number of fork points in the blockchain.
+        Uses the validator's method.
+        
+        :return: Number of forks.
+        """
+        return self.validator._count_forks()
+    
+    def _measure_convergence(self) -> float:
+        """
+        Measure the percentage of nodes that agree on the same chain.
+        Uses the validator's method.
+        
+        :return: Convergence percentage (0.0-1.0).
+        """
+        return self.validator._measure_convergence()
