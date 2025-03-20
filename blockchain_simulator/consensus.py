@@ -48,25 +48,17 @@ class ConsensusProtocol(ABC):
         if isinstance(selected_blocks, list): # If the best block is a list of blocks we should try to accept all of them
             for block in selected_blocks:
                 self.accept_consensus_block(node, block)
+                # Track the number of consensus executions
+                node.network.metrics["consensus_executions"] += 1
+                self.broadcast_consensus_block(node, block)
         elif selected_blocks.block_id in node.blockchain.blocks:
             return  # Block already part of the chain
         else:
             self.accept_consensus_block(node, selected_blocks)
-            
-        # Track the number of consensus executions
-        node.network.metrics["consensus_executions"] += 1
-
-        # If a fork was resolved, increment fork resolutions
-        if len(node.blockchain.blocks) > 1:
-            node.network.metrics["fork_resolutions"] += 1
-        
-        # Done after metrics to ensure logs are correct
-        if isinstance(selected_blocks, list): # If the best block is a list of blocks we should broadcast all of them
-            for block in selected_blocks:
-                self.broadcast_consensus_block(node, block)
-        else:
+            # Track the number of consensus executions
+            node.network.metrics["consensus_executions"] += 1
             self.broadcast_consensus_block(node, selected_blocks)
-    
+            
     def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> bool:
         """
         Accepts a block into the blockchain.
@@ -76,10 +68,15 @@ class ConsensusProtocol(ABC):
         """
         node.blockchain.add_block(block, node)
         node.proposed_blocks.discard(block)  # Remove from proposed blocks (doesn't matter if not present)
+        
         # Ensure the block weight updates correctly
         self.update_weights(block)
+        old_head = node.head
         node.head = self.select_best_block(node.blockchain)  # Update the head
-    
+        # Check if a fork was resolved
+        if (old_head.block_id != node.head.parent.block_id):
+            node.network.metrics["forks"] += 1
+        
     def requires_broadcast(self) -> bool:
         """
         Returns whether the consensus protocol requires broadcasting.
@@ -198,8 +195,6 @@ class GHOSTProtocol(ConsensusProtocol):
             return  # Block already part of the chain
 
         self.propose_block(node, block)
-
-        node.network.metrics["fork_resolutions"] += 1
     
 class LongestChainProtocol(ConsensusProtocol):
     """Implements the Longest Chain consensus protocol (Bitcoin-style)."""

@@ -17,7 +17,7 @@ if __name__ == "__main__":
     sim = BlockchainSimulator(
         num_nodes=10,  # Increased node count for a larger simulation
         avg_peers=4,
-        max_delay=10,
+        max_delay=5,
         consensus_protocol=GHOSTProtocol,
         blockchain_impl=BasicBlockchain,
         block_class=PoWBlock,

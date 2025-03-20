@@ -30,7 +30,7 @@ class NodeBase(ABC):
         self.is_mining = True
         self.active = True
         self.last_consensus_time = 0
-        self.mining_difficulty = 4 # Default difficulty for PoW
+        self.mining_difficulty = 5 # Default difficulty for PoW
 
     def add_peer(self, peer: 'NodeBase'):
         """Connects this node to a peer."""
@@ -65,14 +65,17 @@ class NodeBase(ABC):
             logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} head block not in blockchain")
         new_block = self.blockchain.create_block(self.head, self.node_id, self.env.now)
         yield self.env.process(new_block.mine(self, self.mining_difficulty))
+        
         # Allows for simulation to stop mining
         if not self.is_mining:
             logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} stopped mining")
-            return        
+            return
+        
         # Ensure the block meets PoW validity before adding it
-        if not self.blockchain.add_block(new_block, self):
+        if not self.blockchain.is_valid_block(new_block):
             logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} failed mining block {new_block.block_id}")
             return
+        
         # Increment the total blocks mined
         self.network.metrics["total_blocks_mined"] += 1
         self.network.metrics["blocks_by_node"][self.node_id] += 1

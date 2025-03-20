@@ -70,7 +70,7 @@ class BlockchainSimulator:
             "blocks_by_node": {i: 0 for i in range(num_nodes)},
             "block_propagation_times": [],
             "consensus_executions": 0,
-            "fork_resolutions": 0,
+            "forks": 0,
             "broadcasts": 0,
             "chain_lengths": [],
             "fork_counts": [],
@@ -297,7 +297,7 @@ class BlockchainSimulator:
             print(f"🔹 Average Block Propagation Time: {avg_prop_time:.2f} seconds")
         
         print(f"🔹 Consensus Executions: {self.metrics['consensus_executions']}")
-        print(f"🔹 Fork Resolutions: {self.metrics['fork_resolutions']}")
+        print(f"🔹 Fork Resolutions: {self.metrics['forks']}")
         print(f"🔹 Longest Chain Length: {max(self.metrics["chain_lengths"])}")
         
         # Calculate average number of orphaned blocks
@@ -316,6 +316,7 @@ class BlockchainSimulator:
             print(f"🔹 Average PoW Nonce: {avg_nonce:.2f}")
         
         print("-" * 60)
+        self._print_blockchain_tree()
             
     def validate_simulation(self) -> Dict[str, Dict[str, Any]]:
         """
