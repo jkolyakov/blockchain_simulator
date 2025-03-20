@@ -24,6 +24,7 @@ class BlockBase(ABC):
         self.timestamp: float = timestamp if timestamp else time.time()  # Block creation time
         self.block_id: int = self.generate_block_id()  # Auto-generated block ID
         self.weight: int = 1  # Default weight
+        self.nodes_seen: set[int] = set()  # Nodes that have seen this block
 
     def generate_block_id(self) -> int:
         """Generates a unique block ID using SHA-256."""

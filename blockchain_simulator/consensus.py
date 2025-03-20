@@ -16,7 +16,7 @@ class ConsensusProtocol(ABC):
     """Abstract class for defining custom consensus protocols."""
     
     @abstractmethod
-    def select_best_block(self, chain: 'BlockchainBase') -> 'BlockBase':
+    def find_tip_of_main_chain(self, chain: 'BlockchainBase') -> 'BlockBase':
         """
         Selects the best block for a mined node's parent based on the consensus protocol.
 
@@ -26,7 +26,7 @@ class ConsensusProtocol(ABC):
         pass
     
     @abstractmethod
-    def select_from_proposed(self, node: 'NodeBase') -> 'BlockBase':
+    def select_consensus_candidate(self, node: 'NodeBase') -> 'BlockBase':
         """
         Selects a block from the proposed blocks via the consensus protocol.
 
@@ -44,22 +44,21 @@ class ConsensusProtocol(ABC):
         if not node.proposed_blocks:
             return  # No blocks proposed
         
-        selected_blocks = self.select_from_proposed(node)
+        selected_blocks = self.select_consensus_candidate(node)
+        
         if isinstance(selected_blocks, list): # If the best block is a list of blocks we should try to accept all of them
             for block in selected_blocks:
-                self.accept_consensus_block(node, block)
+                self.confirm_consensus_candidate(node, block)
                 # Track the number of consensus executions
                 node.network.metrics["consensus_executions"] += 1
                 self.broadcast_consensus_block(node, block)
-        elif selected_blocks.block_id in node.blockchain.blocks:
-            return  # Block already part of the chain
         else:
-            self.accept_consensus_block(node, selected_blocks)
+            self.confirm_consensus_candidate(node, selected_blocks)
             # Track the number of consensus executions
             node.network.metrics["consensus_executions"] += 1
             self.broadcast_consensus_block(node, selected_blocks)
             
-    def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> bool:
+    def confirm_consensus_candidate(self, node: 'NodeBase', block: 'BlockBase') -> bool:
         """
         Accepts a block into the blockchain.
 
@@ -72,16 +71,10 @@ class ConsensusProtocol(ABC):
         # Ensure the block weight updates correctly
         self.update_weights(block)
         old_head = node.head
-        node.head = self.select_best_block(node.blockchain)  # Update the head
+        node.head = self.find_tip_of_main_chain(node.blockchain)  # Update the head
         # Check if a fork was resolved
         if (old_head.block_id != node.head.parent.block_id):
             node.network.metrics["forks"] += 1
-        
-    def requires_broadcast(self) -> bool:
-        """
-        Returns whether the consensus protocol requires broadcasting.
-        """
-        return False
 
     def broadcast_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> None:
         """
@@ -90,11 +83,10 @@ class ConsensusProtocol(ABC):
         :param node: The node broadcasting the block.
         :param block: The block to broadcast.
         """
-        if not self.requires_broadcast():
-            return  # No need to broadcast
         for peer in node.peers:
-            delay = node.network.get_network_delay(node, peer)
-            node.env.process(self.receive_consensus_block(peer, block, delay))
+            if peer.node_id not in block.nodes_seen:
+                delay = node.network.get_network_delay(node, peer)
+                node.env.process(self.receive_consensus_block(peer, block, delay))
             
     @abstractmethod
     def receive_consensus_block(self, node: NodeBase, block: BlockBase, delay: float, sender_id: int):
@@ -134,7 +126,7 @@ class ConsensusProtocol(ABC):
         :return: The length of the chain.
         """
         length = 0
-        current = self.select_best_block(node.blockchain)
+        current = self.find_tip_of_main_chain(node.blockchain)
         while current:
             length += 1
             current = current.parent
@@ -146,7 +138,7 @@ class ConsensusProtocol(ABC):
 class GHOSTProtocol(ConsensusProtocol):
     """Implements the GHOST (Greedy Heaviest Observed Subtree) consensus protocol."""
 
-    def select_best_block(self, chain: 'BlockchainBase') -> 'BlockBase':
+    def find_tip_of_main_chain(self, chain: 'BlockchainBase') -> 'BlockBase':
         """
         Selects the heaviest subtree using the GHOST protocol.
         The best block is the one with the most cumulative weight.
@@ -159,7 +151,7 @@ class GHOSTProtocol(ConsensusProtocol):
             current = max(current.children, key=lambda b: (b.weight, -b.block_id)) # Break ties by smallest block ID (hence the negative)
         return current
 
-    def select_from_proposed(self, node: 'NodeBase') -> list['BlockBase']:
+    def select_consensus_candidate(self, node: 'NodeBase') -> list['BlockBase']:
         """
         For GHOST, all blocks proposed blocks should be added to the blockchain.
 
@@ -172,15 +164,8 @@ class GHOSTProtocol(ConsensusProtocol):
         """In GHOST, all blocks are added to the blockchain immediately."""
         if node.blockchain.is_valid_block(block): # Ensure the block is valid
             node.proposed_blocks.add(block)
+            block.nodes_seen.add(node.node_id)
 
-    def requires_broadcast(self) -> bool:
-        """
-        GHOST requires broadcasting the chosen block since it ensures chain synchronization.
-
-        :return: True (GHOST broadcasts selected blocks).
-        """
-        return True
-    
     def update_weights(self, block: 'BlockBase'):
         """Updates the weight of all ancestor blocks in the tree."""
         while block:
@@ -199,7 +184,7 @@ class GHOSTProtocol(ConsensusProtocol):
 class LongestChainProtocol(ConsensusProtocol):
     """Implements the Longest Chain consensus protocol (Bitcoin-style)."""
     
-    def select_best_block(self, node: 'NodeBase') -> 'BlockBase':
+    def find_tip_of_main_chain(self, node: 'NodeBase') -> 'BlockBase':
         """
         Selects the longest chain's tip.
 
@@ -214,7 +199,7 @@ class LongestChainProtocol(ConsensusProtocol):
 class PoSProtocol(ConsensusProtocol):
     """Implements Proof-of-Stake (PoS) consensus."""
     
-    def select_best_block(self, node: 'NodeBase') -> 'BlockBase':
+    def find_tip_of_main_chain(self, node: 'NodeBase') -> 'BlockBase':
         """
         Selects the block with the highest stake contribution.
 
@@ -229,7 +214,7 @@ class PoSProtocol(ConsensusProtocol):
 class DAGProtocol(ConsensusProtocol):
     """Implements GHOSTDAG for DAG-based blockchains."""
     
-    def select_best_block(self, node: 'NodeBase') -> 'BlockBase':
+    def find_tip_of_main_chain(self, node: 'NodeBase') -> 'BlockBase':
         """
         Selects the block with the highest weight in the DAG.
 

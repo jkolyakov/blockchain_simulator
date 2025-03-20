@@ -54,7 +54,7 @@ class NodeBase(ABC):
 
     def mine_block(self):
         """Mines a new block and submits it according to the consensus protocol."""
-        self.head = self.consensus_protocol.select_best_block(self.blockchain)
+        self.head = self.consensus_protocol.find_tip_of_main_chain(self.blockchain)
 
         new_block = self.blockchain.create_block(self.head, self.node_id, self.env.now)
         yield self.env.process(new_block.mine(self, self.mining_difficulty))
@@ -76,7 +76,7 @@ class NodeBase(ABC):
         """Processes an incoming block after a delay."""
         yield self.env.timeout(delay)
 
-        if block.block_id in self.blockchain.blocks:
+        if self.blockchain.contains_block(block.block_id):
             return  # Block already known, ignore it
 
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {sender_id}")

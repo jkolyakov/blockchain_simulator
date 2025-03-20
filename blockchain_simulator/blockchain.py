@@ -48,13 +48,11 @@ class BlockchainBase(ABC):
         return block_id in self.blocks
     
     def is_valid_block(self, block: 'BlockBase') -> bool:
-        """Checks if a block is valid before adding it to the chain."""        
-        # TODO: Note no parent block is needed because blocks are being proposed in batches? note sure why but ensuring parent exists and is in the chain already fails
+        """Checks if a block is valid before adding it to the chain."""       
         if not block.parent:
             return False  # Has no parent
-        if not block.verify_block():
+        if not block.verify_block() or self.contains_block(block.block_id):
             return False  # PoW block is invalid
-        
         return True
 
 # ============================
@@ -75,17 +73,18 @@ class BasicBlockchain(BlockchainBase):
         if not self.is_valid_block(block):
             return False
         
-        if block.block_id in self.blocks:
+        if self.contains_block(block.block_id):
             logging.warning(f"Block {block.block_id} already exists!")
             return False # Block already exists
         
+        
+        if not self.contains_block(block.parent.block_id):
+            return False # Parent block is missing
+        
         # Add the block to the blockchain
         self.blocks[block.block_id] = block
-        if not block.parent and not block.parent in self.blocks:
-            logging.warning(f"Parent block {block.parent.block_id} of {block.block_id} is missing!")
             
         # Connect to parent if it exists
-        if block.parent and block.parent.block_id in self.blocks:
-            if block not in block.parent.children:
-                block.parent.children.append(block)
+        if block not in block.parent.children:
+            block.parent.children.append(block)
         return True
