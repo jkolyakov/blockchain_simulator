@@ -85,7 +85,6 @@ class PoWBlock(BlockBase):
             self.nonce += 1
             if hash_attempts % 1000 == 0:
                 yield node.env.timeout(0.01)
-        # print(f"⛏️  Mined PoW Block {self.block_id} with nonce {self.nonce}")
 
     def update_weight(self) -> None:
         """Updates weight based on mining difficulty."""

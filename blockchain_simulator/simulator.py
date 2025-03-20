@@ -17,7 +17,7 @@ from blockchain_simulator.node import BasicNode
 from blockchain_simulator.validator import BlockchainValidator  # Import the validator
 
 # Configure logging
-logging.basicConfig(filename="blockchain_simulation.log", level=logging.WARNING, format="%(asctime)s - %(message)s")
+logging.basicConfig(filename="blockchain_simulation.log", level=logging.WARNING, format="%(asctime)s - %(message)s", filemode="w")
 
 class BlockchainSimulator:
     """API for running blockchain network simulations with custom implementations."""
@@ -172,8 +172,6 @@ class BlockchainSimulator:
         for node_id in node_ids:
             if 0 <= node_id < self.num_nodes:
                 self.nodes[node_id].start_mining()
-                # Start the node's step process
-                self.env.process(self.nodes[node_id].step())
 
     def stop_mining(self, node_ids: Optional[List[int]] = None) -> None:
         """
