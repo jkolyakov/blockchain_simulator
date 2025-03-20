@@ -148,6 +148,11 @@ class GHOSTProtocol(ConsensusProtocol):
         self.propose_block(node, block)
 
         node.network.metrics["fork_resolutions"] += 1
+
+    def execute_consensus(self) -> 'BlockBase':
+        candidate_block = self.get_candidate_block(node)
+        return candidate_block
+        
     
 class LongestChainProtocol(ConsensusProtocol):
     """Implements the Longest Chain consensus protocol (Bitcoin-style)."""

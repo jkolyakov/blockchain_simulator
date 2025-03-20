@@ -7,7 +7,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from blockchain_simulator.block import BasicBlock, PoWBlock
+from blockchain_simulator.block import PoWBlock
 from blockchain_simulator.blockchain import BasicBlockchain
 from blockchain_simulator.node import BasicNode
 from blockchain_simulator.simulator import BlockchainSimulator

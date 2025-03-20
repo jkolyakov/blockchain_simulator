@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import random
 import time
-from broadcastMessage import ConsensusBroadcast
+
 import simpy
 import asyncio
 from abc import ABC, abstractmethod
@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from blockchain_simulator.blockchain import BlockchainBase
     from blockchain_simulator.consensus import ConsensusProtocol
     from blockchain_simulator.simulator import BlockchainSimulator
+    from blockchain_simulator.broadcastMessage import ConsensusBroadcast
 # ============================
 # ABSTRACT NODE CLASS
 # ============================

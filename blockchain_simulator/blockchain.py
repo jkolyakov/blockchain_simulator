@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import asyncio
 from typing import Dict, Type, Optional, TYPE_CHECKING
 
-from broadcastMessage import ConsensusBroadcast
+from blockchain_simulator.broadcastMessage import ConsensusBroadcast
 
 if TYPE_CHECKING:
     from blockchain_simulator.block import BlockBase, PoWBlock
@@ -95,8 +95,8 @@ class BlockchainBase(ABC):
 class BasicBlockchain(BlockchainBase):
     """Basic blockchain implementation."""
 
-    def __init__(self, block_class: Type['BlockBase']):
-        super().__init__(block_class)
+    def __init__(self, block_class: Type['BlockBase'], owner_node: 'NodeBase'):
+        super().__init__(block_class,owner_node)
 
     def create_genesis_block(self) -> 'BlockBase':
         """Creates a genesis block."""

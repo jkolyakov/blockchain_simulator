@@ -298,7 +298,7 @@ class BlockchainSimulator:
         
         print(f"🔹 Consensus Executions: {self.metrics['consensus_executions']}")
         print(f"🔹 Fork Resolutions: {self.metrics['fork_resolutions']}")
-        print(f"🔹 Longest Chain Length: {max(self.metrics["chain_lengths"])}")
+        print(f"🔹 Longest Chain Length: {max(self.metrics['chain_lengths'])}")
         
         # Calculate average number of orphaned blocks
         if self.metrics["orphaned_blocks"]:
