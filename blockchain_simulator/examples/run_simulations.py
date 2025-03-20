@@ -27,4 +27,4 @@ if __name__ == "__main__":
 
     print("🚀 Starting Blockchain Simulation...")
     sim.start_mining(node_ids=[0, 1, 2])  # Start mining on multiple nodes
-    sim.run(duration=100)  # Run the simulation for 50 seconds
+    sim.run(duration=10) # Run the simulation for 50 seconds

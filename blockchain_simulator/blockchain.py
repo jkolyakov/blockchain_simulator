@@ -16,12 +16,11 @@ import logging
 class BlockchainBase(ABC):
     """Abstract class for defining custom blockchain implementations."""
     
-    def __init__(self, block_class: Type['BlockBase'], owner_node: 'NodeBase'):
-        self.blocks: Dict[int, 'BlockBase'] = {}  # Maps block_id to Block object.
+    def __init__(self, block_class: Type['BlockBase']):
+        self.blocks: Dict[int, 'BlockBase'] = {}  # Maps block_id to Block object
         self.block_class: Type['BlockBase'] = block_class
         self.genesis: 'BlockBase' = self.create_block(None, miner_id=0, timestamp=0)
         self.blocks[self.genesis.block_id] = self.genesis # Add genesis block to the blockchain
-        self.owner: 'NodeBase' = owner_node                 #stores the node that owns the blockchain object
         self.head = self.genesis                      # Stores the head of the main chain for this node.
 
     def create_block(self, parent: BlockBase, miner_id: int, timestamp: float) -> BlockBase:
@@ -95,8 +94,8 @@ class BlockchainBase(ABC):
 class BasicBlockchain(BlockchainBase):
     """Basic blockchain implementation."""
 
-    def __init__(self, block_class: Type['BlockBase'], owner_node: 'NodeBase'):
-        super().__init__(block_class,owner_node)
+    def __init__(self, block_class: Type['BlockBase']):
+        super().__init__(block_class)
 
     def create_genesis_block(self) -> 'BlockBase':
         """Creates a genesis block."""

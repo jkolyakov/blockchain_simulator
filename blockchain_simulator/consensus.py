@@ -34,7 +34,7 @@ class ConsensusProtocol(ABC):
         :param node: The node running the protocol.
         :return: The selected block.
         """
-        return node.get_from_blockqueue(self)
+        return node.get_from_blockqueue()
 
     
     @abstractmethod
@@ -145,11 +145,11 @@ class GHOSTProtocol(ConsensusProtocol):
         if block.block_id in node.blockchain.blocks:
             return  # Block already part of the chain
 
-        self.propose_block(node, block)
+        node.blockchain.add_block(block)
 
         node.network.metrics["fork_resolutions"] += 1
 
-    def execute_consensus(self) -> 'BlockBase':
+    def execute_consensus(self, node: 'NodeBase') -> 'BlockBase':
         candidate_block = self.get_candidate_block(node)
         return candidate_block
         

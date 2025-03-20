@@ -60,11 +60,11 @@ class BlockBase(ABC):
 class GhostBlock(BlockBase):
     """A simple block structure with basic weight calculation for the GHOST Protocol"""
     
-    def __init__(self, block_id: int, parent: Optional['BlockBase'], miner_id: int, timestamp: float):
-        super().__init__(block_id, parent, miner_id, timestamp)
-
     def __init__(self, parent: Optional[BlockBase], miner_id: int, timestamp: Optional[float] = None):
         super().__init__(parent, miner_id, timestamp)
+
+    # def __init__(self, parent: Optional[BlockBase], miner_id: int, timestamp: Optional[float] = None):
+    #     super().__init__(parent, miner_id, timestamp)
 
     
 

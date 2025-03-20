@@ -24,8 +24,8 @@ class BlockchainSimulator:
 
     def __init__(
         self,
-        num_nodes: int = 10,
-        avg_peers: int = 3,
+        num_nodes: int = 2,
+        avg_peers: int = 2,
         max_delay: float = 5.0,
         min_delay: float = 0.1,
         consensus_interval: float = 0.1,
