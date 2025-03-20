@@ -78,7 +78,7 @@ class NodeBase(ABC):
 
     def consensus_step(self):
         """Executes the consensus protocol."""
-        candidate_block = self.consensus_protocol.get_candidate_block(self)
+
         self.consensus_protocol.execute_consensus(self)
         self.last_consensus_time = self.env.now
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} executed consensus, head: {self.head.block_id}")

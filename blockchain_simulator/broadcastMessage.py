@@ -65,6 +65,7 @@ class BroadcastMessage:
 class ConsensusBroadcast(BroadcastMessage):
     
     #TODO: Ensure that this class is extendable to more consensus types
+    #TODO: Add functionality to drop packets with some probability.
     CONSENSUS_TYPE = {
         'final': 1,
         'tentative': 2,
