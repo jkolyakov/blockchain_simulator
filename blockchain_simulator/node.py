@@ -37,6 +37,7 @@ class NodeBase(ABC):
         self.private_key = random.random()
 
         self.mining_time: int = 10                               #mining_time stores the time after which mining process for a new block starts
+        #TODO: discuss if we want to 
         self.is_mining: bool = False                              #is_mining = False -> the node is not mining blocks currently.
         asyncio.run(self.async_mining())
 
@@ -77,6 +78,7 @@ class NodeBase(ABC):
 
     def consensus_step(self):
         """Executes the consensus protocol."""
+        candidate_block = self.consensus_protocol.get_candidate_block(self)
         self.consensus_protocol.execute_consensus(self)
         self.last_consensus_time = self.env.now
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} executed consensus, head: {self.head.block_id}")
@@ -89,6 +91,7 @@ class NodeBase(ABC):
         new_block = self.blockchain.create_block(self.blockchain.head, self.node_id, self.env.now)
         yield self.env.process(new_block.mine(self, self.mining_difficulty))
         # Allows for simulation to stop mining
+        #TODO: check yield vs await
         if not self.is_mining:
             logging.warning(f"Time {self.env.now:.2f}: Node {self.node_id} stopped mining")
             return        
@@ -139,7 +142,7 @@ class NodeBase(ABC):
         """Loop that continuously attempts to mine blocks while is_mining is True."""
         while self.is_mining:
             yield self.env.process(self.mine_block())
-            yield self.env.timeout(random.uniform(0.1, 2*self.mining_time))  # Randomized delay before next mining attempt
+            yield self.env.timeout(random.uniform(0.1, 0.5))  # Randomized delay before next mining attempt
 
 # ============================
 # BASIC NODE CLASS

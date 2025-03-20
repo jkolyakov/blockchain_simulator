@@ -38,12 +38,13 @@ class ConsensusProtocol(ABC):
 
     
     @abstractmethod
-    def execute_consensus(self,node: 'NodeBase') -> 'BlockBase':
+    def execute_consensus(self) -> 'BlockBase':
         """
         Executes the consensus protocol.
         :return: return the block that is the output of consensus protocol
         """
         pass
+    #TODO: Include the code to get candidate block
     
     def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> None:
         """
@@ -53,7 +54,7 @@ class ConsensusProtocol(ABC):
         :param block: The block to accept.
         :param is_proposer: indicates if the node was the proposer of the block or not
         """
-
+        
         node.blockchain.add_block(block)
         node.remove_from_blockqueue(block.block_id)
     

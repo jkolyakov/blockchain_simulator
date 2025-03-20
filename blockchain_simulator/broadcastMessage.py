@@ -1,7 +1,7 @@
 import hashlib
 import json
 import time
-from typing import Dict
+from typing import Dict, List
 from ecdsa import SigningKey, VerifyingKey, NIST256p
 
 
@@ -64,6 +64,7 @@ class BroadcastMessage:
         
 class ConsensusBroadcast(BroadcastMessage):
     
+    #TODO: Ensure that this class is extendable to more consensus types
     CONSENSUS_TYPE = {
         'final': 1,
         'tentative': 2,
