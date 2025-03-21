@@ -13,20 +13,21 @@ import logging
 class BlockchainBase(ABC):
     """Abstract class for defining custom blockchain implementations."""
     
-    def __init__(self, block_class: Type['BlockBase']):
+    def __init__(self, block_class: Type['BlockBase'], genesis_block: 'BlockBase'):
         self.blocks: Dict[int, 'BlockBase'] = {}  # Maps block_id to Block object
         self.block_class: Type['BlockBase'] = block_class
-        self.genesis: 'BlockBase' = self.create_block(None, miner_id=0, timestamp=0)
+        self.genesis: 'BlockBase' = genesis_block
         self.blocks[self.genesis.block_id] = self.genesis # Add genesis block to the blockchain
+        self.head = self.genesis  # The head of the blockchain
 
-    def create_block(self, parent: BlockBase, miner_id: int, timestamp: float) -> BlockBase:
+    def create_block(self, parent: 'BlockBase', miner_id: int, timestamp: float) -> BlockBase:
         """Creates a new block based on the defined block type."""
         new_block = self.block_class(parent=parent, miner_id=miner_id, timestamp=timestamp)
         return new_block  # The block ID is generated inside the class
 
-    def add_block(self, block: BlockBase) -> bool:
+    def add_block(self, block: BlockBase, difficulty: int) -> bool:
         """Adds a block to the blockchain."""
-        if not self.is_valid_block(block):
+        if not self.is_valid_block(block, difficulty):
             return False
         
         if block.block_id not in self.blocks:
@@ -47,11 +48,11 @@ class BlockchainBase(ABC):
         """Check if the blockchain contains a block with the given ID."""
         return block_id in self.blocks
     
-    def is_valid_block(self, block: 'BlockBase') -> bool:
-        """Checks if a block is valid before adding it to the chain."""       
-        if not block.parent:
+    def is_valid_block(self, block: 'BlockBase', difficulty: int) -> bool:
+        """Checks if a block is valid before adding it to the chain."""
+        if not block.parent: # TODO: Fix issue where children are being proposed before parents
             return False  # Has no parent
-        if not block.verify_block() or self.contains_block(block.block_id):
+        if not block.verify_block(difficulty) or self.contains_block(block.block_id):
             return False  # PoW block is invalid
         return True
 
@@ -62,15 +63,14 @@ class BlockchainBase(ABC):
 class BasicBlockchain(BlockchainBase):
     """Basic blockchain implementation."""
 
-    def __init__(self, block_class: Type['BlockBase']):
-        super().__init__(block_class)
+    def __init__(self, block_class: Type['BlockBase'], genesis_block: 'BlockBase'):
+        super().__init__(block_class, genesis_block)
 
     def add_block(self, block: 'BlockBase', node: 'NodeBase') -> bool:
         """Adds a block and updates the weight.
         Assumes parents are properly linked to block
         """
-        logging.warning(f"Adding block {block.block_id} to the blockchain")
-        if not self.is_valid_block(block):
+        if not self.is_valid_block(block, node.mining_difficulty):
             return False
         
         if self.contains_block(block.block_id):

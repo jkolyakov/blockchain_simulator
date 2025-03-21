@@ -3,13 +3,14 @@ import logging
 import random
 import simpy
 from abc import ABC, abstractmethod
-from typing import List, TYPE_CHECKING
+from typing import List, Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from blockchain_simulator.block import BlockBase
     from blockchain_simulator.blockchain import BlockchainBase
     from blockchain_simulator.consensus import ConsensusProtocol
     from blockchain_simulator.simulator import BlockchainSimulator
+    from blockchain_simulator.broadcast import BroadcastProtocol
 
 # ============================
 # ABSTRACT NODE CLASS
@@ -18,19 +19,20 @@ class NodeBase(ABC):
     """Abstract base class for defining a blockchain node."""
 
     def __init__(self, env: simpy.Environment, node_id: int, network: 'BlockchainSimulator', 
-                 consensus_protocol: 'ConsensusProtocol', blockchain: 'BlockchainBase'):
+                 consensus_protocol: 'ConsensusProtocol', blockchain: 'BlockchainBase', broadcast_protocol: Type['BroadcastProtocol']):
         self.env = env
         self.node_id = node_id
         self.network = network
         self.peers: List['NodeBase'] = []
         self.consensus_protocol = consensus_protocol
         self.blockchain = blockchain
-        self.head: 'BlockBase' = blockchain.genesis
         self.proposed_blocks: set['BlockBase'] = set()
         self.is_mining = True
         self.active = True
         self.mining_difficulty = 5 # Default difficulty for PoW
         self.env.process(self.step())  # Start consensus as a process
+        self.pending_blocks: List['BlockBase'] = {} # Blocks that are waiting on their parents to be added to the blockchain
+        self.broadcast_protocol = broadcast_protocol(self)
 
     def add_peer(self, peer: 'NodeBase'):
         """Connects this node to a peer."""
@@ -55,12 +57,13 @@ class NodeBase(ABC):
     def mine_block(self):
         """Mines a new block and submits it according to the consensus protocol."""
         self.head = self.consensus_protocol.find_tip_of_main_chain(self.blockchain)
-
+        assert(self.head is not None)
+        
         new_block = self.blockchain.create_block(self.head, self.node_id, self.env.now)
         yield self.env.process(new_block.mine(self, self.mining_difficulty))
-        
+
         # Allows for simulation to stop mining or block to be rejected
-        if not self.is_mining or not self.blockchain.is_valid_block(new_block):
+        if not self.is_mining or not self.blockchain.is_valid_block(new_block, self.mining_difficulty):
             return
         
         # Increment the total blocks mined
@@ -71,17 +74,6 @@ class NodeBase(ABC):
         self.consensus_protocol.propose_block(self, new_block)
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block.block_id}")
         yield self.env.timeout(0)  # Yield to make this a generator
-
-    def receive_block(self, block: 'BlockBase', delay: float, sender_id: int):
-        """Processes an incoming block after a delay."""
-        yield self.env.timeout(delay)
-
-        if self.blockchain.contains_block(block.block_id):
-            return  # Block already known, ignore it
-
-        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {sender_id}")
-        # Handle block proposal based on the consensus protocol
-        self.consensus_protocol.propose_block(self, block)
 
     def step(self):
         """Executes a timestep in the simulation."""

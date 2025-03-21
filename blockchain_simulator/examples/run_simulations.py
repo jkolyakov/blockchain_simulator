@@ -22,9 +22,10 @@ if __name__ == "__main__":
         blockchain_impl=BasicBlockchain,
         block_class=PoWBlock,
         node_class=BasicNode,
-        network_topology="random"
+        network_topology="fully_connected",
+        drop_rate=0,
     )
 
     print("🚀 Starting Blockchain Simulation...")
-    sim.start_mining(node_ids=[0, 1, 2])  # Start mining on multiple nodes
-    sim.run(duration=100)  # Run the simulation for 50 seconds
+    sim.start_mining(3)  # Start mining on multiple nodes
+    sim.run(duration=50)  # Run the simulation for 50 seconds

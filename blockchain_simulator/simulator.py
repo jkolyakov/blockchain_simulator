@@ -10,11 +10,28 @@ if TYPE_CHECKING:
     from blockchain_simulator.node import NodeBase
     from blockchain_simulator.blockchain import BlockchainBase
     from blockchain_simulator.block import BlockBase
-    from blockchain_simulator.consensus import ConsensusProtocol
+    from blockchain_simulator.consensus import ConsensusProtocol, GHOSTProtocol
 
+from blockchain_simulator.broadcast import BroadcastProtocol, GossipProtocol
 from blockchain_simulator.block import PoWBlock
 from blockchain_simulator.node import BasicNode
 from blockchain_simulator.validator import BlockchainValidator  # Import the validator
+from collections import Counter
+import networkx as nx
+import matplotlib.pyplot as plt
+import copy
+
+def duplicate_stats(lst):
+    counts = Counter(lst)
+    duplicates = {val: count for val, count in counts.items() if count > 1}
+    num_unique_duplicates = len(duplicates)
+    total_duplicate_items = sum(count - 1 for count in duplicates.values())
+    
+    return {
+        "unique_duplicates": num_unique_duplicates,
+        "total_duplicates": total_duplicate_items,
+        "duplicates": duplicates
+    }
 
 # Configure logging
 logging.basicConfig(filename="blockchain_simulation.log", level=logging.WARNING, format="%(asctime)s - %(message)s", filemode="w")
@@ -29,12 +46,14 @@ class BlockchainSimulator:
         max_delay: float = 5.0,
         min_delay: float = 0.1,
         consensus_interval: float = 0.1,
-        consensus_protocol: Optional[Type['ConsensusProtocol']] = None,
-        blockchain_impl: Optional[Type['BlockchainBase']] = None,
-        block_class: Optional[Type['BlockBase']] = None,
-        node_class: Type['NodeBase'] = BasicNode,
+        consensus_protocol: Optional[Type['ConsensusProtocol']] = 'GHOSTProtocol',
+        blockchain_impl: Optional[Type['BlockchainBase']] = 'BlockchainBase',
+        block_class: Optional[Type['BlockBase']] = 'PoWBlock',
+        node_class: Type['NodeBase'] = 'BasicNode',
         network_topology: str = "random",
         stakes: Optional[Dict[int, float]] = None,
+        drop_rate: int = 0,
+        broadcast_protocol: Optional[Type['BroadcastProtocol']] = GossipProtocol,
     ):
         """
         Initializes the blockchain simulator.
@@ -57,9 +76,10 @@ class BlockchainSimulator:
         self.min_delay: float = min_delay
         self.consensus_interval: int = consensus_interval
         self.consensus_protocol: Optional['ConsensusProtocol'] = consensus_protocol() if consensus_protocol else None
-        self.blockchain: Optional['BlockchainBase'] = blockchain_impl(block_class) if blockchain_impl and block_class else None
+        self.genesis_block: 'BlockBase' = block_class(parent=None, miner_id=-1, timestamp=0) if block_class else None
         self.network_topology: str = network_topology
         self.stakes: Dict[int, float] = stakes or {i: 1.0 for i in range(num_nodes)}
+        self.drop_rate: int = drop_rate
         
         # Ensure proper delay matrix setup
         self.delay_matrix = self._generate_symmetric_delay_matrix()
@@ -77,17 +97,19 @@ class BlockchainSimulator:
             "block_validation_results": [],
             "chain_convergence": [],
             "orphaned_blocks": [],
-            "PoW_nonces": []
+            "PoW_nonces": [],
+            "dropped_blocks": 0,
         }
         
         # Create nodes
         self.nodes: List['NodeBase'] = [
-            node_class(self.env, i, self, self.consensus_protocol, self.blockchain)
+            node_class(self.env, i, self, self.consensus_protocol, blockchain_impl(block_class, genesis_block=copy.deepcopy(self.genesis_block)), broadcast_protocol)
             for i in range(num_nodes)
         ]
         
         # Create network topology
         self._create_network_topology()
+        self._visualize_network_topology(self.nodes)
         
         # Initialize validator
         self.validator = BlockchainValidator(self)
@@ -100,6 +122,31 @@ class BlockchainSimulator:
         """
         return [[random.uniform(self.min_delay, self.max_delay) for _ in range(self.num_nodes)] 
             for _ in range(self.num_nodes)]
+        
+    def _visualize_network_topology(self, nodes: List['NodeBase']) -> None:
+        """
+        Visualizes the peer-to-peer network topology.
+
+        :param nodes: List of Node objects (each must have a `node_id` and `peers` attribute)
+        """
+        G = nx.Graph()
+
+        # Add nodes
+        for node in nodes:
+            G.add_node(node.node_id)
+
+        # Add edges (peer connections)
+        for node in nodes:
+            for peer in node.peers:
+                G.add_edge(node.node_id, peer.node_id)  # Undirected edge
+
+        # Draw the network
+        plt.figure(figsize=(10, 6))
+        pos = nx.spring_layout(G, seed=42)  # Layout for better visualization
+        nx.draw(G, pos, with_labels=True, node_size=800, node_color="lightblue", edge_color="gray", font_size=10)
+
+        plt.title("Blockchain Network Topology")
+        plt.show()
 
     def _create_network_topology(self):
         """Creates the network topology based on the specified type."""
@@ -118,7 +165,7 @@ class BlockchainSimulator:
         """Creates a random network topology where each node has a random number of peers."""
         for i, node in enumerate(self.nodes):
             # Determine number of peers for this node
-            num_peers = min(random.randint(1, int(self.num_nodes/2)), self.num_nodes - 1)
+            num_peers = min(random.randint(0, int(self.num_nodes/2)), self.num_nodes - 1)
             
             # Select random peers
             possible_peers = [n for n in self.nodes if n.node_id != i]
@@ -160,19 +207,23 @@ class BlockchainSimulator:
         return float(self.delay_matrix[from_node.node_id][to_node.node_id])  # Use list-of-lists indexing
 
 
-    def start_mining(self, node_ids: Optional[List[int]] = None) -> None:
+    def start_mining(self, num_miners: Optional[int] = None) -> None:
         """
-        Triggers mining at specified nodes or all nodes if not specified.
+        Triggers mining for num_miners randomly selected nodes.
 
-        :param node_ids: List of node IDs to start mining, or None for all nodes.
+        :param num_miners: Total miners to be randomly selected. All nodes mine if None.
         """
-        if node_ids is None:
+        
+        if num_miners is None:
             node_ids = list(range(self.num_nodes))
+        else:
+            assert num_miners <= self.num_nodes, "Number of miners cannot exceed the number of nodes"
+            node_ids = random.sample(range(self.num_nodes), num_miners) 
         
         for node_id in node_ids:
             if 0 <= node_id < self.num_nodes:
                 self.nodes[node_id].start_mining()
-
+        
     def stop_mining(self, node_ids: Optional[List[int]] = None) -> None:
         """
         Stops mining at specified nodes or all nodes if not specified.
@@ -220,6 +271,11 @@ class BlockchainSimulator:
         # Display results
         self.display_metrics()
         
+        for node in self.nodes:
+            self._print_blockchain_tree(node)
+            
+        
+        
         # Validate the simulation
         validation_results = self.validate_simulation()
         
@@ -247,9 +303,6 @@ class BlockchainSimulator:
             # Count forks
             self.metrics["fork_counts"].append(self._count_forks())
             
-            # Measure chain convergence (% of nodes that agree on the main chain)
-            self.metrics["chain_convergence"].append(self._measure_convergence())
-            
             # Wait for the next collection interval
             yield self.env.timeout(interval)
 
@@ -258,19 +311,24 @@ class BlockchainSimulator:
         # Count orphaned blocks        
         for node in self.nodes:
             # Collect PoW nonces for PoW-based simulations
-            if self.blockchain.blocks and isinstance(next(iter(self.blockchain.blocks.values())), PoWBlock):
-                pow_nonces = [block.nonce for block in self.blockchain.blocks.values() if block.nonce is not None]
+            if node.blockchain.blocks and isinstance(next(iter(node.blockchain.blocks.values())), PoWBlock):
+                pow_nonces = [block.nonce for block in node.blockchain.blocks.values() if block.nonce is not None]
                 average_nonce = sum(pow_nonces) / len(pow_nonces) if pow_nonces else 0
                 self.metrics["PoW_nonces"].append(average_nonce)
+        
+        # Measure chain convergence (% of nodes that agree on the main chain)
+        self.metrics["chain_convergence"].append(self._measure_convergence())
 
-    def _print_blockchain_tree(self):
+    def _print_blockchain_tree(self, node: Optional['NodeBase']):
         """Selects a random node and prints its blockchain in tree format."""
         if not self.nodes:
             print("No nodes in the network.")
             return
 
         # Randomly select a node
-        node = random.choice(self.nodes)
+        # node = random.choice(self.nodes)
+        if node is None:
+            node = self.nodes[0]  # Select the first node for consistency
         print(f"\n📜 Blockchain Tree for Node {node.node_id}\n")
 
         def print_tree(block: 'BlockBase', indent=0):
@@ -289,6 +347,9 @@ class BlockchainSimulator:
         print("\n📊 Blockchain Simulation Summary")
         print("-" * 60)
         print(f"🔹 Total Blocks Mined: {self.metrics['total_blocks_mined']}")
+        print(f"🔹 Blocks Mined by Node: ")
+        for node_id, blocks_mined in self.metrics["blocks_by_node"].items():
+            print(f"   Node {node_id}: {blocks_mined}")
         
         if self.metrics["block_propagation_times"]:
             avg_prop_time = sum(self.metrics["block_propagation_times"]) / len(self.metrics["block_propagation_times"])
@@ -307,15 +368,26 @@ class BlockchainSimulator:
         if self.metrics["chain_lengths"]:
             avg_chain_length = sum(self.metrics["chain_lengths"]) / len(self.metrics["chain_lengths"])
             print(f"🔹 Average Chain Length: {avg_chain_length:.2f}")
+            # display each node's chain length and the head of each chain
+            for node_id, chain_length in enumerate(self.metrics["chain_lengths"]):
+                print(f"   Node {node_id}: {chain_length}. Head: {self.nodes[node_id].blockchain.head.block_id}")
         
         # Calculate average PoW nonce
         if self.metrics["PoW_nonces"]:
             avg_nonce = sum(self.metrics["PoW_nonces"]) / len(self.metrics["PoW_nonces"])
             print(f"🔹 Average PoW Nonce: {avg_nonce:.2f}")
+            
+        if self.metrics["dropped_blocks"]:
+            avg_dropped = self.metrics["dropped_blocks"] / self.num_nodes
+            print(f"🔹 Average dropped blocks: {avg_dropped:.2f}")
+        
+        if self.metrics["chain_convergence"]:
+            head_id, convergence_percentage = self.metrics["chain_convergence"][0]
+            print(f"🔹 Chain Convergence: {convergence_percentage:.2%} (Head: {head_id})")
         
         print("-" * 60)
-        self._print_blockchain_tree()
-            
+        # self._print_blockchain_tree()   
+                 
     def validate_simulation(self) -> Dict[str, Dict[str, Any]]:
         """
         Validates the simulation using the BlockchainValidator.

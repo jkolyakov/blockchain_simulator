@@ -86,12 +86,14 @@ class PoWBlock(BlockBase):
             self.nonce += 1
             if hash_attempts % 1000 == 0:
                 yield node.env.timeout(0.01)
+        # assert self.verify_block(difficulty), f"Block {self.block_id} was not mined correctly!"
+        # print(f"⛏️  Mined Block {self.block_id} with nonce {self.nonce} in {hash_attempts} attempts")
 
     def update_weight(self) -> None:
         """Updates weight based on mining difficulty."""
         self.weight = 1 + sum(child.weight for child in self.children)
 
-    def verify_block(self, difficulty: int = 4) -> bool:
+    def verify_block(self, difficulty: int) -> bool:
         """Verifies that the block was mined correctly."""
         if self.nonce is None:
             return False  # No nonce means it wasn't mined

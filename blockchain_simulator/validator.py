@@ -45,7 +45,7 @@ class BlockchainValidator:
         unresolved_forks = self._count_forks()
         
         # Check convergence
-        convergence = self._measure_convergence()
+        convergence = self._measure_convergence()[1]
         
         return {
             "unresolved_forks": unresolved_forks,
@@ -136,7 +136,7 @@ class BlockchainValidator:
         
         heads = {}
         for node in active_nodes:
-            head_id = node.head.block_id
+            head_id = node.blockchain.head.block_id
             if head_id in heads:
                 heads[head_id] += 1
             else:
@@ -204,7 +204,7 @@ class BlockchainValidator:
         
         # Count occurrences of each head block
         for node in active_nodes:
-            head_id = node.head.block_id
+            head_id = node.consensus_protocol.find_tip_of_main_chain(node.blockchain).block_id
             if head_id in heads:
                 heads[head_id] += 1
             else:
@@ -217,4 +217,4 @@ class BlockchainValidator:
         most_common_head, count = max(heads.items(), key=lambda x: x[1])
         
         # Calculate the percentage of nodes with this head
-        return count / len(active_nodes)
+        return most_common_head, count / len(active_nodes)

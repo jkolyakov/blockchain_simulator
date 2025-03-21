@@ -7,7 +7,8 @@ if TYPE_CHECKING:
     from blockchain_simulator.node import NodeBase
     from blockchain_simulator.block import BlockBase
     from blockchain_simulator.blockchain import BlockchainBase
-
+    from blockchain_simulator.broadcast import GossipBroadcast
+import logging
 # ============================
 # CONSENSUS PROTOCOL ABSTRACT CLASS
 # ============================
@@ -15,6 +16,58 @@ if TYPE_CHECKING:
 class ConsensusProtocol(ABC):
     """Abstract class for defining custom consensus protocols."""
     
+    def execute_consensus(self, node: 'NodeBase') -> None:
+        """
+        Executes a step in the consensus protocol.
+
+        :param node: The node running the protocol.
+        """
+        if not node.proposed_blocks:
+            return  # No blocks proposed
+        
+        selected_blocks = self.select_consensus_candidate(node)
+        
+        if isinstance(selected_blocks, list): # If the best block is a list of blocks we should try to accept all of them
+            for block in selected_blocks:
+                self.confirm_consensus_candidate(node, block)
+                # Track the number of consensus executions
+                node.network.metrics["consensus_executions"] += 1
+                node.broadcast_protocol.broadcast_block(block)
+        else:
+            self.confirm_consensus_candidate(node, selected_blocks)
+            # Track the number of consensus executions
+            node.network.metrics["consensus_executions"] += 1
+            node.broadcast_protocol.broadcast_block(block)
+            
+    @abstractmethod
+    def confirm_consensus_candidate(self, node: 'NodeBase', block: 'BlockBase') -> bool:
+        """
+        Accepts a block into the blockchain.
+
+        :param node: The node running the protocol.
+        :param block: The block to accept.
+        """
+        pass
+            
+    @abstractmethod
+    def receive_consensus_block(self, node: NodeBase, block: BlockBase):
+        """Processes an incoming consensus-finalized block."""
+        pass
+    
+    @abstractmethod
+    def update_weights(self, block: 'BlockBase') -> None:
+        """
+        Updates the weight of all ancestor blocks in the tree.
+
+        :param block: The block to update weights from.
+        """
+        pass
+    
+    @abstractmethod
+    def propose_block(self, node: NodeBase, block: BlockBase):
+        """Handles how blocks are proposed based on the consensus protocol."""
+        pass
+
     @abstractmethod
     def find_tip_of_main_chain(self, chain: 'BlockchainBase') -> 'BlockBase':
         """
@@ -35,78 +88,6 @@ class ConsensusProtocol(ABC):
         """
         pass
     
-    def execute_consensus(self, node: 'NodeBase') -> None:
-        """
-        Executes a step in the consensus protocol.
-
-        :param node: The node running the protocol.
-        """
-        if not node.proposed_blocks:
-            return  # No blocks proposed
-        
-        selected_blocks = self.select_consensus_candidate(node)
-        
-        if isinstance(selected_blocks, list): # If the best block is a list of blocks we should try to accept all of them
-            for block in selected_blocks:
-                self.confirm_consensus_candidate(node, block)
-                # Track the number of consensus executions
-                node.network.metrics["consensus_executions"] += 1
-                self.broadcast_consensus_block(node, block)
-        else:
-            self.confirm_consensus_candidate(node, selected_blocks)
-            # Track the number of consensus executions
-            node.network.metrics["consensus_executions"] += 1
-            self.broadcast_consensus_block(node, selected_blocks)
-            
-    def confirm_consensus_candidate(self, node: 'NodeBase', block: 'BlockBase') -> bool:
-        """
-        Accepts a block into the blockchain.
-
-        :param node: The node running the protocol.
-        :param block: The block to accept.
-        """
-        node.blockchain.add_block(block, node)
-        node.proposed_blocks.discard(block)  # Remove from proposed blocks (doesn't matter if not present)
-        
-        # Ensure the block weight updates correctly
-        self.update_weights(block)
-        old_head = node.head
-        node.head = self.find_tip_of_main_chain(node.blockchain)  # Update the head
-        # Check if a fork was resolved
-        if (old_head.block_id != node.head.parent.block_id):
-            node.network.metrics["forks"] += 1
-
-    def broadcast_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> None:
-        """
-        Broadcasts a block to all peers.
-
-        :param node: The node broadcasting the block.
-        :param block: The block to broadcast.
-        """
-        for peer in node.peers:
-            if peer.node_id not in block.nodes_seen:
-                delay = node.network.get_network_delay(node, peer)
-                node.env.process(self.receive_consensus_block(peer, block, delay))
-            
-    @abstractmethod
-    def receive_consensus_block(self, node: NodeBase, block: BlockBase, delay: float, sender_id: int):
-        """Processes an incoming consensus-finalized block."""
-        pass
-    
-    @abstractmethod
-    def update_weights(self, block: 'BlockBase') -> None:
-        """
-        Updates the weight of all ancestor blocks in the tree.
-
-        :param block: The block to update weights from.
-        """
-        pass
-    
-    @abstractmethod
-    def propose_block(self, node: NodeBase, block: BlockBase):
-        """Handles how blocks are proposed based on the consensus protocol."""
-        pass
-    
     def count_orphaned_blocks(self, node: 'NodeBase') -> int:
         """
         Counts the number of orphaned blocks in the blockchain.
@@ -115,10 +96,10 @@ class ConsensusProtocol(ABC):
         :param node: The node running the protocol.
         :return: The number of orphaned blocks.
         """
-        return len(node.blockchain.blocks) - self.chain_length(node)
+        return max(0, len(node.blockchain.blocks) - self.main_chain_length(node)) # max to avoid negative values
 
     
-    def chain_length(self, node: 'NodeBase') -> int:
+    def main_chain_length(self, node: 'NodeBase') -> int:
         """
         Returns the length of the longest chain.
 
@@ -131,6 +112,15 @@ class ConsensusProtocol(ABC):
             length += 1
             current = current.parent
         return length
+
+    def chain_length(self, node: 'NodeBase'):
+        """
+        Returns the number of nodes in the chain.
+
+        :param node: The node running the protocol.
+        :return: The length of the chain.
+        """
+        return len(node.blockchain.blocks)
     
 # ============================
 # CONSENSUS PROTOCOL IMPLEMENTATIONS
@@ -162,7 +152,7 @@ class GHOSTProtocol(ConsensusProtocol):
 
     def propose_block(self, node: NodeBase, block: BlockBase):
         """In GHOST, all blocks are added to the blockchain immediately."""
-        if node.blockchain.is_valid_block(block): # Ensure the block is valid
+        if node.blockchain.is_valid_block(block, node.mining_difficulty): # Ensure the block is valid
             node.proposed_blocks.add(block)
             block.nodes_seen.add(node.node_id)
 
@@ -172,14 +162,31 @@ class GHOSTProtocol(ConsensusProtocol):
             block.weight = 1 + sum(child.weight for child in block.children)
             block = block.parent  # Move up the chain
             
-    def receive_consensus_block(self, node: NodeBase, block: BlockBase, delay: float):
+    def receive_consensus_block(self, node: 'NodeBase', block: 'BlockBase'):
         """Processes an incoming consensus-finalized block in GHOST."""
-        yield node.env.timeout(delay)
-
-        if block.block_id in node.blockchain.blocks:
+        if node.blockchain.contains_block(block.block_id):
             return  # Block already part of the chain
+        
+        # node.blockchain.add_block(block, node)
+        self.propose_block(node, block)  # Add to proposed blocks
+    
+    def confirm_consensus_candidate(self, node: 'NodeBase', block: 'BlockBase') -> bool:
+        """
+        Accepts a block into the blockchain.
 
-        self.propose_block(node, block)
+        :param node: The node running the protocol.
+        :param block: The block to accept.
+        """
+        node.blockchain.add_block(block, node)
+        node.proposed_blocks.discard(block)  # Remove from proposed blocks (doesn't matter if not present)
+        
+        # Ensure the block weight updates correctly
+        self.update_weights(block)
+        old_head = node.blockchain.head
+        node.blockchain.head = self.find_tip_of_main_chain(node.blockchain)  # Update the head
+        # Check if a fork was resolved
+        if node.blockchain.head != node.blockchain.genesis and old_head.block_id != node.blockchain.head.parent.block_id:
+            node.network.metrics["forks"] += 1
     
 class LongestChainProtocol(ConsensusProtocol):
     """Implements the Longest Chain consensus protocol (Bitcoin-style)."""
