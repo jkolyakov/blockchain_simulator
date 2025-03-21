@@ -204,7 +204,7 @@ class BlockchainValidator:
         
         # Count occurrences of each head block
         for node in active_nodes:
-            head_id = node.consensus_protocol.find_tip_of_main_chain(node.blockchain).block_id
+            head_id = node.blockchain.head.block_id
             if head_id in heads:
                 heads[head_id] += 1
             else:

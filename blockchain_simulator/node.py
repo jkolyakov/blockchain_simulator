@@ -3,7 +3,7 @@ import logging
 import random
 import simpy
 from abc import ABC, abstractmethod
-from typing import List, Type, TYPE_CHECKING
+from typing import List, Type, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from blockchain_simulator.block import BlockBase
@@ -29,9 +29,10 @@ class NodeBase(ABC):
         self.proposed_blocks: set['BlockBase'] = set()
         self.is_mining = True
         self.active = True
-        self.mining_difficulty = 5 # Default difficulty for PoW
+        self.mining_difficulty = 6 # Default difficulty for PoW
         self.env.process(self.step())  # Start consensus as a process
-        self.pending_blocks: List['BlockBase'] = {} # Blocks that are waiting on their parents to be added to the blockchain
+        # int is parent block_id, value is list of blocks waiting for that parent
+        self.pending_blocks: Dict[int, List['BlockBase']] = {} # Blocks that are waiting on their parents to be added to the blockchain
         self.broadcast_protocol = broadcast_protocol(self)
 
     def add_peer(self, peer: 'NodeBase'):

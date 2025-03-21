@@ -27,6 +27,7 @@ class ConsensusProtocol(ABC):
         
         selected_blocks = self.select_consensus_candidate(node)
         
+        logging.warning(f"Node {node.node_id} selected block {selected_blocks} as the consensus candidate")
         if isinstance(selected_blocks, list): # If the best block is a list of blocks we should try to accept all of them
             for block in selected_blocks:
                 self.confirm_consensus_candidate(node, block)
@@ -47,11 +48,6 @@ class ConsensusProtocol(ABC):
         :param node: The node running the protocol.
         :param block: The block to accept.
         """
-        pass
-            
-    @abstractmethod
-    def receive_consensus_block(self, node: NodeBase, block: BlockBase):
-        """Processes an incoming consensus-finalized block."""
         pass
     
     @abstractmethod
@@ -154,21 +150,18 @@ class GHOSTProtocol(ConsensusProtocol):
         """In GHOST, all blocks are added to the blockchain immediately."""
         if node.blockchain.is_valid_block(block, node.mining_difficulty): # Ensure the block is valid
             node.proposed_blocks.add(block)
+            logging.warning(f"Node {node.node_id} added block {block.block_id} to its proposed list with proposed blocks: {node.proposed_blocks}")
             block.nodes_seen.add(node.node_id)
 
     def update_weights(self, block: 'BlockBase'):
         """Updates the weight of all ancestor blocks in the tree."""
-        while block:
+        if len(block.children) == 0:
+            block.weight = 1  # Leaf blocks have weight 1
+        else:
             block.weight = 1 + sum(child.weight for child in block.children)
-            block = block.parent  # Move up the chain
-            
-    def receive_consensus_block(self, node: 'NodeBase', block: 'BlockBase'):
-        """Processes an incoming consensus-finalized block in GHOST."""
-        if node.blockchain.contains_block(block.block_id):
-            return  # Block already part of the chain
-        
-        # node.blockchain.add_block(block, node)
-        self.propose_block(node, block)  # Add to proposed blocks
+
+        if block.parent is not None:
+            self.update_weights(block.parent)  # Recursively update ancestors
     
     def confirm_consensus_candidate(self, node: 'NodeBase', block: 'BlockBase') -> bool:
         """
@@ -177,16 +170,22 @@ class GHOSTProtocol(ConsensusProtocol):
         :param node: The node running the protocol.
         :param block: The block to accept.
         """
-        node.blockchain.add_block(block, node)
-        node.proposed_blocks.discard(block)  # Remove from proposed blocks (doesn't matter if not present)
+        block_clone = block.clone()  # Clone the block to avoid modifying the original
+        if not node.blockchain.add_block(block_clone, node):
+            logging.warning(f"Node {node.node_id} rejected block {block.block_id}")
+            return # Block was, potentially waiting for parents to be added
+        node.proposed_blocks.discard(block)  # Remove from original block proposed blocks (doesn't matter if not present)
         
         # Ensure the block weight updates correctly
-        self.update_weights(block)
+        self.update_weights(block_clone)
         old_head = node.blockchain.head
         node.blockchain.head = self.find_tip_of_main_chain(node.blockchain)  # Update the head
         # Check if a fork was resolved
         if node.blockchain.head != node.blockchain.genesis and old_head.block_id != node.blockchain.head.parent.block_id:
             node.network.metrics["forks"] += 1
+            
+        # if block is successfully added, process any pending children
+        node.broadcast_protocol._process_pending_blocks(node, block.block_id)
     
 class LongestChainProtocol(ConsensusProtocol):
     """Implements the Longest Chain consensus protocol (Bitcoin-style)."""

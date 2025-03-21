@@ -30,7 +30,7 @@ class BlockchainBase(ABC):
         if not self.is_valid_block(block, difficulty):
             return False
         
-        if block.block_id not in self.blocks:
+        if not self.contains_block(block.block_id):
             self.blocks[block.block_id] = block
             logging.warning(f"Block {block.block_id} added to the blockchain!")
             return True
@@ -61,14 +61,15 @@ class BlockchainBase(ABC):
 # ============================
 
 class BasicBlockchain(BlockchainBase):
-    """Basic blockchain implementation."""
+    """Basic blockchain implementation"""
 
     def __init__(self, block_class: Type['BlockBase'], genesis_block: 'BlockBase'):
         super().__init__(block_class, genesis_block)
 
     def add_block(self, block: 'BlockBase', node: 'NodeBase') -> bool:
         """Adds a block and updates the weight.
-        Assumes parents are properly linked to block
+        Assumes parents are properly linked to block.
+        Assumes that block param is a clone of the original block before adding.
         """
         if not self.is_valid_block(block, node.mining_difficulty):
             return False
@@ -77,14 +78,18 @@ class BasicBlockchain(BlockchainBase):
             logging.warning(f"Block {block.block_id} already exists!")
             return False # Block already exists
         
-        
+        # If parent block is missing, add to node's pending blocks which the GossipProtocol will handle
         if not self.contains_block(block.parent.block_id):
+            node.pending_blocks.setdefault(block.parent.block_id, []).append(block)            
+            logging.warning(f"Block {block.block_id} is waiting for parent {block.parent.block_id}. Queued in pending_blocks.")
             return False # Parent block is missing
         
+        parent = self.get_block(block.parent.block_id)
+        block.parent = parent # Reassign parent block to the local parent block object
         # Add the block to the blockchain
         self.blocks[block.block_id] = block
+        
+        if block not in parent.children:
+            parent.children.append(block) # Connect to parent
             
-        # Connect to parent if it exists
-        if block not in block.parent.children:
-            block.parent.children.append(block)
         return True

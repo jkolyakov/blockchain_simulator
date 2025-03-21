@@ -16,6 +16,7 @@ from blockchain_simulator.broadcast import BroadcastProtocol, GossipProtocol
 from blockchain_simulator.block import PoWBlock
 from blockchain_simulator.node import BasicNode
 from blockchain_simulator.validator import BlockchainValidator  # Import the validator
+from blockchain_simulator.visualizer import BlockchainVisualizer
 from collections import Counter
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -54,6 +55,8 @@ class BlockchainSimulator:
         stakes: Optional[Dict[int, float]] = None,
         drop_rate: int = 0,
         broadcast_protocol: Optional[Type['BroadcastProtocol']] = GossipProtocol,
+        interactive_visualization: bool = False,
+        num_visualization_nodes: int = 3,
     ):
         """
         Initializes the blockchain simulator.
@@ -80,6 +83,8 @@ class BlockchainSimulator:
         self.network_topology: str = network_topology
         self.stakes: Dict[int, float] = stakes or {i: 1.0 for i in range(num_nodes)}
         self.drop_rate: int = drop_rate
+        self.interactive_visualization: bool = interactive_visualization
+        self.num_visualization_nodes: int = num_visualization_nodes
         
         # Ensure proper delay matrix setup
         self.delay_matrix = self._generate_symmetric_delay_matrix()
@@ -272,12 +277,20 @@ class BlockchainSimulator:
         self.display_metrics()
         
         for node in self.nodes:
+            print(f"Node {node.node_id} has {len(node.blockchain.blocks)} blocks")
             self._print_blockchain_tree(node)
             
         
         
         # Validate the simulation
         validation_results = self.validate_simulation()
+        
+        # Visualize the blockchain tree for a random set of nodes based on 
+        if self.interactive_visualization:
+            sample_nodes = random.sample(self.nodes, min(self.num_nodes, self.num_visualization_nodes))
+            for node in sample_nodes:
+                visualizer = BlockchainVisualizer(node, output_path=f"visualizations/{node.node_id}_blockchain_interactive.html")
+                visualizer.draw_interactive()
         
         # Return metrics for further analysis
         return {
@@ -330,11 +343,23 @@ class BlockchainSimulator:
         if node is None:
             node = self.nodes[0]  # Select the first node for consistency
         print(f"\n📜 Blockchain Tree for Node {node.node_id}\n")
+        print(f"\033[94m{"Blue is the main chain"}\033[0m")
 
+        # Get all block_ids on the main chain
+        main_chain_ids = set()
+        current = node.blockchain.head
+        while current:
+            main_chain_ids.add(current.block_id)
+            current = current.parent
+            
         def print_tree(block: 'BlockBase', indent=0):
             """Recursive function to print the blockchain tree structure."""
-            print("    " * indent + f"🔗 Block {block.block_id} (Miner: {block.miner_id}, Weight: {block.weight})")
-            for child in sorted(block.children, key=lambda b: b.block_id):  # Sort to maintain order
+            prefix = "    " * indent
+            block_str = f"🔗 Block {block.block_id} (Miner: {block.miner_id}, Weight: {block.weight})"
+            if block.block_id in main_chain_ids:
+                block_str = f"\033[94m{block_str}\033[0m"  # Blue highlight
+            print(prefix + block_str)
+            for child in sorted(block.children, key=lambda b: b.block_id):
                 print_tree(child, indent + 1)
 
         # Start printing from the genesis block

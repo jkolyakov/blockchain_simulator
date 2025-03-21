@@ -48,7 +48,7 @@ class BlockBase(ABC):
     
     @abstractmethod
     def clone(self) -> BlockBase:
-        """Clone the block. Should be overridden by subclasses to copy specific attributes."""
+        """Clone the block. Should be overridden by subclasses to copy specific attributes. Meant for sending copy of blocks to other nodes instead of the original block."""
         raise NotImplementedError("Subclasses must implement the clone() method.")
 
     def __repr__(self):
@@ -70,7 +70,15 @@ class BasicBlock(BlockBase):
         self.weight = 1 + sum(child.weight for child in self.children)
 
     def clone(self) -> BasicBlock:
-        return BasicBlock(parent=self.parent, miner_id=self.miner_id, timestamp=self.timestamp)
+        copy = BasicBlock.__new__(BasicBlock)  # Bypass __init__
+        copy.parent = self.parent
+        copy.miner_id = self.miner_id
+        copy.timestamp = self.timestamp
+        copy.block_id = self.block_id  # Preserve block ID
+        copy.weight = self.weight
+        copy.children = list(self.children)
+        copy.nodes_seen = set(self.nodes_seen)
+        return copy
 
 class PoWBlock(BlockBase):
     """A proof-of-work block structure with mining and weight calculation."""
@@ -109,7 +117,14 @@ class PoWBlock(BlockBase):
         return block_hash.startswith("0" * difficulty) and block_hash == self.hash
 
     def clone(self) -> PoWBlock:
-        copy = PoWBlock(parent=self.parent, miner_id=self.miner_id, timestamp=self.timestamp)
+        copy = PoWBlock.__new__(PoWBlock)
+        copy.parent = self.parent
+        copy.miner_id = self.miner_id
+        copy.timestamp = self.timestamp
+        copy.block_id = self.block_id
+        copy.weight = 1
+        copy.children = []
+        copy.nodes_seen = set(self.nodes_seen)
         copy.nonce = self.nonce
         copy.hash = self.hash
         return copy
