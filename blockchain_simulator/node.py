@@ -29,7 +29,7 @@ class NodeBase(ABC):
         self.proposed_blocks: set['BlockBase'] = set()
         self.is_mining = True
         self.active = True
-        self.mining_difficulty = 6 # Default difficulty for PoW
+        self.mining_difficulty = 5 # Default difficulty for PoW
         self.env.process(self.step())  # Start consensus as a process
         # int is parent block_id, value is list of blocks waiting for that parent
         self.pending_blocks: Dict[int, List['BlockBase']] = {} # Blocks that are waiting on their parents to be added to the blockchain

@@ -23,7 +23,7 @@ if __name__ == "__main__":
         block_class=PoWBlock,
         node_class=BasicNode,
         network_topology="random",
-        drop_rate=0,
+        drop_rate=50,
         interactive_visualization=True,
         num_visualization_nodes=3,
     )
