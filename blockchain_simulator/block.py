@@ -45,6 +45,11 @@ class BlockBase(ABC):
     def mine(self, difficulty: int = 4) -> None:
         """Abstract method to mine the block based on consensus rules."""
         pass
+    
+    @abstractmethod
+    def clone(self) -> BlockBase:
+        """Clone the block. Should be overridden by subclasses to copy specific attributes."""
+        raise NotImplementedError("Subclasses must implement the clone() method.")
 
     def __repr__(self):
         return f"Block(id={self.block_id}, miner={self.miner_id}, weight={self.weight}, time={self.timestamp})"
@@ -64,6 +69,8 @@ class BasicBlock(BlockBase):
         """Updates weight based on the number of children."""
         self.weight = 1 + sum(child.weight for child in self.children)
 
+    def clone(self) -> BasicBlock:
+        return BasicBlock(parent=self.parent, miner_id=self.miner_id, timestamp=self.timestamp)
 
 class PoWBlock(BlockBase):
     """A proof-of-work block structure with mining and weight calculation."""
@@ -101,17 +108,12 @@ class PoWBlock(BlockBase):
         block_hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
         return block_hash.startswith("0" * difficulty) and block_hash == self.hash
 
-class PoABlock(BlockBase):
-    """A proof-of-authority block structure with a fixed weight."""
-
-    def __init__(self, parent: Optional[BlockBase], miner_id: int, timestamp: Optional[float] = None):
-        super().__init__(parent, miner_id, timestamp)
-
-    def update_weight(self) -> None:
-        """Weight remains constant for PoA."""
-        self.weight = 1
-
-
+    def clone(self) -> PoWBlock:
+        copy = PoWBlock(parent=self.parent, miner_id=self.miner_id, timestamp=self.timestamp)
+        copy.nonce = self.nonce
+        copy.hash = self.hash
+        return copy
+    
 class PoSBlock(BlockBase):
     """A proof-of-stake block structure where weight depends on stake."""
 
