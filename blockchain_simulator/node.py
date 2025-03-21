@@ -31,7 +31,7 @@ class NodeBase(ABC):
         self.block_queue: set['BlockBase'] = set()
         self.is_mining = True
         self.active = True
-        self.mining_difficulty = 5 # Default difficulty for PoW
+        self.mining_difficulty = 7 # Default difficulty for PoW
         self.env.process(self.step())  # Start consensus as a process
 
     def add_block_to_queue(self, block: 'BlockBase'):
