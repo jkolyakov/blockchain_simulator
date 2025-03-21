@@ -3,7 +3,7 @@ import logging
 import random
 import simpy
 from abc import ABC, abstractmethod
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Type
 
 
 
@@ -21,14 +21,13 @@ class NodeBase(ABC):
     """Abstract base class for defining a blockchain node."""
 
     def __init__(self, env: simpy.Environment, node_id: int, network: 'BlockchainSimulator', 
-                 consensus_protocol: 'ConsensusProtocol', blockchain: 'BlockchainBase'):
+                 consensus_impl: Type['ConsensusProtocol'], blockchain_impl: Type['BlockchainBase'], block_impl: Type['BlockBase']):
         self.env = env
         self.node_id = node_id
         self.network = network
         self.peers: List['NodeBase'] = []
-        self.consensus_protocol = consensus_protocol
-        self.blockchain = blockchain
-        self.head: 'BlockBase' = blockchain.genesis
+        self.consensus_protocol = consensus_impl()
+        self.blockchain = blockchain_impl(block_impl, self)
         self.block_queue: set['BlockBase'] = set()
         self.is_mining = True
         self.active = True
@@ -36,12 +35,14 @@ class NodeBase(ABC):
         self.env.process(self.step())  # Start consensus as a process
 
     def add_block_to_queue(self, block: 'BlockBase'):
+        # print("add block to queue")
         """Adds a block to the queue """
         self.block_queue.add(block)
 
     def get_from_blockqueue(self) -> 'BlockBase':
         """Gets a block from the queue """
         if len(self.block_queue) > 0:
+            # print("get block to queue")
             return self.block_queue.pop()
         return None
     
@@ -76,9 +77,8 @@ class NodeBase(ABC):
 
     def mine_block(self):
         """Mines a new block and submits it according to the consensus protocol."""
-        self.head = self.consensus_protocol.select_best_block(self.blockchain)
 
-        new_block = self.blockchain.create_block(self.head, self.node_id, self.env.now)
+        new_block = self.blockchain.create_block(self.blockchain.head, self.node_id, self.env.now)
         yield self.env.process(new_block.mine(self, self.mining_difficulty))
         
         # Allows for simulation to stop mining or block to be rejected
@@ -91,30 +91,40 @@ class NodeBase(ABC):
         
         # Handle block proposal based on the consensus protocol
         self.add_block_to_queue(new_block)
-        logging.info(f"Siddhart")
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block.block_id}")
         yield self.env.timeout(0)  # Yield to make this a generator
 
-    def receive_message(self, broadcast_message: 'ConsensusBroadcast', delay: float, sender_id: int):
+    def receive_message(self, broadcast_message: 'ConsensusBroadcast'):
         """Processes an incoming block after a delay."""
-        yield self.env.timeout(delay)
+        # yield self.env.timeout(delay)
+        
 
         block = broadcast_message.data['block']
+        # print(f"Node {self.node_id} Received block {block.block_id} from {broadcast_message.sender}")
 
         if block.block_id in self.blockchain.blocks:
+            if self.node_id == 3:
+                print(f"Node {self.node_id} Received KNOWN block {block.block_id} from {broadcast_message.sender}. It has blocks {list(self.blockchain.blocks.keys())}")
             return  # Block already known, ignore it
-
-        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {sender_id}")
+        
+        
+        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {broadcast_message.sender}")
         # Handle block proposal based on the consensus protocol
         self.blockchain.receive_final_consensus_block(broadcast_message)
 
     def step(self):
         """Executes a timestep in the simulation."""
+        # print(f"Steo function called by node {self.node_id}")
+        logging.info(f"Node {self.node_id} started executing consensus with {len(self.block_queue)} blocks in queue and is_active={self.active}")
         if not self.active:
             return
 
+        
         if len(self.block_queue) > 0:
-            self.consensus_protocol.execute_consensus(self)
+            print(f"Node {self.node_id} started executing consensus")
+            candidate_block = self.consensus_protocol.execute_consensus(self)
+            self.blockchain.add_consensus_block_to_chain(candidate_block)
+                
             
         yield self.env.timeout(self.network.consensus_interval) # Wait for the next consensus interval
         self.env.process(self.step())

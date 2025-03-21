@@ -24,8 +24,9 @@ class BlockBase(ABC):
         self.timestamp: float = timestamp  # Block creation time        
         self.weight: int = 1  # Default weight
         self.tree_weight: int  = self.weight #weight of tree rooted at this block. It is different from the weight of the block
-        self.block_id: int = self.generate_block_id()  # Auto-generated block ID
+        self.block_id: int = 1 if parent is None else self.generate_block_id() # Auto-generated block ID for everything except genesis
 
+    
     def generate_block_id(self) -> int:
         """Generates a unique block ID using SHA-256."""
         block_data = f"{self.parent.block_id if self.parent else 'genesis'}-{self.miner_id}-{self.timestamp}"

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+import logging
 from typing import Type, TYPE_CHECKING
 import random
 
@@ -46,17 +47,17 @@ class ConsensusProtocol(ABC):
         pass
     #TODO: Include the code to get candidate block
     
-    def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> None:
-        """
-        Accepts a block into the blockchain.
+    # def accept_consensus_block(self, node: 'NodeBase', block: 'BlockBase') -> None:
+    #     """
+    #     Accepts a block into the blockchain.
 
-        :param node: The node running the protocol.
-        :param block: The block to accept.
-        :param is_proposer: indicates if the node was the proposer of the block or not
-        """
+    #     :param node: The node running the protocol.
+    #     :param block: The block to accept.
+    #     :param is_proposer: indicates if the node was the proposer of the block or not
+    #     """
         
-        node.blockchain.add_block(block)
-        node.remove_from_blockqueue(block.block_id)
+    #     node.blockchain.add_block(block)
+    #     node.remove_from_blockqueue(block.block_id)
     
     def requires_broadcast(self) -> bool:
         """
@@ -145,12 +146,13 @@ class GHOSTProtocol(ConsensusProtocol):
         if block.block_id in node.blockchain.blocks:
             return  # Block already part of the chain
 
-        node.blockchain.add_block(block)
+        node.blockchain.add_block(block,False)
 
         node.network.metrics["fork_resolutions"] += 1
 
     def execute_consensus(self, node: 'NodeBase') -> 'BlockBase':
         candidate_block = self.get_candidate_block(node)
+        # logging.info(f"Node {node.node_id} selected block {candidate_block.block_id} as candidate block")
         return candidate_block
         
     

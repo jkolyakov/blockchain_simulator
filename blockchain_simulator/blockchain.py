@@ -16,12 +16,13 @@ import logging
 class BlockchainBase(ABC):
     """Abstract class for defining custom blockchain implementations."""
     
-    def __init__(self, block_class: Type['BlockBase']):
+    def __init__(self, block_class: Type['BlockBase'], owner: 'NodeBase'):
         self.blocks: Dict[int, 'BlockBase'] = {}  # Maps block_id to Block object
         self.block_class: Type['BlockBase'] = block_class
         self.genesis: 'BlockBase' = self.create_block(None, miner_id=0, timestamp=0)
         self.blocks[self.genesis.block_id] = self.genesis # Add genesis block to the blockchain
         self.head = self.genesis                      # Stores the head of the main chain for this node.
+        self.owner = owner
 
     def create_block(self, parent: BlockBase, miner_id: int, timestamp: float) -> BlockBase:
         """Creates a new block based on the defined block type."""
@@ -29,18 +30,8 @@ class BlockchainBase(ABC):
         return new_block  # The block ID is generated inside the class
 
     @abstractmethod
-    def add_block(self, block: BlockBase) -> bool:
+    def add_block(self, block: BlockBase, is_proposer: bool) -> bool:
         """Adds a block to the blockchain."""
-        # if not self.is_valid_block(block):
-        #     return False
-        
-        # if block.block_id not in self.blocks:
-        #     self.blocks[block.block_id] = block
-        #     logging.warning(f"Block {block.block_id} added to the blockchain!")
-        #     return True
-        
-        # logging.warning(f"Block {block.block_id} already exists!")
-        # return False
         pass
     
     # For testing purposes
@@ -63,28 +54,30 @@ class BlockchainBase(ABC):
         
         return True
     
-    async def add_consensus_block_to_chain(self) -> bool:
+    def add_consensus_block_to_chain(self, consensus_output: 'BlockBase'):
         """Invokes the underlying consensus protocol and adds the propogates the output of the consensus to nodes in the network for them to add it in their blockchain"""
-
-        consensus_output = await self.owner.consensus_protocol.execute_consensus(self.owner)
-        self.add_block(consensus_output)
-
+        # 
+        self.add_block(consensus_output,True)
+        
         #create the broadcastmessage to be sent to other nodes
         message_payload = {}
         message_payload['block'] = consensus_output
         message_payload['consensus_type'] = ConsensusBroadcast.CONSENSUS_TYPE['final']
-        broadcast_message = ConsensusBroadcast(self.node_id,message_payload, self.private_key)
-
+        broadcast_message = ConsensusBroadcast(self.owner.node_id,message_payload)
+        # print(f"BROADCAST payload {message_payload}")
+        
         broadcast_message.send_message_to_peers(self.owner)
 
-    async def receive_final_consensus_block(self, broadcast_message: ConsensusBroadcast) -> bool:
+    def receive_final_consensus_block(self, broadcast_message: ConsensusBroadcast) -> bool:
         """processes the output of the broadcast message containing the final consensus block. Returns true of the processing is successful"""
         block = broadcast_message.data['block']
+        # print(f"Message received by node {self.owner.node_id} {block.block_id}")
+
         if not block.verify_block():
             log_message = broadcast_message.to_json()
             print(f"Node {self.owner.node_id} received an invalid final consensus block {log_message}")
             return False
-        self.blockchain.add_block(broadcast_message.data['block'])
+        self.add_block(block,False)
         return True
 
 # ============================
@@ -94,8 +87,8 @@ class BlockchainBase(ABC):
 class BasicBlockchain(BlockchainBase):
     """Basic blockchain implementation."""
 
-    def __init__(self, block_class: Type['BlockBase']):
-        super().__init__(block_class)
+    def __init__(self, block_class: Type['BlockBase'], owner: 'NodeBase'):
+        super().__init__(block_class, owner)
 
     def create_genesis_block(self) -> 'BlockBase':
         """Creates a genesis block."""
@@ -103,10 +96,11 @@ class BasicBlockchain(BlockchainBase):
         self.blocks[0] = genesis
         return genesis
 
-    def add_block(self, block: 'BlockBase') -> bool:
+    def add_block(self, block: 'BlockBase', is_proposer: bool) -> bool:
         """Adds a block and updates the weight.
         Assumes parents are properly linked to block
         """
+        
         logging.warning(f"Adding block {block.block_id} to the blockchain")
         if not self.is_valid_block(block):
             logging.warning(f"Block {block.block_id} is not a valid block")
@@ -116,18 +110,27 @@ class BasicBlockchain(BlockchainBase):
             logging.warning(f"Block {block.block_id} already exists!")
             return False # Block already exists
         
+       
+        
         # Add the block to the blockchain
-        self.blocks[block.block_id] = block
-        # block.parent.children.append(block) # Assume all parents have blocks because genesis block must have been created already
 
         if not block.parent and not block.parent in self.blocks:
+            print(f"Parent block {block.parent.block_id} of {block.block_id} is missing!")
             logging.warning(f"Parent block {block.parent.block_id} of {block.block_id} is missing!")
+
+        if(self.owner.node_id == 3):
+            print(f"Adding block {block.block_id} to the blockchain")
+        self.blocks[block.block_id] = block
+
+        self.owner.network.metrics["blockchain_size"][self.owner.node_id] += 1  
+        self.owner.network.metrics["blockchain_ids"][self.owner.node_id].append(block.block_id)  
             
-        # Connect to parent if it exists
-        if block.parent and block.parent.block_id in self.blocks:
-            if block not in block.parent.children:
-                block.parent.children.append(block)
-                self.owner.consensus_protocol.select_best_block(self.owner)
+        # Connect to parent 
+        if block not in block.parent.children:
+            block.parent.children.append(block)
+            # print(f"INVOKING BEST BLOCK by node {self.owner.node_id} {is_proposer}")
+            self.head = self.owner.consensus_protocol.select_best_block(self.owner.blockchain)
+            self.owner.network.metrics["blockchain_size"][self.owner.node_id] += 1
         return True
 
         

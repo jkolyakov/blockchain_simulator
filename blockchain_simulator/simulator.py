@@ -29,7 +29,7 @@ class BlockchainSimulator:
         max_delay: float = 5.0,
         min_delay: float = 0.1,
         consensus_interval: float = 0.1,
-        consensus_protocol: Optional[Type['ConsensusProtocol']] = None,
+        consensus_impl: Optional[Type['ConsensusProtocol']] = None,
         blockchain_impl: Optional[Type['BlockchainBase']] = None,
         block_class: Optional[Type['BlockBase']] = None,
         node_class: Type['NodeBase'] = BasicNode,
@@ -56,8 +56,10 @@ class BlockchainSimulator:
         self.max_delay: float = max_delay
         self.min_delay: float = min_delay
         self.consensus_interval: int = consensus_interval
-        self.consensus_protocol: Optional['ConsensusProtocol'] = consensus_protocol() if consensus_protocol else None
-        self.blockchain: Optional['BlockchainBase'] = blockchain_impl(block_class) if blockchain_impl and block_class else None
+        self.consensus_impl = consensus_impl
+        self.blockchain_impl = blockchain_impl
+        # self.consensus_protocol: Optional['ConsensusProtocol'] = consensus_protocol() if consensus_protocol else None
+        # self.blockchain: Optional['BlockchainBase'] = blockchain_impl(block_class) if blockchain_impl and block_class else None
         self.network_topology: str = network_topology
         self.stakes: Dict[int, float] = stakes or {i: 1.0 for i in range(num_nodes)}
         
@@ -68,6 +70,7 @@ class BlockchainSimulator:
         self.metrics: Dict[str, Any] = {
             "total_blocks_mined": 0,
             "blocks_by_node": {i: 0 for i in range(num_nodes)},
+            "blockchain_ids": {i: [] for i in range(num_nodes)},
             "block_propagation_times": [],
             "consensus_executions": 0,
             "fork_resolutions": 0,
@@ -77,12 +80,14 @@ class BlockchainSimulator:
             "block_validation_results": [],
             "chain_convergence": [],
             "orphaned_blocks": [],
-            "PoW_nonces": []
+            "PoW_nonces": [],
+            "blockchain_size": {i: 0 for i in range(num_nodes)},
         }
+        
         
         # Create nodes
         self.nodes: List['NodeBase'] = [
-            node_class(self.env, i, self, self.consensus_protocol, self.blockchain)
+            node_class(self.env, i, self, self.consensus_impl, self.blockchain_impl, block_class)
             for i in range(num_nodes)
         ]
         
@@ -199,13 +204,14 @@ class BlockchainSimulator:
         print(f"🚀 Running blockchain simulation for {duration} seconds...\n")
         
         # Setup metrics collection process
-        self.env.process(self._collect_metrics(collect_interval))
+        self.env.process(self._collect_metrics(collect_interval))#TODO: Include the code to collect metric
         
         # Run the simulation
         # Create a progress bar
         with tqdm(total=duration, desc="⏳ Simulation Progress", unit="s", ascii=" ▖▘▝▗▚▞█") as pbar:
             last_time = self.env.now 
             while self.env.now < duration:
+                logging.info(f"run() called")
                 self.env.step()          
                 # Update pbar with the actual time that has passed
                 time_advanced = self.env.now - last_time
@@ -243,7 +249,7 @@ class BlockchainSimulator:
             self.metrics["chain_lengths"] = chain_lengths
             
             # Collect orphaned blocks
-            orphaned_blocks = [self.consensus_protocol.count_orphaned_blocks(node) for node in self.nodes]
+            orphaned_blocks = [node.consensus_protocol.count_orphaned_blocks(node) for node in self.nodes]
             self.metrics["orphaned_blocks"] = orphaned_blocks
             
             # Count forks
@@ -260,8 +266,8 @@ class BlockchainSimulator:
         # Count orphaned blocks        
         for node in self.nodes:
             # Collect PoW nonces for PoW-based simulations
-            if self.blockchain.blocks and isinstance(next(iter(self.blockchain.blocks.values())), PoWBlock):
-                pow_nonces = [block.nonce for block in self.blockchain.blocks.values() if block.nonce is not None]
+            if node.blockchain.blocks and isinstance(next(iter(node.blockchain.blocks.values())), PoWBlock):
+                pow_nonces = [block.nonce for block in node.blockchain.blocks.values() if block.nonce is not None]
                 average_nonce = sum(pow_nonces) / len(pow_nonces) if pow_nonces else 0
                 self.metrics["PoW_nonces"].append(average_nonce)
 
@@ -290,7 +296,10 @@ class BlockchainSimulator:
         """
         print("\n📊 Blockchain Simulation Summary")
         print("-" * 60)
-        print(f"🔹 Total Blocks Mined: {self.metrics['total_blocks_mined']}")
+        print(f"🔹 Blocks: {self.metrics['blockchain_ids']}")
+        print(f"🔹 Blocks Mined: {self.metrics['blocks_by_node']}")
+        
+        print(f"🔹 Blockchain_size: {self.metrics['blockchain_size']}")
         
         if self.metrics["block_propagation_times"]:
             avg_prop_time = sum(self.metrics["block_propagation_times"]) / len(self.metrics["block_propagation_times"])
@@ -300,15 +309,17 @@ class BlockchainSimulator:
         print(f"🔹 Fork Resolutions: {self.metrics['fork_resolutions']}")
         print(f"🔹 Longest Chain Length: {max(self.metrics['chain_lengths'])}")
         
-        # Calculate average number of orphaned blocks
+        # Calculate node-wise number of orphaned blocks
         if self.metrics["orphaned_blocks"]:
-            avg_orphaned = sum(self.metrics["orphaned_blocks"]) / len(self.metrics["orphaned_blocks"])
-            print(f"🔹 Average Orphaned Blocks: {avg_orphaned:.2f}")
+            # avg_orphaned = sum(self.metrics["orphaned_blocks"]) / len(self.metrics["orphaned_blocks"])
+            print(f"🔹  Orphaned Blocks: {self.metrics['orphaned_blocks']}")
+
+        #
         
         # Calculate average chain length
         if self.metrics["chain_lengths"]:
-            avg_chain_length = sum(self.metrics["chain_lengths"]) / len(self.metrics["chain_lengths"])
-            print(f"🔹 Average Chain Length: {avg_chain_length:.2f}")
+            # avg_chain_length = sum(self.metrics["chain_lengths"]) / len(self.metrics["chain_lengths"])
+            print(f"🔹 Chain Length: {self.metrics['chain_lengths']}")
         
         # Calculate average PoW nonce
         if self.metrics["PoW_nonces"]:

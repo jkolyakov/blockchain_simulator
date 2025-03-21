@@ -6,7 +6,7 @@ from ecdsa import SigningKey, VerifyingKey, NIST256p
 
 
 class BroadcastMessage:
-    def __init__(self, sender: int, data: Dict, private_key: SigningKey):
+    def __init__(self, sender: int, data: Dict):
         """
         :param sender
         """
@@ -15,7 +15,7 @@ class BroadcastMessage:
         self.nodes_visited: List[int] = []
         self.nodes_visited.append(sender)
         self.timestamp = time.time()
-        self.signature = self.sign_message(private_key)
+        self.signature = 123
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict())
@@ -49,18 +49,20 @@ class BroadcastMessage:
             print(f"Verification failed: {e}")
             return False
         
-    async def send_message_to_peers(self,node):
+    def send_message_to_peers(self,node):
+        # print(f"Sending message to peers of {node.node_id}")
         for peer in node.peers:
             if peer.node_id not in self.nodes_visited:
                 delay = node.network.get_network_delay(node, peer)
+                print(f"Node {node.node_id} sending message {self.data['block'].block_id} to {peer.node_id} with delay {delay}")
                 node.env.process(self.receive_message_from_peers(peer, delay))
-                self.network.metrics["broadcasts"] += 1
+                node.network.metrics["broadcasts"] += 1
 
-    async def receive_message_from_peers(self, node, delay):
-        await node.env.timeout(delay)
+    def receive_message_from_peers(self, node, delay):
+        yield node.env.timeout(delay)
         self.nodes_visited.append(node.node_id)
-        if node.receive_broadcast_message(self):
-            self.send_message_to_peers(self,node)
+        node.receive_message(self)
+        self.send_message_to_peers(node)
         
 class ConsensusBroadcast(BroadcastMessage):
     
@@ -72,5 +74,5 @@ class ConsensusBroadcast(BroadcastMessage):
         'inProgress': 3
     }
     
-    def __init__(self, sender: int, data: Dict, private_key: SigningKey):
-        super.__init__(sender,data,private_key)
+    def __init__(self, sender: int, data: Dict):
+        super().__init__(sender,data)
