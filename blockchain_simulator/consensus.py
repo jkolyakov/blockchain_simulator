@@ -43,12 +43,12 @@ class ConsensusProtocol(ABC):
     @abstractmethod
     def confirm_consensus_candidate(self, node: 'NodeBase', block: 'BlockBase') -> bool:
         """
-        Accepts a block into the blockchain.
+        Runs the protocol specific logic to confirm a block as part of the main chain.
 
         :param node: The node running the protocol.
-        :param block: The block to accept.
+        :param block: The block to potentially accept.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement the confirm_consensus_candidate() method.")
     
     @abstractmethod
     def update_weights(self, block: 'BlockBase') -> None:
@@ -57,22 +57,22 @@ class ConsensusProtocol(ABC):
 
         :param block: The block to update weights from.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement the update_weights() method.")
     
     @abstractmethod
     def propose_block(self, node: NodeBase, block: BlockBase):
         """Handles how blocks are proposed based on the consensus protocol."""
-        pass
+        raise NotImplementedError("Subclasses must implement the propose_block() method.")
 
     @abstractmethod
     def find_tip_of_main_chain(self, chain: 'BlockchainBase') -> 'BlockBase':
         """
-        Selects the best block for a mined node's parent based on the consensus protocol.
+        Selects the best block for a new mined node's parent based on the consensus protocol.
 
         :param node: The node running the protocol.
         :return: The best block to extend from.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement the find_tip_of_main_chain() method.")
     
     @abstractmethod
     def select_consensus_candidate(self, node: 'NodeBase') -> 'BlockBase':
@@ -82,7 +82,7 @@ class ConsensusProtocol(ABC):
         :param node: The node running the protocol.
         :return: The selected block.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement the select_consensus_candidate() method.")
     
     def count_orphaned_blocks(self, node: 'NodeBase') -> int:
         """
@@ -111,7 +111,7 @@ class ConsensusProtocol(ABC):
 
     def chain_length(self, node: 'NodeBase'):
         """
-        Returns the number of nodes in the chain.
+        Returns the number of nodes in the blockchain.
 
         :param node: The node running the protocol.
         :return: The length of the chain.
@@ -187,45 +187,3 @@ class GHOSTProtocol(ConsensusProtocol):
         # if block is successfully added, process any pending children
         node.broadcast_protocol._process_pending_blocks(node, block.block_id)
     
-class LongestChainProtocol(ConsensusProtocol):
-    """Implements the Longest Chain consensus protocol (Bitcoin-style)."""
-    
-    def find_tip_of_main_chain(self, node: 'NodeBase') -> 'BlockBase':
-        """
-        Selects the longest chain's tip.
-
-        :param node: The node running the protocol.
-        :return: The block at the tip of the longest chain.
-        """
-        current: 'BlockBase' = node.blockchain.blocks[0]
-        while current.children:
-            current = max(current.children, key=lambda b: len(b.children))
-        return current
-
-class PoSProtocol(ConsensusProtocol):
-    """Implements Proof-of-Stake (PoS) consensus."""
-    
-    def find_tip_of_main_chain(self, node: 'NodeBase') -> 'BlockBase':
-        """
-        Selects the block with the highest stake contribution.
-
-        :param node: The node running the protocol.
-        :return: The block with the highest stake-weighted contribution.
-        """
-        current: 'BlockBase' = node.blockchain.blocks[0]
-        while current.children:
-            current = max(current.children, key=lambda b: node.network.stakes.get(b.miner_id, 1))
-        return current
-
-class DAGProtocol(ConsensusProtocol):
-    """Implements GHOSTDAG for DAG-based blockchains."""
-    
-    def find_tip_of_main_chain(self, node: 'NodeBase') -> 'BlockBase':
-        """
-        Selects the block with the highest weight in the DAG.
-
-        :param node: The node running the protocol.
-        :return: The highest-weighted block in the DAG structure.
-        """
-        sorted_blocks = sorted(node.blockchain.blocks.values(), key=lambda b: b.weight, reverse=True)
-        return sorted_blocks[0] if sorted_blocks else node.blockchain.blocks[0]

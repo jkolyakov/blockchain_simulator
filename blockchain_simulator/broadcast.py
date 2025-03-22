@@ -52,7 +52,15 @@ class BroadcastProtocol(ABC):
     def _propagate_block_request(self, node: 'NodeBase', block_id: int, ttl: int, delay: float, request_origin: int):
         """Gossip-style recursive propagation of block fetch requests."""
         pass
+    
+    @abstractmethod
+    def is_parent_missing(self, block: 'BlockBase') -> bool:
+        """Checks if the parent block is missing from the blockchain. If it is, the block is added to the pending queue on the node"""
+        pass
 
+# ============================
+# BROADCAST PROTOCOL IMPLEMENTATION
+# ============================
 class GossipProtocol(BroadcastProtocol):
     """Implements a gossip protocol for broadcasting messages."""
     def __init__(self, node: 'NodeBase'):
@@ -85,8 +93,7 @@ class GossipProtocol(BroadcastProtocol):
         
         # If parent is missing, add block to pending queue and request it before processing
         # print the block id and a list of the recipient's blockchain block_ids
-        if not recipient.blockchain.contains_block(block.parent.block_id):
-            recipient.pending_blocks.setdefault(block.parent.block_id, []).append(block)
+        if self.is_parent_missing(recipient, block):
             self._request_missing_block(recipient, block.parent.block_id, request_origin=recipient.node_id, ttl=3)
             return
         
@@ -134,7 +141,6 @@ class GossipProtocol(BroadcastProtocol):
             delay = self.node.network.get_network_delay(requester, peer)
             requester.env.process(self._propagate_block_request(peer, block_id, ttl - 1, delay, request_origin))
     
-    # TODO: Blocks are currently being found. Need to figure out why they are not being added to the blockchain properly
     def _deliver_block_with_delay(self, recipient: 'NodeBase', block: 'BlockBase', delay: int):
         """Delivers a block to a peer with a given delay."""
         yield self.node.env.timeout(delay)
@@ -146,3 +152,11 @@ class GossipProtocol(BroadcastProtocol):
         """Gossip-style recursive propagation of block fetch requests."""
         yield self.node.env.timeout(delay)
         self._request_missing_block(node, block_id, ttl, request_origin=request_origin)
+    
+    def is_parent_missing(self, node: 'NodeBase', block: 'BlockBase') -> bool:
+        """Checks if the parent is missing. Adds block to pending if true."""
+        if not node.blockchain.contains_block(block.parent.block_id):
+            node.pending_blocks.setdefault(block.parent.block_id, []).append(block)
+            logging.warning(f"Block {block.block_id} is waiting for missing parent {block.parent.block_id}. Queued in pending_blocks.")
+            return True
+        return False

@@ -117,13 +117,14 @@ class PoWBlock(BlockBase):
         return block_hash.startswith("0" * difficulty) and block_hash == self.hash
 
     def clone(self) -> PoWBlock:
+        """ Clones the block, resetting the weight and children. Meant for sending copy of blocks to other nodes instead of the original block."""
         copy = PoWBlock.__new__(PoWBlock)
         copy.parent = self.parent
         copy.miner_id = self.miner_id
         copy.timestamp = self.timestamp
         copy.block_id = self.block_id
-        copy.weight = 1
-        copy.children = []
+        copy.weight = 1 # Reset weight to 1 
+        copy.children = [] # Reset children
         copy.nodes_seen = set(self.nodes_seen)
         copy.nonce = self.nonce
         copy.hash = self.hash

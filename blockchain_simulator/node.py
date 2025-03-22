@@ -105,6 +105,9 @@ class NodeBase(ABC):
             yield self.env.process(self.mine_block())
             yield self.env.timeout(random.uniform(0.1, 0.5))  # Randomized delay before next mining attempt
 
+    def __repr__(self):
+        return f"Node(node_id={self.node_id}, active={self.active}, mining={self.is_mining}, peers={len(self.peers)}, blockchain={self.blockchain}, consensus={self.consensus_protocol.__class__.__name__})"
+    
 # ============================
 # BASIC NODE CLASS
 # ============================
