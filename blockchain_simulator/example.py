@@ -37,10 +37,10 @@ class PoWBlockchain(BlockchainBase):
     def add_block(self, block, node):
         block.mine(difficulty=4)
         self.blocks[block.block_id] = block
-        for parent in block.parents:
-            if parent:
-                parent.children.append(block)
-                parent.update_weight()
+        # for parent in block.parents:
+        #     if parent:
+        #         parent.children.append(block)
+        #         parent.update_weight()
 
 # ============================
 # 🔗 Custom PoW Consensus Protocol

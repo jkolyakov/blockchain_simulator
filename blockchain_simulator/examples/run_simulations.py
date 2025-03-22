@@ -20,6 +20,7 @@ if __name__ == "__main__":
         max_delay=10,
         consensus_impl=GHOSTProtocol,
         blockchain_impl=BasicBlockchain,
+        consensus_interval = 5,
         block_class=PoWBlock,
         node_class=BasicNode,
         network_topology="random"
@@ -27,4 +28,5 @@ if __name__ == "__main__":
 
     print("🚀 Starting Blockchain Simulation...")
     sim.start_mining(node_ids=[0, 1, 2])  # Start mining on multiple nodes
-    sim.run(duration=20) # Run the simulation for 50 seconds
+    # sim.start_mining(node_ids=[0])
+    sim.run(duration=30) # Run the simulation for 50 seconds

@@ -31,7 +31,7 @@ class NodeBase(ABC):
         self.block_queue: set['BlockBase'] = set()
         self.is_mining = True
         self.active = True
-        self.mining_difficulty = 7 # Default difficulty for PoW
+        self.mining_difficulty = 5 # Default difficulty for PoW
         self.env.process(self.step())  # Start consensus as a process
 
     def add_block_to_queue(self, block: 'BlockBase'):
@@ -103,11 +103,11 @@ class NodeBase(ABC):
         # print(f"Node {self.node_id} Received block {block.block_id} from {broadcast_message.sender}")
 
         if block.block_id in self.blockchain.blocks:
-            if self.node_id == 3:
-                print(f"Node {self.node_id} Received KNOWN block {block.block_id} from {broadcast_message.sender}. It has blocks {list(self.blockchain.blocks.keys())}")
             return  # Block already known, ignore it
         
-        
+        if self.node_id == 3:
+            print(f"Node {self.node_id} Received block {block.block_id} with children {[x.block_id for x in block.children]}")
+            
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {broadcast_message.sender}")
         # Handle block proposal based on the consensus protocol
         self.blockchain.receive_final_consensus_block(broadcast_message)

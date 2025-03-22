@@ -146,9 +146,9 @@ class GHOSTProtocol(ConsensusProtocol):
         if block.block_id in node.blockchain.blocks:
             return  # Block already part of the chain
 
-        node.blockchain.add_block(block,False)
+        # node.blockchain.add_block(block,False)
 
-        node.network.metrics["fork_resolutions"] += 1
+        # node.network.metrics["fork_resolutions"] += 1
 
     def execute_consensus(self, node: 'NodeBase') -> 'BlockBase':
         candidate_block = self.get_candidate_block(node)
