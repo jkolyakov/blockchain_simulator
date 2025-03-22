@@ -1,4 +1,5 @@
 from __future__ import annotations
+import copy
 import logging
 import random
 import simpy
@@ -99,14 +100,14 @@ class NodeBase(ABC):
         # yield self.env.timeout(delay)
         
 
-        block = broadcast_message.data['block']
+        block = copy.deepcopy(broadcast_message.data['block'])
         # print(f"Node {self.node_id} Received block {block.block_id} from {broadcast_message.sender}")
 
         if block.block_id in self.blockchain.blocks:
             return  # Block already known, ignore it
         
         if self.node_id == 3:
-            print(f"Node {self.node_id} Received block {block.block_id} with children {[x.block_id for x in block.children]}")
+            print(f"Node {self.node_id} Received block {block.block_id} from {broadcast_message.sender} with children {[x.block_id for x in block.children]}")
             
         logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} received block {block.block_id} from Node {broadcast_message.sender}")
         # Handle block proposal based on the consensus protocol

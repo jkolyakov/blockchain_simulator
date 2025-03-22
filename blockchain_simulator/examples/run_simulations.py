@@ -23,7 +23,7 @@ if __name__ == "__main__":
         consensus_interval = 5,
         block_class=PoWBlock,
         node_class=BasicNode,
-        network_topology="random"
+        network_topology="fully_connected"
     )
 
     print("🚀 Starting Blockchain Simulation...")

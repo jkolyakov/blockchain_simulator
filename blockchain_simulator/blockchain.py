@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import asyncio
+import copy
 from typing import Dict, Type, Optional, TYPE_CHECKING
 
 from blockchain_simulator.broadcastMessage import ConsensusBroadcast
@@ -75,7 +76,7 @@ class BlockchainBase(ABC):
 
     def receive_final_consensus_block(self, broadcast_message: ConsensusBroadcast) -> bool:
         """processes the output of the broadcast message containing the final consensus block. Returns true of the processing is successful"""
-        block = broadcast_message.data['block']
+        block = copy.deepcopy(broadcast_message.data['block'])
         
 
         # if self.owner.node_id == 3:
@@ -124,7 +125,7 @@ class BasicBlockchain(BlockchainBase):
         # Connect to parent 
 
         block.parent = self.head
-        self.head.children.append(block)
+        self.head.add_child(block)
         self.head = block
         return block
         
@@ -163,7 +164,7 @@ class BasicBlockchain(BlockchainBase):
         block_parent = self.blocks[block.parent.block_id] if block.parent.block_id in self.blocks else None
 
 
-        if block_parent and block.block_id not in [x.block_id forblock_parent.children:
+        if block_parent and block.block_id not in [x.block_id for x in block_parent.children]:
 
             if self.owner.node_id == 3:
                 print(f"parent id :::: {block_parent.block_id} children of parent node {[x.block_id for x in block_parent.children]}")
@@ -171,7 +172,7 @@ class BasicBlockchain(BlockchainBase):
             self.blocks[block.block_id] = block
             self.owner.network.metrics["blockchain_size"][self.owner.node_id] += 1
             self.owner.network.metrics["blockchain_ids"][self.owner.node_id].append(block.block_id)  
-            block_parent.children.append(block)
+            block_parent.add_child(block)
             self.head = self.owner.consensus_protocol.select_best_block(self.owner.blockchain)
             if not self.head.block_id == block.block_id:
                 self.owner.network.metrics["fork_resolutions"] += 1

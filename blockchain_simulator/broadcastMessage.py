@@ -2,6 +2,7 @@ import hashlib
 import json
 import time
 from typing import Dict, List
+import copy
 from ecdsa import SigningKey, VerifyingKey, NIST256p
 
 
@@ -52,8 +53,8 @@ class BroadcastMessage:
     def send_message_to_peers(self,node):
         # print(f"Sending message to peers of {node.node_id}")
 
-        if self.nodes_visited is None:
-            node.network.metrics["consensus_executions"] += 1
+        # if len(self.nodes_visited) == 0:
+        node.network.metrics["consensus_executions"] += 1
         for peer in node.peers:
             if peer.node_id not in self.nodes_visited:
                 delay = node.network.get_network_delay(node, peer)
@@ -64,10 +65,13 @@ class BroadcastMessage:
     def receive_message_from_peers(self, node, delay):
 
         
-        yield node.env.timeout(delay)
-        self.nodes_visited.append(node.node_id)
-        self.send_message_to_peers(node)
-        yield node.env.timeout(1)
+        yield node.env.timeout(0)
+        # self.nodes_visited.append(node.node_id)
+        if node.node_id == 3:
+            print(f"Node {node.node_id} received message from {self.sender} with block {self.data['block'].block_id}")
+        # self.send_message_to_peers(node)
+        # yield node.env.timeout(1)
+        # a = copy.deepcopy(node)
         node.receive_message(self)
         
         
