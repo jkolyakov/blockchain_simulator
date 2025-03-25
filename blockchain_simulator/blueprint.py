@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Type, Dict, Set, Optional
 import simpy
 
+#Griffin
 class BlockBase(ABC):
     @abstractmethod
     @staticmethod
@@ -55,6 +56,7 @@ class BlockBase(ABC):
         """Returns the string representation of the block"""
         pass
 
+# Jacob
 class BlockchainBase(ABC):
     def __init__(self, block_class: Type[BlockBase], mining_difficulty: int):
         """" Abstract class for defining a blockchain.
@@ -93,6 +95,7 @@ class BlockchainBase(ABC):
         """Returns the string representation of the blockchain"""
         pass
 
+# Griffin
 class ConsensusProtocolBase(ABC):
     @abstractmethod
     def execute_consensus(self, node: 'NodeBase') -> None:
@@ -105,6 +108,7 @@ class ConsensusProtocolBase(ABC):
         pass
     pass
 
+# Siddarth
 class BroadcastProtocolBase(ABC):
     def __init__(self):
         """Initializes the broadcast protocol."""
@@ -119,7 +123,8 @@ class BroadcastProtocolBase(ABC):
     def receive_block(self, recipient: 'NodeBase', block: BlockBase) -> None:
         """Receives a block from a peer."""
         pass
-    
+
+# Jacob    
 class NodeBase(ABC):
     def __init__(self,
                  env: simpy.Environment,
@@ -178,6 +183,7 @@ class NodeBase(ABC):
         """Simulates one time step of a node execution."""
         pass
 
+# Siddarth
 class NetworkTopologyBase(ABC):
     def __init__(self, 
                  max_delay: float = 0.5,
@@ -196,6 +202,7 @@ class NetworkTopologyBase(ABC):
         """Returns the delay between two nodes. Should be between min_delay and max_delay"""
         pass
     
+# Jacob
 class BlockchainSimulatorBase(ABC):
     def __init__(self, 
                  network_topology_class: Type[NetworkTopologyBase], 
@@ -257,6 +264,7 @@ class BlockchainSimulatorBase(ABC):
         """Runs the simulation for the given duration."""
         pass
     
+# Jacob but don't implement this class
 class Metrics(ABC):
     def __init__(self):
         """Initializes the metrics collection object."""
