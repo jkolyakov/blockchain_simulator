@@ -27,18 +27,19 @@ class ConsensusProtocol(ABC):
         
         selected_blocks = self.select_consensus_candidate(node)
         
-        logging.warning(f"Node {node.node_id} selected block {selected_blocks} as the consensus candidate")
         if isinstance(selected_blocks, list): # If the best block is a list of blocks we should try to accept all of them
             for block in selected_blocks:
-                self.confirm_consensus_candidate(node, block)
+                if self.confirm_consensus_candidate(node, block):
+                    node.broadcast_protocol._process_pending_blocks(node, block.block_id)
+                    node.broadcast_protocol.broadcast_block(block)
                 # Track the number of consensus executions
                 node.network.metrics["consensus_executions"] += 1
-                node.broadcast_protocol.broadcast_block(block)
         else:
-            self.confirm_consensus_candidate(node, selected_blocks)
+            if self.confirm_consensus_candidate(node, selected_blocks):
+                node.broadcast_protocol._process_pending_blocks(node, block.block_id)
+                node.broadcast_protocol.broadcast_block(block)   
             # Track the number of consensus executions
             node.network.metrics["consensus_executions"] += 1
-            node.broadcast_protocol.broadcast_block(block)
             
     @abstractmethod
     def confirm_consensus_candidate(self, node: 'NodeBase', block: 'BlockBase') -> bool:
@@ -150,7 +151,6 @@ class GHOSTProtocol(ConsensusProtocol):
         """In GHOST, all blocks are added to the blockchain immediately."""
         if node.blockchain.is_valid_block(block, node.mining_difficulty): # Ensure the block is valid
             node.proposed_blocks.add(block)
-            logging.warning(f"Node {node.node_id} added block {block.block_id} to its proposed list with proposed blocks: {node.proposed_blocks}")
             block.nodes_seen.add(node.node_id)
 
     def update_weights(self, block: 'BlockBase'):
@@ -173,7 +173,7 @@ class GHOSTProtocol(ConsensusProtocol):
         block_clone = block.clone()  # Clone the block to avoid modifying the original
         if not node.blockchain.add_block(block_clone, node):
             logging.warning(f"Node {node.node_id} rejected block {block.block_id}")
-            return # Block was, potentially waiting for parents to be added
+            return False # Block was, potentially waiting for parents to be added
         node.proposed_blocks.discard(block)  # Remove from original block proposed blocks (doesn't matter if not present)
         
         # Ensure the block weight updates correctly
@@ -186,4 +186,5 @@ class GHOSTProtocol(ConsensusProtocol):
             
         # if block is successfully added, process any pending children
         node.broadcast_protocol._process_pending_blocks(node, block.block_id)
+        return True
     

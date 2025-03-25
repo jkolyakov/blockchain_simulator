@@ -34,15 +34,18 @@ class BlockchainBase(ABC):
             return False
         
         if self.contains_block(block.block_id):
-            logging.warning(f"Block {block.block_id} already exists!")
             return False # Block already exists
         
         # parent is guaranteed to be on blockchain, so get the local parent block object
         parent = self.get_block(block.parent.block_id)
+        if parent is None:
+            logging.error(f"Parent block {block.parent.block_id} not found!")
+            # return False
         block.parent = parent # Reassign parent block to the local parent block object
         
         # Add the block to the local blockchain
         self.blocks[block.block_id] = block
+        node.network.animator.log_event(f"Node {node.node_id} added block {block} to the blockchain", timestamp=node.env.now)
         
         if block not in parent.children:
             parent.children.append(block) # Connect to local parent

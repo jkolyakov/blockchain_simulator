@@ -1,11 +1,11 @@
-import simpy
+import simpy, random, logging, numpy as np, pandas as pd, matplotlib.pyplot as plt, copy, subprocess, networkx as nx
 import random
 import logging
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from typing import Type, Optional, List, Dict, Any, Callable, TYPE_CHECKING
+from typing import Type, Optional, List, Dict, Any, TYPE_CHECKING
 if TYPE_CHECKING:
     from blockchain_simulator.node import NodeBase
     from blockchain_simulator.blockchain import BlockchainBase
@@ -17,10 +17,9 @@ from blockchain_simulator.block import PoWBlock
 from blockchain_simulator.node import BasicNode
 from blockchain_simulator.validator import BlockchainValidator  # Import the validator
 from blockchain_simulator.visualizer import BlockchainVisualizer
+from blockchain_simulator.manim_animator import AnimationLogger
 from collections import Counter
-import networkx as nx
-import matplotlib.pyplot as plt
-import copy
+
 
 def duplicate_stats(lst):
     counts = Counter(lst)
@@ -35,7 +34,7 @@ def duplicate_stats(lst):
     }
 
 # Configure logging
-logging.basicConfig(filename="blockchain_simulation.log", level=logging.WARNING, format="%(asctime)s - %(message)s", filemode="w")
+logging.basicConfig(filename="blockchain_simulation.log", level=logging.ERROR, format="%(asctime)s - %(message)s", filemode="w")
 
 class BlockchainSimulator:
     """API for running blockchain network simulations with custom implementations."""
@@ -57,6 +56,7 @@ class BlockchainSimulator:
         broadcast_protocol: Optional[Type['BroadcastProtocol']] = GossipProtocol,
         interactive_visualization: bool = False,
         num_visualization_nodes: int = 3,
+        render_animation: bool = False,
     ):
         """
         Initializes the blockchain simulator.
@@ -85,10 +85,10 @@ class BlockchainSimulator:
         self.drop_rate: int = drop_rate
         self.interactive_visualization: bool = interactive_visualization
         self.num_visualization_nodes: int = num_visualization_nodes
+        self.animator: AnimationLogger = AnimationLogger()
         
         # Ensure proper delay matrix setup
         self.delay_matrix = self._generate_symmetric_delay_matrix()
-        
         # Initialize metrics dictionary
         self.metrics: Dict[str, Any] = {
             "total_blocks_mined": 0,
@@ -113,11 +113,18 @@ class BlockchainSimulator:
         ]
         
         # Create network topology
-        self._create_network_topology()
+        self._create_network_topology() # TODO: Make this extendable
+        
         self._visualize_network_topology(self.nodes)
         
         # Initialize validator
         self.validator = BlockchainValidator(self)
+        self.render_animation = render_animation
+        
+        # Set the animator properties
+        self.animator.set_num_nodes(self.num_nodes)
+        self.animator.set_peers({n.node_id: [p.node_id for p in n.peers] for n in self.nodes})
+        
     
     def _generate_symmetric_delay_matrix(self) -> np.ndarray:
         """
@@ -276,12 +283,18 @@ class BlockchainSimulator:
         # Display results
         self.display_metrics()
         
-        for node in self.nodes:
-            print(f"Node {node.node_id} has {len(node.blockchain.blocks)} blocks")
-            self._print_blockchain_tree(node)
+        # for node in self.nodes:
+        #     print(f"Node {node.node_id} has {len(node.blockchain.blocks)} blocks")
+        #     self._print_blockchain_tree(node)
+        
+        
+        if self.render_animation:
+            manim_file = "./blockchain_simulator/manim_animator.py"
+            scene_class = "BlockchainAnimation"
+            self.animator.save("animation_events.json")
+            # run the subprocess to render the animation
+            subprocess.run(["manim", "-pql", manim_file, scene_class, "-o", "network_activity.mp4"])        
             
-        
-        
         # Validate the simulation
         validation_results = self.validate_simulation()
         

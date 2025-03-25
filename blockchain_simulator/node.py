@@ -3,7 +3,7 @@ import logging
 import random
 import simpy
 from abc import ABC, abstractmethod
-from typing import List, Type, Dict, TYPE_CHECKING
+from typing import List, Type, Dict, Set, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from blockchain_simulator.block import BlockBase
@@ -34,6 +34,7 @@ class NodeBase(ABC):
         # int is parent block_id, value is list of blocks waiting for that parent
         self.pending_blocks: Dict[int, List['BlockBase']] = {} # Blocks that are waiting on their parents to be added to the blockchain
         self.broadcast_protocol = broadcast_protocol(self)
+        self.recent_senders: Set[tuple[int, int]] = set()  # Set of (block_id, sender_id) tuples for recent senders
 
     def add_peer(self, peer: 'NodeBase'):
         """Connects this node to a peer."""
@@ -69,11 +70,11 @@ class NodeBase(ABC):
         
         # Increment the total blocks mined
         self.network.metrics["total_blocks_mined"] += 1
+        self.network.animator.log_event(f"Node {self.node_id} mined block {new_block.block_id}", timestamp=self.env.now)
         self.network.metrics["blocks_by_node"][self.node_id] += 1
         
         # Handle block proposal based on the consensus protocol
         self.consensus_protocol.propose_block(self, new_block)
-        logging.info(f"Time {self.env.now:.2f}: Node {self.node_id} mined block {new_block.block_id}")
         yield self.env.timeout(0)  # Yield to make this a generator
 
     def step(self):

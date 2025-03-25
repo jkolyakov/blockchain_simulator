@@ -5,3 +5,4 @@ rich
 tdqm
 plotly
 pydot
+manim
