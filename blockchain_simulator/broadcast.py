@@ -198,7 +198,7 @@ class GossipProtocol(BroadcastProtocol):
             f"Node {recipient.node_id} received block {block.block_id} with parent {block.parent.block_id}"
         )
         self.node.network.animator.log_event(
-            f"Node {self.node.node_id} broadcasting block {block} to {[(recipient.node_id, False)]}", 
+            f"Node {self.node.node_id} broadcasting block {block} to {[(recipient.node_id, False, recipient.blockchain.contains_block(block.block_id))]}", 
             timestamp=self.node.env.now
         ) # TODO: Fix so that this is a different kind of log
         self.receive_block(recipient, block)
