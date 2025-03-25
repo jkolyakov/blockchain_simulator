@@ -339,6 +339,8 @@ class BlockchainAnimation(Scene):
             block.remove_updater(keep_visible)
             message.remove_updater(keep_visible)
             block_text.remove_updater(keep_visible)
+        if len(anims) == 0:
+            return None
         return AnimationGroup(*anims, lag_ratio=0)
 
     def construct(self):
@@ -383,6 +385,8 @@ class BlockchainAnimation(Scene):
                     group = Succession(animation, cleanup, run_time = 2)
             elif event_type == "broadcast":
                 animation = self.create_broadcasting_animation(params)
+                if animation is None:
+                    continue
                 group = animation
             else:
                 continue
