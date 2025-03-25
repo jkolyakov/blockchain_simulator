@@ -26,7 +26,7 @@ if __name__ == "__main__":
         drop_rate=20,
         interactive_visualization=True,
         num_visualization_nodes=1,
-        render_animation=False,
+        render_animation=True,
     )
 
     print("🚀 Starting Blockchain Simulation...")
