@@ -4,6 +4,13 @@ import simpy, random
 
 # Griffin
 class BlockBase(ABC):
+    def __init__(self):
+        self.block_id: int
+        self.parent_id: int
+        self.children_ids: Set[int]
+        self.miner_id: int
+        self.timestamp: float
+        
     @staticmethod
     @abstractmethod
     def create_block(parent: 'BlockBase', time_stamp: float, miner: 'NodeBase')->Generator[None, None, 'BlockBase']:
@@ -26,35 +33,29 @@ class BlockBase(ABC):
         """ Abstract method to verify block validity"""
         raise NotImplementedError("verify_block method is not implemented")
     
-    @abstractmethod
     def get_block_id(self) -> int:
         """Returns the block id"""
-        raise NotImplementedError("get_block_id method is not implemented")
+        return self.block_id
     
-    @abstractmethod
     def get_parent_id(self) -> int:
         """Returns the parent block id"""
-        raise NotImplementedError("get_parent_id method is not implemented")
+        return self.parent_id
     
-    @abstractmethod
     def get_children_ids(self) -> List[int]:
         """Returns the children block ids"""
-        raise NotImplementedError("get_children_ids method is not implemented")
+        return self.children_ids
     
-    @abstractmethod
     def add_child(self, child_id: int) -> None:
         """Adds a child block. Makes sure no duplicate children"""
-        raise NotImplementedError("add_child method is not implemented")
+        self.children_ids.add(child_id)
 
-    @abstractmethod
     def set_parent(self, parent_id: int) -> None:
         """Sets the parent block"""
-        raise NotImplementedError("set_parent method is not implemented")
+        self.parent_id = parent_id
     
-    @abstractmethod
     def __repr__(self) -> str:
         """Returns the string representation of the block"""
-        raise NotImplementedError("__repr__ method is not implemented")
+        return f"Block(id={self.block_id}, miner={self.miner_id}, parent={self.parent_id})"
 
 # Jacob
 class BlockchainBase(ABC):
@@ -152,7 +153,7 @@ class NodeBase(ABC):
                  blockchain_class: Type[BlockchainBase],
                  broadcast_protocol_class: Type[BroadcastProtocolBase],
                  network: 'BlockchainSimulatorBase',
-                 mining_difficulty: int = 5,
+                 mining_difficulty: int = 0,
                  ):
         """" Abstract class for defining a node in the network.
         :args:
