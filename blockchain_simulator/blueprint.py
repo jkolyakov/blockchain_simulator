@@ -1,68 +1,72 @@
 from abc import ABC, abstractmethod
-from typing import List, Type, Dict, Set, Optional
-import simpy
+from typing import List, Type, Dict, Set, Optional, Generator
+import simpy, random
 
-#Griffin
+# Griffin
 class BlockBase(ABC):
-    @abstractmethod
     @staticmethod
-    def create_block(self, parent: 'BlockBase', time_stamp: float, miner: 'NodeBase')->'BlockBase':
-        """Creates a new block based on the defined block type."""
-        pass
+    @abstractmethod
+    def create_block(parent: 'BlockBase', time_stamp: float, miner: 'NodeBase')->Generator[None, None, 'BlockBase']:
+        """Creates a new block based on the defined block type. Mines if it needs to and only returns upon completion."""
+        raise NotImplementedError("create_block method is not implemented")
     
-    @abstractmethod
     @staticmethod
-    def create_genesis_block(self)->'BlockBase':
+    @abstractmethod
+    def create_genesis_block()->'BlockBase':
         """Creates a genesis block based on the defined block type."""
-        pass
+        raise NotImplementedError("create_genesis_block method is not implemented")
     
     @abstractmethod
     def clone(self) -> 'BlockBase':
         """Clone the block. Should be overridden by subclasses to copy specific attributes. Meant for sending copy of blocks to other nodes instead of the original block."""
-        pass
+        raise NotImplementedError("clone method is not implemented")
     
     @abstractmethod
     def verify_block(self, owner: 'NodeBase') -> bool:
         """ Abstract method to verify block validity"""
-        pass
+        raise NotImplementedError("verify_block method is not implemented")
     
     @abstractmethod
     def get_block_id(self) -> int:
         """Returns the block id"""
-        pass
+        raise NotImplementedError("get_block_id method is not implemented")
     
     @abstractmethod
     def get_parent_id(self) -> int:
         """Returns the parent block id"""
-        pass
+        raise NotImplementedError("get_parent_id method is not implemented")
     
     @abstractmethod
     def get_children_ids(self) -> List[int]:
         """Returns the children block ids"""
-        pass
+        raise NotImplementedError("get_children_ids method is not implemented")
     
     @abstractmethod
     def add_child(self, child_id: int) -> None:
-        """Adds a child block"""
-        pass
+        """Adds a child block. Makes sure no duplicate children"""
+        raise NotImplementedError("add_child method is not implemented")
 
     @abstractmethod
     def set_parent(self, parent_id: int) -> None:
         """Sets the parent block"""
-        pass
+        raise NotImplementedError("set_parent method is not implemented")
     
     @abstractmethod
     def __repr__(self) -> str:
         """Returns the string representation of the block"""
-        pass
+        raise NotImplementedError("__repr__ method is not implemented")
 
 # Jacob
 class BlockchainBase(ABC):
-    def __init__(self, block_class: Type[BlockBase], mining_difficulty: int):
-        """" Abstract class for defining a blockchain.
+    def __init__(self, block_class: Type[BlockBase]):
+        """" Class for defining a blockchain.
         Needs to create a genesis block and a way of storing all the blocks in the chain.
         """
-        pass
+        self.genesis: BlockBase = block_class.create_genesis_block() # Create the genesis block
+        self.blocks: Dict[int, BlockBase] = {} # Maps block_id to Block object
+        self.blocks[self.genesis.get_block_id()] = self.genesis # Add genesis block to the blockchain
+        self.head = self.genesis # The head of the blockchain
+        self.block_class: Type[BlockBase] = block_class # The class of the blocks in the blockchain
     
     @abstractmethod
     def add_block(self, block: BlockBase, node: 'NodeBase') -> bool:
@@ -70,17 +74,15 @@ class BlockchainBase(ABC):
         :args:
         block: The block to add.
         node: The node adding the block that owns this blockchain instance."""
-        pass
+        raise NotImplementedError("add_block method is not implemented")
     
-    @abstractmethod
     def get_block(self, block_id: int) -> Optional[BlockBase]:
         """Get a block by its ID."""
-        pass
+        return self.blocks.get(block_id)
     
-    @abstractmethod
     def contains_block(self, block_id: int) -> bool:
         """Check if the blockchain contains a block with the given ID."""
-        pass
+        return block_id in self.blocks
     
     @abstractmethod
     def authorize_block(self, block: BlockBase, node: 'NodeBase') -> bool:
@@ -88,44 +90,61 @@ class BlockchainBase(ABC):
         :args:
         block: The block to authorize.
         node: The node authorizing the block."""
-        pass
+        raise NotImplementedError("authorize_block method is not implemented")
     
-    @abstractmethod
+    def get_current_head(self) -> BlockBase:
+        """Updates and returns the current head of the blockchain."""
+        return self.head
+    
+    def update_head(self, new_head: BlockBase) -> None:
+        """Updates the head of the blockchain."""
+        self.head = new_head
+    
+    def get_genesis(self) -> BlockBase:
+        """Returns the genesis block of the blockchain."""
+        return self.genesis
+    
     def __repr__(self) -> str:
         """Returns the string representation of the blockchain"""
-        pass
+        return f"Blockchain(blocks={len(self.blocks)}, head={self.head.get_block_id()}, genesis={self.genesis.get_block_id}, block_class={self.block_class.__name__})"
 
 # Griffin
 class ConsensusProtocolBase(ABC):
     @abstractmethod
     def execute_consensus(self, node: 'NodeBase') -> None:
         """Executes a step in the consensus protocol on a node."""
-        pass
+        raise NotImplementedError("execute_consensus method is not implemented")
     
     @abstractmethod
     def propose_block(self, node: 'NodeBase', block: BlockBase) -> None:
         """Proposes a block to the consensus protocol of a specific node."""
-        pass
-    pass
+        raise NotImplementedError("propose_block method is not implemented")
+    
+    @abstractmethod
+    def update_main_chain(self, blockchain: 'BlockchainBase') -> None:
+        """Updates the main chain of a node by calling the update_head method of the blockchain and starting from the get_genesis method."""
+        raise NotImplementedError("update_main_chain method is not implemented")
 
 # Siddarth
 class BroadcastProtocolBase(ABC):
+    @abstractmethod
     def __init__(self):
         """Initializes the broadcast protocol."""
-        pass
+        raise NotImplementedError("BroadcastProtocolBase class is not implemented")
     
     @abstractmethod
     def broadcast_block(self, sender: 'NodeBase', block: BlockBase) -> None:
         """Broadcasts a block to all peers."""
-        pass
+        raise NotImplementedError("broadcast_block method is not implemented")
     
     @abstractmethod
     def receive_block(self, recipient: 'NodeBase', block: BlockBase) -> None:
         """Receives a block from a peer."""
-        pass
+        raise NotImplementedError("receive_block method is not implemented")
 
 # Jacob    
 class NodeBase(ABC):
+    @abstractmethod
     def __init__(self,
                  env: simpy.Environment,
                  node_id: int,
@@ -133,7 +152,6 @@ class NodeBase(ABC):
                  blockchain_class: Type[BlockchainBase],
                  broadcast_protocol_class: Type[BroadcastProtocolBase],
                  network: 'BlockchainSimulatorBase',
-                 mining_difficulty: int = 5,
                  ):
         """" Abstract class for defining a node in the network.
         :args:
@@ -146,64 +164,104 @@ class NodeBase(ABC):
         mining_difficulty: The mining difficulty for the node.
         
         """
-        pass
+        self.env = env
+        self.node_id = node_id
+        self.network = network
+        self.consensus = consensus_protocol_class()
+        self.blockchain = blockchain_class()
+        self.broadcast_protocol = broadcast_protocol_class()
+        
+        self.peers: Set['NodeBase'] = set()
+        self.is_mining = False
+        self.recent_senders: Set[tuple[int, int]] = set()  # Set of (block_id, sender_id) tuples for recent senders. Needs to be reset periodically
+        self.pending_blocks: Dict[int, Set[BlockBase]] = {}
     
-    @abstractmethod
-    def get_peers(self) -> List['NodeBase']:
+    def get_peers(self) -> Set['NodeBase']:
         """Returns the peers of the node."""
-        pass
+        return self.peers
     
-    @abstractmethod
     def add_peer(self, peer: 'NodeBase') -> None:
         """Adds a peer to the node."""
-        pass
+        self.peers.add(peer)
     
     @abstractmethod
     def mine_block(self) -> None:
         """Mines a new block and submits it according to the consensus protocol."""
-        pass
+        raise NotImplementedError("mine_block method is not implemented")
     
-    @abstractmethod
     def start_mining(self) -> None:
         """Starts the mining process for this node"""
-        pass
+        self.is_mining = True
+        self.env.process(self.mining_loop())
     
-    @abstractmethod
     def stop_mining(self) -> None:
         """Stops the mining process for this node"""
-        pass
+        self.is_mining = False
     
-    @abstractmethod
-    def mining_loop(self) -> None:
+    def mining_loop(self):
         """The mining loop for the node. Should call mine_block and then wait for a delay before mining again."""
-        pass
+        while self.is_mining:
+            yield self.env.process(self.mine_block())
+            yield self.env.timeout(random.uniform(0.1, 0.5))
     
     @abstractmethod
     def step(self) -> None:
         """Simulates one time step of a node execution."""
-        pass
+        raise NotImplementedError("step method is not implemented")
+    
+    def get_node_id(self) -> int:
+        """Returns the node ID."""
+        return self.node_id
+    
+    def get_consensus_protocol(self) -> ConsensusProtocolBase:
+        """Returns the consensus protocol of the node."""
+        return self.consensus
+    
+    def add_to_pending(self, block: BlockBase) -> None:
+        """Adds a block to the pending blocks of the node. Meant for when parent isn't on chain yet"""
+        if block.get_parent_id() not in self.pending_blocks:
+            self.pending_blocks[block.get_parent_id()] = set()
+        self.pending_blocks[block.get_parent_id()].add(block)
+    
+    def get_pending_for_parent(self, parent_id: int) -> Set[BlockBase]:
+        """Returns the pending blocks for a parent block."""
+        return self.pending_blocks[parent_id]
+    
+    def get_env(self) -> simpy.Environment:
+        """Returns the simulation environment."""
+        return self.env
+    
+    def get_is_mining(self) -> bool:
+        """Returns whether the node is mining."""
+        return self.is_mining
+    
+    def __repr__(self) -> str:
+        """Returns the string representation of the node."""
+        return f"Node(node_id={self.node_id}, peers={len(self.peers)}, blockchain={self.blockchain})"
 
 # Siddarth
 class NetworkTopologyBase(ABC):
+    @abstractmethod
     def __init__(self, 
                  max_delay: float = 0.5,
                  min_delay: float = 0.1,
                  nodes: List[NodeBase] = [],
                  ):
-        pass
+        raise NotImplementedError("NetworkTopologyBase class is not implemented")
     
     @abstractmethod
     def create_network_topology(self, nodes: List[NodeBase]) -> None:
         """Creates the network topology. Adds peers to each node accordingly."""
-        pass
+        raise NotImplementedError("create_network_topology method is not implemented")
     
     @abstractmethod
     def get_delay_between_nodes(self, node1: NodeBase, node2: NodeBase) -> float:
         """Returns the delay between two nodes. Should be between min_delay and max_delay"""
-        pass
-    
+        raise NotImplementedError("get_delay_between_nodes method is not implemented")
+
 # Jacob
 class BlockchainSimulatorBase(ABC):
+    @abstractmethod
     def __init__(self, 
                  network_topology_class: Type[NetworkTopologyBase], 
                  consensus_protocol_class: Optional[Type[ConsensusProtocolBase]], 
@@ -237,51 +295,34 @@ class BlockchainSimulatorBase(ABC):
         
         Note that this shold create a simpy.Environment object and store it in the self.env attribute.   
         """
-        pass
+        raise NotImplementedError("BlockchainSimulatorBase class is not implemented")
     
     @abstractmethod
     def __create_network_topology(self, topology: NetworkTopologyBase) -> None:
         """Calls the create_network_topology method of the NetworkTopology object."""
-        pass
+        raise NotImplementedError("__create_network_topology method is not implemented")
     
     @abstractmethod
     def __create_nodes(self, consensus_protocol: ConsensusProtocolBase, blockchain: BlockchainBase, broadcast_protocol: BroadcastProtocolBase) -> None:
         """Creates the nodes in the network."""
-        pass
+        raise NotImplementedError("__create_nodes method is not implemented")
     
     @abstractmethod
     def start_mining(self, num_miners: int) -> None: #TODO: Do we want to allow selection of specific nodes to mine
         """Starts the mining process for all nodes."""
-        pass
+        raise NotImplementedError("start_mining method is not implemented")
     
     @abstractmethod
     def __stop_mining(self) -> None:
         """Loops through all the nodes and stops all of them from mining."""
-        pass
+        raise NotImplementedError("__stop_mining method is not implemented")
     
     @abstractmethod
     def run(self, duration: int = 100) -> None:
         """Runs the simulation for the given duration."""
-        pass
-    
-# Jacob but don't implement this class
-class Metrics(ABC):
-    def __init__(self):
-        """Initializes the metrics collection object."""
-        pass
+        raise NotImplementedError("run method is not implemented")
     
     @abstractmethod
-    def collect_metrics(self, node: NodeBase) -> None:
-        """Collects metrics from the node."""
-        pass
-    
-    @abstractmethod
-    def get_metrics(self) -> Dict[str, float]:
-        """Returns the metrics collected."""
-        pass
-    
-    @abstractmethod
-    def reset_metrics(self) -> None:
-        """Resets the metrics collected."""
-        pass
-
+    def get_consensus_interval(self) -> float:
+        """Returns how long to wait before running consensus again."""
+        raise NotImplementedError("get_consensus_interval method is not implemented")
