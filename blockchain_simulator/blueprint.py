@@ -177,6 +177,7 @@ class NodeBase(ABC):
         self.is_mining = False
         self.recent_senders: Set[tuple[int, int]] = set()  # Set of (block_id, sender_id) tuples for recent senders. Needs to be reset periodically
         self.pending_blocks: Dict[int, Set[BlockBase]] = {}
+        self.proposed_blocks: set[BlockBase] = set() # Blocks that have been proposed by this node, either through mining or receiving
     
     def get_peers(self) -> Set['NodeBase']:
         """Returns the peers of the node."""
@@ -205,6 +206,14 @@ class NodeBase(ABC):
         while self.is_mining:
             yield self.env.process(self.mine_block())
             yield self.env.timeout(random.uniform(0.1, 0.5))
+            
+    def get_proposed_blocks(self) -> Set[BlockBase]:
+        """Returns the proposed blocks of the node."""
+        return self.proposed_blocks
+
+    def add_proposed_block(self, block: BlockBase) -> None:
+        """Adds a block to the proposed blocks of the node."""
+        self.proposed_blocks.add(block)
     
     @abstractmethod
     def step(self) -> None:
