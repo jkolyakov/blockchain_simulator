@@ -152,6 +152,7 @@ class NodeBase(ABC):
                  blockchain_class: Type[BlockchainBase],
                  broadcast_protocol_class: Type[BroadcastProtocolBase],
                  network: 'BlockchainSimulatorBase',
+                 mining_difficulty: int = 5,
                  ):
         """" Abstract class for defining a node in the network.
         :args:
@@ -170,7 +171,7 @@ class NodeBase(ABC):
         self.consensus = consensus_protocol_class()
         self.blockchain = blockchain_class()
         self.broadcast_protocol = broadcast_protocol_class()
-        
+        self.mining_difficulty = mining_difficulty
         self.peers: Set['NodeBase'] = set()
         self.is_mining = False
         self.recent_senders: Set[tuple[int, int]] = set()  # Set of (block_id, sender_id) tuples for recent senders. Needs to be reset periodically
@@ -234,6 +235,10 @@ class NodeBase(ABC):
     def get_is_mining(self) -> bool:
         """Returns whether the node is mining."""
         return self.is_mining
+    
+    def get_mining_difficulty(self) -> int:
+        """Returns the mining difficulty of the node."""
+        return self.mining_difficulty
     
     def __repr__(self) -> str:
         """Returns the string representation of the node."""
