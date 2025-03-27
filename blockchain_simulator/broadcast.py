@@ -2,10 +2,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Type, Set, TYPE_CHECKING
 import random
+import simpy
 
 if TYPE_CHECKING:
     from blockchain_simulator.blueprint import NodeBase,BlockBase,BlockchainBase,BroadcastProtocolBase
-    from blockchain_simulator.broadcast_pipe import BroadcastPipe
 import logging
 
 
@@ -14,7 +14,7 @@ class BroadcastProtocol(BroadcastProtocolBase):
         self.node = node  # The node running the protocol
 
     @abstractmethod
-    def broadcast_block(self, block: "BlockBase"):
+    def broadcast_block(self, block: "BlockBase", env: simpy.Environment):
         """Broadcasts a block to all peers."""
         pass
 
@@ -108,15 +108,15 @@ class GossipProtocol(BroadcastProtocolBase):
     def send_block(self, peer: "NodeBase", block: "BlockBase", delay):
         """Sends a block to a peer with a given delay."""
         yield self.node.env.timeout(delay)
-        self.receive_block(peer, block)
+        self.simulator.input_pipe[peer.node_id].put(block)
 
-    def receive_block(self, recipient: "NodeBase", block: "BlockBase"):
+    def receive_block(self, block: "BlockBase"):
         """Receives a block from a peer."""
-        recipient.recent_senders.add((block.block_id, self.node.node_id))
-        if recipient.blockchain.contains_block(block.block_id):
+        self.recent_senders.add((block.block_id, self.node.node_id))
+        if self.blockchain.contains_block(block.block_id):
             self.node.network.animator.log_event(
-                f"Node {recipient.node_id} received duplicate block {block.block_id}",
-                timestamp=recipient.env.now,
+                f"Node {self.node_id} received duplicate block {block.block_id}",
+                timestamp=self.env.now,
             ) # TODO: Fix this so we can discard all duplicates from the same broadcast
             return
 
@@ -125,18 +125,18 @@ class GossipProtocol(BroadcastProtocolBase):
             logging.warning(f"Block {block.block_id} has no parent (genesis block?)")
         # If parent is missing, add block to pending queue and request it before processing
         # print the block id and a list of the recipient's blockchain block_ids
-        if self.is_parent_missing(recipient, block):
+        if self.is_parent_missing(self, block):
             # self.node.network.animator.log_event(f"Node {recipient.node_id} is requesting missing parent block {block.parent} for block {block}", timestamp=recipient.env.now)
             self._request_missing_block(
-                recipient,
+                self,
                 block.parent.block_id,
-                request_origin=recipient.node_id,
+                request_origin=self.node_id,
                 ttl=3,
             )
             return
 
         # Propose the block to the node
-        recipient.consensus_protocol.propose_block(recipient, block)
+        self.consensus_protocol.propose_block(self, block)
 
     def _process_pending_blocks(self, node: "NodeBase", parent_id: int):
         """Processes any pending blocks that were waiting on the given block."""
@@ -196,7 +196,8 @@ class GossipProtocol(BroadcastProtocolBase):
             f"Node {self.node.node_id} broadcasting block {block} to {[(recipient.node_id, False, recipient.blockchain.contains_block(block.block_id))]}", 
             timestamp=self.node.env.now
         ) # TODO: Fix so that this is a different kind of log
-        self.receive_block(recipient, block)
+        # self.receive_block(recipient, block)
+        self.simulator.input_pipe[recipient.node_id].put(block)
 
     def _propagate_block_request(
         self,
