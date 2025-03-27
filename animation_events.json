@@ -2,2766 +2,1876 @@
   "num_nodes": 10,
   "events": [
     [
-      0.12999999999999998,
-      "Node 6 mined block 5196488616"
-    ],
-    [
-      0.2,
-      "Node 6 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.2,
-      "Node 6 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(1, False, False), (3, False, False), (0, False, False), (7, False, False)]"
-    ],
-    [
-      0.2700000000000001,
-      "Node 3 mined block 3841176264"
-    ],
-    [
-      0.30000000000000004,
-      "Node 0 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.30000000000000004,
-      "Node 0 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(8, False, False)]"
-    ],
-    [
-      0.30000000000000004,
-      "Node 1 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.30000000000000004,
-      "Node 1 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(3, False, False), (7, False, False)]"
-    ],
-    [
-      0.30000000000000004,
-      "Node 3 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
-    ],
-    [
-      0.30000000000000004,
-      "Node 3 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(1, False, False), (8, False, False), (2, False, False), (6, True, False), (7, True, False), (4, False, False)]"
-    ],
-    [
-      0.30000000000000004,
-      "Node 3 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.30000000000000004,
-      "Node 3 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(1, True, True), (8, False, False), (2, False, False), (7, True, False), (4, False, False)]"
-    ],
-    [
-      0.30000000000000004,
-      "Node 7 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.30000000000000004,
-      "Node 7 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(3, False, True), (5, False, False), (9, False, False), (1, False, True), (4, False, False), (8, True, False)]"
-    ],
-    [
-      0.3063194290072186,
-      "Node 3 received duplicate block 5196488616"
-    ],
-    [
-      0.32412527106817335,
-      "Node 7 received duplicate block 5196488616"
-    ],
-    [
-      0.36387256574804566,
-      "Node 3 received duplicate block 5196488616"
-    ],
-    [
-      0.36478470061204776,
-      "Node 1 received duplicate block 5196488616"
+      0.3900000000000002,
+      "Node 2 mined block 918394107"
     ],
     [
       0.4,
-      "Node 1 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
+      "Node 2 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
     ],
     [
       0.4,
-      "Node 1 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(6, True, False), (7, False, False)]"
-    ],
-    [
-      0.4,
-      "Node 2 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
-    ],
-    [
-      0.4,
-      "Node 2 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(4, True, False), (5, False, False)]"
-    ],
-    [
-      0.4,
-      "Node 2 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.4,
-      "Node 2 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(4, False, False), (5, False, False)]"
-    ],
-    [
-      0.4,
-      "Node 4 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
-    ],
-    [
-      0.4,
-      "Node 4 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(2, False, True), (9, False, False), (8, False, False), (5, False, False), (7, False, False)]"
-    ],
-    [
-      0.4,
-      "Node 4 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.4,
-      "Node 4 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(2, False, True), (9, False, False), (8, False, False), (5, False, False)]"
-    ],
-    [
-      0.4,
-      "Node 5 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.4,
-      "Node 5 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(2, True, True), (4, True, True)]"
-    ],
-    [
-      0.4,
-      "Node 8 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
-    ],
-    [
-      0.4,
-      "Node 8 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(4, False, True), (0, False, False), (7, False, False)]"
-    ],
-    [
-      0.4,
-      "Node 8 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.4,
-      "Node 8 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(4, False, True), (7, False, True)]"
-    ],
-    [
-      0.4,
-      "Node 9 added block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to the blockchain"
-    ],
-    [
-      0.4,
-      "Node 9 broadcasting block Block(id=5196488616, miner=6, weight=1, time=1742826202.517591) to [(4, False, True)]"
-    ],
-    [
-      0.40604481629285194,
-      "Node 7 received duplicate block 5196488616"
-    ],
-    [
-      0.40717945789232246,
-      "Node 9 received duplicate block 5196488616"
-    ],
-    [
-      0.42029019809473683,
-      "Node 4 received duplicate block 5196488616"
-    ],
-    [
-      0.42323220313145854,
-      "Node 5 received duplicate block 5196488616"
-    ],
-    [
-      0.4507317868360439,
-      "Node 4 received duplicate block 5196488616"
-    ],
-    [
-      0.4567039989289063,
-      "Node 4 received duplicate block 3841176264"
-    ],
-    [
-      0.4567039989289063,
-      "Node 4 received duplicate block 5196488616"
-    ],
-    [
-      0.46435334719014726,
-      "Node 2 received duplicate block 3841176264"
-    ],
-    [
-      0.46435334719014726,
-      "Node 2 received duplicate block 5196488616"
-    ],
-    [
-      0.48962933123810687,
-      "Node 8 received duplicate block 3841176264"
-    ],
-    [
-      0.48962933123810687,
-      "Node 8 received duplicate block 5196488616"
-    ],
-    [
-      0.4993511875714598,
-      "Node 5 received duplicate block 5196488616"
+      "Node 2 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(1, True, False), (8, True, False), (7, False, False), (5, False, False)]"
     ],
     [
       0.5,
-      "Node 0 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
+      "Node 5 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
     ],
     [
       0.5,
-      "Node 0 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(6, False, False)]"
+      "Node 5 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(0, False, False), (3, True, False), (7, False, False), (4, False, False), (8, False, False), (9, False, False)]"
     ],
     [
       0.5,
-      "Node 5 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
+      "Node 7 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
     ],
     [
       0.5,
-      "Node 5 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(7, False, False)]"
+      "Node 7 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(5, False, True), (8, False, False)]"
     ],
     [
-      0.5,
-      "Node 7 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
+      0.5238129391660301,
+      "Node 7 received duplicate block 918394107"
     ],
     [
-      0.5,
-      "Node 7 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(3, False, True), (5, False, True), (9, False, False), (6, True, False)]"
-    ],
-    [
-      0.5,
-      "Node 9 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
-    ],
-    [
-      0.5,
-      "Node 9 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(7, False, True)]"
-    ],
-    [
-      0.5090005920131317,
-      "Node 7 received duplicate block 3841176264"
-    ],
-    [
-      0.5487187880358813,
-      "Node 5 received duplicate block 3841176264"
-    ],
-    [
-      0.5550402248253516,
-      "Node 7 received duplicate block 3841176264"
-    ],
-    [
-      0.5638725657480457,
-      "Node 3 received duplicate block 3841176264"
-    ],
-    [
-      0.5754534205709775,
-      "Node 9 received duplicate block 3841176264"
+      0.5412979379607026,
+      "Node 5 received duplicate block 918394107"
     ],
     [
       0.6,
-      "Node 6 added block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to the blockchain"
+      "Node 0 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
     ],
     [
       0.6,
-      "Node 6 broadcasting block Block(id=3841176264, miner=3, weight=1, time=1742826202.517576) to [(1, False, True), (3, False, True), (7, False, True)]"
+      "Node 0 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(4, False, False), (9, False, False)]"
     ],
     [
-      0.6462581859917054,
-      "Node 3 received duplicate block 3841176264"
+      0.6,
+      "Node 4 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
     ],
     [
-      0.6627999182101549,
-      "Node 1 received duplicate block 3841176264"
+      0.6,
+      "Node 4 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(0, False, True), (3, False, False)]"
     ],
     [
-      0.6868549323561746,
-      "Node 7 received duplicate block 3841176264"
+      0.6,
+      "Node 8 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
     ],
     [
-      2.719999999999986,
-      "Node 8 mined block 8327246588"
+      0.6,
+      "Node 8 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(2, False, True), (6, False, False)]"
+    ],
+    [
+      0.6,
+      "Node 9 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
+    ],
+    [
+      0.6,
+      "Node 9 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(0, False, True), (6, True, False)]"
+    ],
+    [
+      0.606469491271599,
+      "Node 2 received duplicate block 918394107"
+    ],
+    [
+      0.6070436263533114,
+      "Node 4 received duplicate block 918394107"
+    ],
+    [
+      0.6357368356398194,
+      "Node 0 received duplicate block 918394107"
+    ],
+    [
+      0.6665798959546284,
+      "Node 9 received duplicate block 918394107"
+    ],
+    [
+      0.682913584211125,
+      "Node 0 received duplicate block 918394107"
+    ],
+    [
+      0.6900000000000004,
+      "Node 3 mined block 5357373724"
+    ],
+    [
+      0.7,
+      "Node 3 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
+    ],
+    [
+      0.7,
+      "Node 3 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(5, False, True), (6, False, False)]"
+    ],
+    [
+      0.7,
+      "Node 3 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      0.7,
+      "Node 3 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(5, True, False), (4, True, False), (6, False, False)]"
+    ],
+    [
+      0.7,
+      "Node 6 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
+    ],
+    [
+      0.7,
+      "Node 6 broadcasting block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to [(3, False, True), (9, False, True)]"
+    ],
+    [
+      0.7497708791597966,
+      "Node 3 received duplicate block 918394107"
+    ],
+    [
+      0.7749336642604557,
+      "Node 6 received duplicate block 918394107"
+    ],
+    [
+      0.7793940023827868,
+      "Node 9 received duplicate block 918394107"
+    ],
+    [
+      0.7794695401681806,
+      "Node 5 received duplicate block 918394107"
+    ],
+    [
+      0.7999999999999999,
+      "Node 6 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      0.7999999999999999,
+      "Node 6 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(8, False, False), (9, True, False)]"
+    ],
+    [
+      0.8999999999999999,
+      "Node 8 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      0.8999999999999999,
+      "Node 8 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(2, False, False), (5, False, False), (7, True, False)]"
+    ],
+    [
+      0.9999999999999999,
+      "Node 2 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      0.9999999999999999,
+      "Node 2 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(1, False, False), (7, False, False), (5, False, False)]"
+    ],
+    [
+      0.9999999999999999,
+      "Node 5 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      0.9999999999999999,
+      "Node 5 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(0, False, False), (3, True, True), (7, False, False), (2, False, True), (4, False, False), (9, True, False)]"
+    ],
+    [
+      1.0589319348814576,
+      "Node 3 mined block 3403110064"
+    ],
+    [
+      1.0729904640846937,
+      "Node 2 received duplicate block 5357373724"
+    ],
+    [
+      1.0836992894204907,
+      "Node 5 received duplicate block 5357373724"
+    ],
+    [
+      1.0999999999999999,
+      "Node 0 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      1.0999999999999999,
+      "Node 0 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(4, True, False), (9, False, False)]"
+    ],
+    [
+      1.0999999999999999,
+      "Node 1 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      1.0999999999999999,
+      "Node 1 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to []"
+    ],
+    [
+      1.0999999999999999,
+      "Node 3 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.0999999999999999,
+      "Node 3 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(5, False, False), (4, False, False), (6, False, False)]"
+    ],
+    [
+      1.0999999999999999,
+      "Node 4 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      1.0999999999999999,
+      "Node 4 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(0, False, True), (3, False, True)]"
+    ],
+    [
+      1.0999999999999999,
+      "Node 7 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      1.0999999999999999,
+      "Node 7 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(8, True, True)]"
+    ],
+    [
+      1.1731177683356628,
+      "Node 3 received duplicate block 5357373724"
+    ],
+    [
+      1.182913584211125,
+      "Node 0 received duplicate block 5357373724"
+    ],
+    [
+      1.2,
+      "Node 4 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.2,
+      "Node 4 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(0, False, False), (5, True, False)]"
+    ],
+    [
+      1.2,
+      "Node 5 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.2,
+      "Node 5 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(0, False, False), (7, False, False), (2, False, False), (4, True, True), (8, True, False), (9, False, False)]"
+    ],
+    [
+      1.2,
+      "Node 6 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.2,
+      "Node 6 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(8, True, False), (9, False, False)]"
+    ],
+    [
+      1.2,
+      "Node 9 added block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to the blockchain"
+    ],
+    [
+      1.2,
+      "Node 9 broadcasting block Block(id=5357373724, miner=3, weight=1, time=1743103561.1166499) to [(5, False, True), (6, False, True)]"
+    ],
+    [
+      1.2037208002426432,
+      "Node 6 received duplicate block 5357373724"
+    ],
+    [
+      1.2190405247844032,
+      "Node 5 received duplicate block 5357373724"
+    ],
+    [
+      1.3,
+      "Node 0 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.3,
+      "Node 0 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(9, False, False)]"
+    ],
+    [
+      1.3,
+      "Node 2 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.3,
+      "Node 2 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(1, False, False), (8, False, False), (7, False, False)]"
+    ],
+    [
+      1.3,
+      "Node 7 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.3,
+      "Node 7 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(2, False, True), (8, False, False)]"
+    ],
+    [
+      1.3,
+      "Node 9 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.3,
+      "Node 9 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(0, False, True)]"
+    ],
+    [
+      1.3164851772008475,
+      "Node 2 received duplicate block 3403110064"
+    ],
+    [
+      1.3357368356398194,
+      "Node 0 received duplicate block 3403110064"
+    ],
+    [
+      1.3665798959546285,
+      "Node 9 received duplicate block 3403110064"
+    ],
+    [
+      1.3716536287757977,
+      "Node 2 broadcasting block Block(id=918394107, miner=2, weight=2, time=1743103561.1166441) to [(1, False, False)]"
+    ],
+    [
+      1.3833130926483723,
+      "Node 7 received duplicate block 3403110064"
+    ],
+    [
+      1.4000000000000001,
+      "Node 1 added block Block(id=918394107, miner=2, weight=1, time=1743103561.1166441) to the blockchain"
+    ],
+    [
+      1.4000000000000001,
+      "Node 1 broadcasting block Block(id=918394107, miner=2, weight=2, time=1743103561.1166441) to []"
+    ],
+    [
+      1.4000000000000001,
+      "Node 8 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.4000000000000001,
+      "Node 8 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to [(5, True, True), (6, True, True)]"
+    ],
+    [
+      1.5000000000000002,
+      "Node 1 added block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to the blockchain"
+    ],
+    [
+      1.5000000000000002,
+      "Node 1 broadcasting block Block(id=3403110064, miner=3, weight=1, time=0.9489319348814576) to []"
+    ],
+    [
+      1.7015862935282215,
+      "Node 2 mined block 6085900125"
+    ],
+    [
+      1.8000000000000005,
+      "Node 2 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      1.8000000000000005,
+      "Node 2 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(1, False, False), (8, True, False), (7, False, False), (5, False, False)]"
+    ],
+    [
+      1.9000000000000006,
+      "Node 1 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      1.9000000000000006,
+      "Node 1 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to []"
+    ],
+    [
+      1.9000000000000006,
+      "Node 5 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      1.9000000000000006,
+      "Node 5 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(0, False, False), (3, False, False), (7, False, False), (4, False, False), (8, False, False), (9, True, False)]"
+    ],
+    [
+      1.9000000000000006,
+      "Node 7 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      1.9000000000000006,
+      "Node 7 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(5, False, True), (8, False, False)]"
+    ],
+    [
+      1.9238129391660306,
+      "Node 7 received duplicate block 6085900125"
+    ],
+    [
+      1.9412979379607032,
+      "Node 5 received duplicate block 6085900125"
+    ],
+    [
+      2.0000000000000004,
+      "Node 0 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      2.0000000000000004,
+      "Node 0 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(4, True, False), (9, False, False)]"
+    ],
+    [
+      2.0000000000000004,
+      "Node 3 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      2.0000000000000004,
+      "Node 3 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(4, False, False), (6, True, False)]"
+    ],
+    [
+      2.0000000000000004,
+      "Node 4 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      2.0000000000000004,
+      "Node 4 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(0, False, True), (3, False, True)]"
+    ],
+    [
+      2.0000000000000004,
+      "Node 8 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      2.0000000000000004,
+      "Node 8 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(2, False, True), (6, False, False)]"
+    ],
+    [
+      2.0064694912715995,
+      "Node 2 received duplicate block 6085900125"
+    ],
+    [
+      2.0731177683356634,
+      "Node 3 received duplicate block 6085900125"
+    ],
+    [
+      2.0829135842111253,
+      "Node 0 received duplicate block 6085900125"
+    ],
+    [
+      2.090621446613449,
+      "Node 4 received duplicate block 6085900125"
+    ],
+    [
+      2.1000000000000005,
+      "Node 6 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      2.1000000000000005,
+      "Node 6 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(3, False, True), (9, False, False)]"
+    ],
+    [
+      2.1000000000000005,
+      "Node 9 added block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to the blockchain"
+    ],
+    [
+      2.1000000000000005,
+      "Node 9 broadcasting block Block(id=6085900125, miner=2, weight=1, time=0.7615862935282207) to [(5, False, True), (6, False, True)]"
+    ],
+    [
+      2.1037208002426437,
+      "Node 6 received duplicate block 6085900125"
+    ],
+    [
+      2.1190405247844035,
+      "Node 5 received duplicate block 6085900125"
+    ],
+    [
+      2.149770879159797,
+      "Node 3 received duplicate block 6085900125"
+    ],
+    [
+      2.1793940023827876,
+      "Node 9 received duplicate block 6085900125"
+    ],
+    [
+      2.781454646984302,
+      "Node 3 mined block 1966317172"
     ],
     [
       2.800000000000001,
-      "Node 8 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 3 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       2.800000000000001,
-      "Node 8 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(3, False, False), (4, True, False), (0, False, False), (7, False, False)]"
+      "Node 3 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(5, False, False), (4, True, False), (6, False, False)]"
     ],
     [
       2.9000000000000012,
-      "Node 0 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 5 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       2.9000000000000012,
-      "Node 0 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(6, False, False)]"
+      "Node 5 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(0, False, False), (7, False, False), (2, False, False), (4, False, False), (8, False, False), (9, False, False)]"
     ],
     [
       2.9000000000000012,
-      "Node 3 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 6 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       2.9000000000000012,
-      "Node 3 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(1, False, False), (2, True, False), (6, False, False), (7, False, False), (4, False, False)]"
-    ],
-    [
-      2.9000000000000012,
-      "Node 7 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
-    ],
-    [
-      2.9000000000000012,
-      "Node 7 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(3, True, True), (5, False, False), (9, False, False), (6, False, False), (1, False, False), (4, False, False)]"
-    ],
-    [
-      2.998018852231717,
-      "Node 7 received duplicate block 8327246588"
+      "Node 6 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(8, False, False), (9, False, False)]"
     ],
     [
       3.0000000000000013,
-      "Node 1 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 0 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       3.0000000000000013,
-      "Node 1 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(6, True, False)]"
+      "Node 0 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(4, False, False), (9, False, False)]"
     ],
     [
       3.0000000000000013,
-      "Node 4 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 2 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       3.0000000000000013,
-      "Node 4 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(2, False, False), (9, False, False), (8, False, True), (5, False, False)]"
+      "Node 2 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(1, False, False), (8, False, False), (7, False, False)]"
     ],
     [
       3.0000000000000013,
-      "Node 5 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 4 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       3.0000000000000013,
-      "Node 5 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(2, False, False), (4, False, True)]"
+      "Node 4 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(0, False, True), (3, False, True)]"
     ],
     [
       3.0000000000000013,
-      "Node 6 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 7 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       3.0000000000000013,
-      "Node 6 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(1, False, True)]"
+      "Node 7 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(2, False, True), (8, False, False)]"
     ],
     [
       3.0000000000000013,
-      "Node 9 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 8 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       3.0000000000000013,
-      "Node 9 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(4, False, True)]"
+      "Node 8 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(2, False, True), (7, False, True)]"
     ],
     [
-      3.007179457892324,
-      "Node 9 received duplicate block 8327246588"
+      3.0000000000000013,
+      "Node 9 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
-      3.02323220313146,
-      "Node 5 received duplicate block 8327246588"
+      3.0000000000000013,
+      "Node 9 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to [(0, False, True)]"
     ],
     [
-      3.0337235252528143,
-      "Node 4 received duplicate block 8327246588"
+      3.0064694912716003,
+      "Node 2 received duplicate block 1966317172"
     ],
     [
-      3.050731786836045,
-      "Node 4 received duplicate block 8327246588"
+      3.0070436263533127,
+      "Node 4 received duplicate block 1966317172"
     ],
     [
-      3.0627999182101564,
-      "Node 1 received duplicate block 8327246588"
+      3.0164851772008485,
+      "Node 2 received duplicate block 1966317172"
     ],
     [
-      3.089629331238108,
-      "Node 8 received duplicate block 8327246588"
+      3.035736835639821,
+      "Node 0 received duplicate block 1966317172"
+    ],
+    [
+      3.06657989595463,
+      "Node 9 received duplicate block 1966317172"
+    ],
+    [
+      3.067398674106919,
+      "Node 8 received duplicate block 1966317172"
+    ],
+    [
+      3.0731177683356643,
+      "Node 3 received duplicate block 1966317172"
+    ],
+    [
+      3.082913584211126,
+      "Node 0 received duplicate block 1966317172"
+    ],
+    [
+      3.083313092648374,
+      "Node 7 received duplicate block 1966317172"
+    ],
+    [
+      3.086605776411123,
+      "Node 8 received duplicate block 1966317172"
+    ],
+    [
+      3.0884027445309217,
+      "Node 7 received duplicate block 1966317172"
     ],
     [
       3.1000000000000014,
-      "Node 2 added block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to the blockchain"
+      "Node 1 added block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to the blockchain"
     ],
     [
       3.1000000000000014,
-      "Node 2 broadcasting block Block(id=8327246588, miner=8, weight=1, time=1742826202.517602) to [(3, False, True)]"
+      "Node 1 broadcasting block Block(id=1966317172, miner=3, weight=1, time=1.2914546469843178) to []"
     ],
     [
-      3.155498021977598,
-      "Node 3 received duplicate block 8327246588"
-    ],
-    [
-      3.239269867288747,
-      "Node 3 mined block 9738975099"
-    ],
-    [
-      3.3000000000000016,
-      "Node 3 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.3000000000000016,
-      "Node 3 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(1, False, False), (8, False, False), (2, False, False), (6, False, False), (7, False, False), (4, False, False)]"
-    ],
-    [
-      3.4000000000000017,
-      "Node 1 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.4000000000000017,
-      "Node 1 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(6, False, False), (7, False, False)]"
-    ],
-    [
-      3.4000000000000017,
-      "Node 2 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.4000000000000017,
-      "Node 2 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(4, False, False), (5, False, False)]"
-    ],
-    [
-      3.4000000000000017,
-      "Node 4 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.4000000000000017,
-      "Node 4 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(2, False, True), (9, False, False), (8, False, False), (5, False, False), (7, False, False)]"
-    ],
-    [
-      3.4000000000000017,
-      "Node 6 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.4000000000000017,
-      "Node 6 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(1, False, True), (0, False, False), (7, False, False)]"
-    ],
-    [
-      3.4000000000000017,
-      "Node 7 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.4000000000000017,
-      "Node 7 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(5, True, False), (9, True, False), (6, False, True), (1, False, True), (4, False, True), (8, False, False)]"
-    ],
-    [
-      3.4000000000000017,
-      "Node 8 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.4000000000000017,
-      "Node 8 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(4, False, True), (0, True, False), (7, False, True)]"
-    ],
-    [
-      3.4060448162928534,
-      "Node 7 received duplicate block 9738975099"
-    ],
-    [
-      3.41244835417121,
-      "Node 7 received duplicate block 9738975099"
-    ],
-    [
-      3.4202901980947384,
-      "Node 4 received duplicate block 9738975099"
-    ],
-    [
-      3.4211491998715076,
-      "Node 8 received duplicate block 9738975099"
-    ],
-    [
-      3.424125271068175,
-      "Node 7 received duplicate block 9738975099"
-    ],
-    [
-      3.456703998928908,
-      "Node 4 received duplicate block 9738975099"
-    ],
-    [
-      3.4627999182101568,
-      "Node 1 received duplicate block 9738975099"
-    ],
-    [
-      3.464353347190149,
-      "Node 2 received duplicate block 9738975099"
-    ],
-    [
-      3.4647847006120496,
-      "Node 1 received duplicate block 9738975099"
-    ],
-    [
-      3.4773611016850228,
-      "Node 6 received duplicate block 9738975099"
-    ],
-    [
-      3.4868549323561764,
-      "Node 7 received duplicate block 9738975099"
-    ],
-    [
-      3.4869471105868994,
-      "Node 4 received duplicate block 9738975099"
-    ],
-    [
-      3.4870656082116547,
-      "Node 6 received duplicate block 9738975099"
-    ],
-    [
-      3.4896293312381084,
-      "Node 8 received duplicate block 9738975099"
-    ],
-    [
-      3.5000000000000018,
-      "Node 0 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.5000000000000018,
-      "Node 0 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(8, False, True)]"
-    ],
-    [
-      3.5000000000000018,
-      "Node 5 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.5000000000000018,
-      "Node 5 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(7, False, True)]"
-    ],
-    [
-      3.5000000000000018,
-      "Node 9 added block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to the blockchain"
-    ],
-    [
-      3.5000000000000018,
-      "Node 9 broadcasting block Block(id=9738975099, miner=3, weight=1, time=0.4692698672887722) to [(7, False, True)]"
-    ],
-    [
-      3.5090005920131335,
-      "Node 7 received duplicate block 9738975099"
-    ],
-    [
-      3.509931314924553,
-      "Node 8 received duplicate block 9738975099"
-    ],
-    [
-      3.5550402248253534,
-      "Node 7 received duplicate block 9738975099"
-    ],
-    [
-      4.159999999999956,
-      "Node 0 mined block 8166789038"
-    ],
-    [
-      4.200000000000001,
-      "Node 0 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
-    ],
-    [
-      4.200000000000001,
-      "Node 0 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(6, False, False), (8, False, False)]"
+      4.279999999999953,
+      "Node 6 mined block 4160752772"
     ],
     [
       4.300000000000001,
-      "Node 6 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
+      "Node 6 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
       4.300000000000001,
-      "Node 6 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(1, False, False), (3, False, False), (7, False, False)]"
-    ],
-    [
-      4.300000000000001,
-      "Node 8 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
-    ],
-    [
-      4.300000000000001,
-      "Node 8 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(3, False, False), (4, False, False), (7, False, False)]"
+      "Node 6 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(3, False, False), (8, False, False), (9, False, False)]"
     ],
     [
       4.4,
-      "Node 1 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
+      "Node 3 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
       4.4,
-      "Node 1 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(3, False, False), (7, False, False)]"
+      "Node 3 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(5, False, False), (4, False, False)]"
     ],
     [
       4.4,
-      "Node 3 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
+      "Node 8 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
       4.4,
-      "Node 3 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(1, False, True), (2, False, False), (7, False, False), (4, False, False)]"
+      "Node 8 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(2, False, False), (5, False, False), (7, False, False)]"
     ],
     [
       4.4,
-      "Node 4 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
+      "Node 9 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
       4.4,
-      "Node 4 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(2, False, False), (3, False, True), (9, False, False), (5, True, False), (7, False, False)]"
-    ],
-    [
-      4.4,
-      "Node 7 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
-    ],
-    [
-      4.4,
-      "Node 7 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(3, True, True), (5, False, False), (9, False, False), (1, False, True), (4, True, True)]"
-    ],
-    [
-      4.406319429007219,
-      "Node 3 received duplicate block 8166789038"
-    ],
-    [
-      4.412448354171208,
-      "Node 7 received duplicate block 8166789038"
-    ],
-    [
-      4.412594997603843,
-      "Node 4 received duplicate block 8166789038"
-    ],
-    [
-      4.424125271068173,
-      "Node 7 received duplicate block 8166789038"
-    ],
-    [
-      4.441393687067257,
-      "Node 3 received duplicate block 8166789038"
-    ],
-    [
-      4.464784700612048,
-      "Node 1 received duplicate block 8166789038"
-    ],
-    [
-      4.479691511419245,
-      "Node 1 received duplicate block 8166789038"
-    ],
-    [
-      4.4980188522317155,
-      "Node 7 received duplicate block 8166789038"
+      "Node 9 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(0, True, False), (5, False, False)]"
     ],
     [
       4.5,
-      "Node 2 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
+      "Node 2 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
       4.5,
-      "Node 2 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(5, True, False)]"
+      "Node 2 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(1, False, False), (7, False, False), (5, False, False)]"
     ],
     [
       4.5,
-      "Node 5 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
+      "Node 4 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
       4.5,
-      "Node 5 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to [(2, False, True), (4, False, True)]"
+      "Node 4 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(0, False, False), (5, True, False)]"
     ],
     [
       4.5,
-      "Node 9 added block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to the blockchain"
+      "Node 5 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
       4.5,
-      "Node 9 broadcasting block Block(id=8166789038, miner=0, weight=1, time=1742826202.517505) to []"
+      "Node 5 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(0, True, False), (7, False, False), (2, True, True), (4, False, True)]"
     ],
     [
-      4.533723525252813,
-      "Node 4 received duplicate block 8166789038"
+      4.5,
+      "Node 7 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
-      4.584124494568426,
-      "Node 2 received duplicate block 8166789038"
+      4.5,
+      "Node 7 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(2, True, True), (5, False, True)]"
     ],
     [
-      4.699014583992544,
-      "Node 6 mined block 6800688523"
+      4.52381293916603,
+      "Node 7 received duplicate block 4160752772"
     ],
     [
-      4.699999999999999,
-      "Node 6 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      4.524778790432171,
+      "Node 4 received duplicate block 4160752772"
     ],
     [
-      4.699999999999999,
-      "Node 6 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(1, False, False), (3, False, False), (0, True, False), (7, False, False)]"
+      4.541297937960703,
+      "Node 5 received duplicate block 4160752772"
     ],
     [
-      4.799999999999999,
-      "Node 1 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      4.583313092648372,
+      "Node 7 received duplicate block 4160752772"
     ],
     [
-      4.799999999999999,
-      "Node 1 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(3, False, False), (7, False, False)]"
+      4.58369928942049,
+      "Node 5 received duplicate block 4160752772"
     ],
     [
-      4.799999999999999,
-      "Node 3 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      4.6,
+      "Node 0 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
-      4.799999999999999,
-      "Node 3 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(1, False, True), (8, False, False), (2, False, False), (7, False, False), (4, True, False)]"
+      4.6,
+      "Node 0 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to [(5, False, True), (9, False, True)]"
     ],
     [
-      4.799999999999999,
-      "Node 7 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      4.6,
+      "Node 1 added block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to the blockchain"
     ],
     [
-      4.799999999999999,
-      "Node 7 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(3, False, True), (5, False, False), (9, False, False), (1, False, True), (4, False, False), (8, False, False)]"
+      4.6,
+      "Node 1 broadcasting block Block(id=4160752772, miner=6, weight=1, time=1743103561.116668) to []"
     ],
     [
-      4.8063194290072175,
-      "Node 3 received duplicate block 6800688523"
+      4.666579895954628,
+      "Node 9 received duplicate block 4160752772"
     ],
     [
-      4.824125271068172,
-      "Node 7 received duplicate block 6800688523"
+      4.67623883225799,
+      "Node 5 received duplicate block 4160752772"
     ],
     [
-      4.863872565748045,
-      "Node 3 received duplicate block 6800688523"
+      5.129999999999935,
+      "Node 9 mined block 5513227021"
     ],
     [
-      4.864784700612047,
-      "Node 1 received duplicate block 6800688523"
+      5.1999999999999975,
+      "Node 9 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      4.879691511419243,
-      "Node 1 received duplicate block 6800688523"
+      5.1999999999999975,
+      "Node 9 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(0, False, False), (5, False, False), (6, True, False)]"
     ],
     [
-      4.898018852231714,
-      "Node 7 received duplicate block 6800688523"
+      5.299999999999997,
+      "Node 0 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      4.899999999999999,
-      "Node 2 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      5.299999999999997,
+      "Node 0 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(4, False, False), (5, True, False)]"
     ],
     [
-      4.899999999999999,
-      "Node 2 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(4, True, False), (5, True, False)]"
+      5.299999999999997,
+      "Node 5 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      4.899999999999999,
-      "Node 4 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      5.299999999999997,
+      "Node 5 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(0, False, True), (3, True, False), (7, False, False), (2, False, False), (4, False, False), (8, False, False)]"
     ],
     [
-      4.899999999999999,
-      "Node 4 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(2, False, True), (3, False, True), (9, False, False), (8, False, False), (5, False, False)]"
+      5.350878688188079,
+      "Node 0 received duplicate block 5513227021"
     ],
     [
-      4.899999999999999,
-      "Node 5 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      5.399999999999997,
+      "Node 2 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      4.899999999999999,
-      "Node 5 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(2, True, True), (4, False, True)]"
+      5.399999999999997,
+      "Node 2 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(1, False, False), (8, False, False), (7, True, False)]"
     ],
     [
-      4.899999999999999,
-      "Node 8 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      5.399999999999997,
+      "Node 4 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      4.899999999999999,
-      "Node 8 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(4, False, True), (0, True, False)]"
+      5.399999999999997,
+      "Node 4 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(3, False, False)]"
     ],
     [
-      4.899999999999999,
-      "Node 9 added block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to the blockchain"
+      5.399999999999997,
+      "Node 7 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      4.899999999999999,
-      "Node 9 broadcasting block Block(id=6800688523, miner=6, weight=1, time=0.5390145839926003) to [(4, False, True)]"
+      5.399999999999997,
+      "Node 7 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(2, False, True), (8, False, False)]"
     ],
     [
-      4.907179457892321,
-      "Node 9 received duplicate block 6800688523"
+      5.399999999999997,
+      "Node 8 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      4.923232203131457,
-      "Node 5 received duplicate block 6800688523"
+      5.399999999999997,
+      "Node 8 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(2, False, True), (6, False, False), (7, False, True)]"
     ],
     [
-      4.9337235252528115,
-      "Node 4 received duplicate block 6800688523"
+      5.406469491271596,
+      "Node 2 received duplicate block 5513227021"
     ],
     [
-      4.941393687067255,
-      "Node 3 received duplicate block 6800688523"
+      5.416485177200844,
+      "Node 2 received duplicate block 5513227021"
     ],
     [
-      4.950731786836043,
-      "Node 4 received duplicate block 6800688523"
+      5.4673986741069145,
+      "Node 8 received duplicate block 5513227021"
     ],
     [
-      4.956703998928905,
-      "Node 4 received duplicate block 6800688523"
+      5.4866057764111185,
+      "Node 8 received duplicate block 5513227021"
     ],
     [
-      4.964353347190146,
-      "Node 2 received duplicate block 6800688523"
+      5.488402744530917,
+      "Node 7 received duplicate block 5513227021"
     ],
     [
-      4.989629331238105,
-      "Node 8 received duplicate block 6800688523"
+      5.4999999999999964,
+      "Node 1 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      5.779999999999921,
-      "Node 1 mined block 9335177273"
+      5.4999999999999964,
+      "Node 1 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to []"
     ],
     [
-      5.799999999999995,
-      "Node 1 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
+      5.4999999999999964,
+      "Node 3 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      5.799999999999995,
-      "Node 1 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(6, False, False), (3, True, False), (7, False, False)]"
+      5.4999999999999964,
+      "Node 3 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(5, True, True), (6, True, False)]"
     ],
     [
-      5.846421584331183,
-      "Node 8 mined block 3986599527"
+      5.4999999999999964,
+      "Node 6 added block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to the blockchain"
     ],
     [
-      5.899999999999995,
-      "Node 6 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
+      5.4999999999999964,
+      "Node 6 broadcasting block Block(id=5513227021, miner=9, weight=1, time=1743103561.116689) to [(3, False, True), (9, False, True)]"
     ],
     [
-      5.899999999999995,
-      "Node 6 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(3, False, False), (0, False, False), (7, False, False)]"
+      5.5497708791597935,
+      "Node 3 received duplicate block 5513227021"
     ],
     [
-      5.899999999999995,
-      "Node 7 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
+      5.5793940023827835,
+      "Node 9 received duplicate block 5513227021"
     ],
     [
-      5.899999999999995,
-      "Node 7 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(3, False, False), (5, False, False), (9, False, False), (6, True, True), (4, False, False), (8, False, False)]"
-    ],
-    [
-      5.899999999999995,
-      "Node 8 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      5.899999999999995,
-      "Node 8 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(3, False, False), (4, True, False), (0, True, False), (7, False, False)]"
-    ],
-    [
-      5.986854932356169,
-      "Node 7 received duplicate block 9335177273"
-    ],
-    [
-      5.999999999999995,
-      "Node 0 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
-    ],
-    [
-      5.999999999999995,
-      "Node 0 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(8, True, False)]"
-    ],
-    [
-      5.999999999999995,
-      "Node 3 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      5.999999999999995,
-      "Node 3 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(1, True, False), (2, False, False), (6, False, False), (7, False, False), (4, False, False)]"
-    ],
-    [
-      5.999999999999995,
-      "Node 3 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
-    ],
-    [
-      5.999999999999995,
-      "Node 3 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(1, True, True), (8, False, False), (2, False, False), (4, False, False)]"
-    ],
-    [
-      5.999999999999995,
-      "Node 4 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
-    ],
-    [
-      5.999999999999995,
-      "Node 4 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(2, False, False), (3, False, True), (9, False, False), (8, True, False), (5, True, False)]"
-    ],
-    [
-      5.999999999999995,
-      "Node 5 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
-    ],
-    [
-      5.999999999999995,
-      "Node 5 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(2, True, False), (4, True, True)]"
-    ],
-    [
-      5.999999999999995,
-      "Node 7 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      5.999999999999995,
-      "Node 7 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(3, False, True), (5, False, False), (9, False, False), (6, False, False), (1, False, False), (4, False, False)]"
-    ],
-    [
-      5.999999999999995,
-      "Node 8 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
-    ],
-    [
-      5.999999999999995,
-      "Node 8 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(3, False, True), (4, False, True), (0, False, True)]"
-    ],
-    [
-      5.999999999999995,
-      "Node 9 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
-    ],
-    [
-      5.999999999999995,
-      "Node 9 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(4, False, True)]"
-    ],
-    [
-      6.007179457892317,
-      "Node 9 received duplicate block 9335177273"
-    ],
-    [
-      6.012594997603838,
-      "Node 4 received duplicate block 9335177273"
-    ],
-    [
-      6.020390014145804,
-      "Node 0 received duplicate block 9335177273"
-    ],
-    [
-      6.03615444601796,
-      "Node 8 received duplicate block 9335177273"
-    ],
-    [
-      6.040082245070434,
-      "Node 3 received duplicate block 9335177273"
-    ],
-    [
-      6.041393687067251,
-      "Node 3 received duplicate block 9335177273"
-    ],
-    [
-      6.050731786836039,
-      "Node 4 received duplicate block 9335177273"
-    ],
-    [
-      6.056703998928901,
-      "Node 4 received duplicate block 9335177273"
-    ],
-    [
-      6.06387256574804,
-      "Node 3 received duplicate block 3986599527"
-    ],
-    [
-      6.09801885223171,
-      "Node 7 received duplicate block 3986599527"
-    ],
-    [
-      6.099999999999994,
-      "Node 1 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      6.099999999999994,
-      "Node 1 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(6, False, False), (3, False, True)]"
-    ],
-    [
-      6.099999999999994,
-      "Node 2 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      6.099999999999994,
-      "Node 2 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(4, False, False), (5, False, False)]"
-    ],
-    [
-      6.099999999999994,
-      "Node 2 added block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to the blockchain"
-    ],
-    [
-      6.099999999999994,
-      "Node 2 broadcasting block Block(id=9335177273, miner=1, weight=1, time=1742826202.5175622) to [(5, False, True)]"
-    ],
-    [
-      6.099999999999994,
-      "Node 4 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      6.099999999999994,
-      "Node 4 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(2, False, True), (9, False, False), (8, False, True), (5, False, False)]"
-    ],
-    [
-      6.099999999999994,
-      "Node 5 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      6.099999999999994,
-      "Node 5 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(2, False, True), (4, True, True)]"
-    ],
-    [
-      6.099999999999994,
-      "Node 6 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      6.099999999999994,
-      "Node 6 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(1, False, True), (0, False, False)]"
-    ],
-    [
-      6.099999999999994,
-      "Node 9 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      6.099999999999994,
-      "Node 9 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(4, False, True)]"
-    ],
-    [
-      6.106319429007213,
-      "Node 3 received duplicate block 3986599527"
-    ],
-    [
-      6.107179457892316,
-      "Node 9 received duplicate block 3986599527"
-    ],
-    [
-      6.1202901980947315,
-      "Node 4 received duplicate block 3986599527"
-    ],
-    [
-      6.123232203131453,
-      "Node 5 received duplicate block 3986599527"
-    ],
-    [
-      6.1507317868360385,
-      "Node 4 received duplicate block 3986599527"
-    ],
-    [
-      6.162799918210149,
-      "Node 1 received duplicate block 3986599527"
-    ],
-    [
-      6.164353347190142,
-      "Node 2 received duplicate block 3986599527"
-    ],
-    [
-      6.177361101685015,
-      "Node 6 received duplicate block 3986599527"
-    ],
-    [
-      6.184124494568421,
-      "Node 2 received duplicate block 3986599527"
-    ],
-    [
-      6.189629331238101,
-      "Node 8 received duplicate block 3986599527"
-    ],
-    [
-      6.199351187571454,
-      "Node 5 received duplicate block 3986599527"
-    ],
-    [
-      6.199351187571454,
-      "Node 5 received duplicate block 9335177273"
-    ],
-    [
-      6.199999999999994,
-      "Node 0 added block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to the blockchain"
-    ],
-    [
-      6.199999999999994,
-      "Node 0 broadcasting block Block(id=3986599527, miner=8, weight=1, time=2.906421584331245) to [(8, False, True)]"
-    ],
-    [
-      6.209931314924545,
-      "Node 8 received duplicate block 3986599527"
-    ],
-    [
-      6.699999999999902,
-      "Node 4 mined block 3921292173"
-    ],
-    [
-      6.699999999999992,
-      "Node 4 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.699999999999992,
-      "Node 4 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(2, False, False), (3, False, False), (9, False, False), (8, False, False), (5, True, False), (7, False, False)]"
-    ],
-    [
-      6.799999999999992,
-      "Node 2 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.799999999999992,
-      "Node 2 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(3, False, False), (5, False, False)]"
-    ],
-    [
-      6.799999999999992,
-      "Node 3 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.799999999999992,
-      "Node 3 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(1, True, False), (8, False, False), (2, False, True), (6, False, False), (7, False, False)]"
-    ],
-    [
-      6.799999999999992,
-      "Node 7 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.799999999999992,
-      "Node 7 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(3, False, True), (5, False, False), (9, False, False), (6, False, False), (1, True, False), (8, False, False)]"
-    ],
-    [
-      6.799999999999992,
-      "Node 8 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.799999999999992,
-      "Node 8 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(3, False, True), (0, False, False), (7, False, True)]"
-    ],
-    [
-      6.799999999999992,
-      "Node 9 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.799999999999992,
-      "Node 9 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(7, False, True)]"
-    ],
-    [
-      6.806044816292844,
-      "Node 7 received duplicate block 3921292173"
-    ],
-    [
-      6.821149199871498,
-      "Node 8 received duplicate block 3921292173"
-    ],
-    [
-      6.836154446017957,
-      "Node 8 received duplicate block 3921292173"
-    ],
-    [
-      6.840082245070431,
-      "Node 3 received duplicate block 3921292173"
-    ],
-    [
-      6.855040224825343,
-      "Node 7 received duplicate block 3921292173"
-    ],
-    [
-      6.8554980219775885,
-      "Node 3 received duplicate block 3921292173"
-    ],
-    [
-      6.8638725657480375,
-      "Node 3 received duplicate block 3921292173"
-    ],
-    [
-      6.875453420570969,
-      "Node 9 received duplicate block 3921292173"
-    ],
-    [
-      6.898018852231707,
-      "Node 7 received duplicate block 3921292173"
-    ],
-    [
-      6.8984618337407415,
-      "Node 2 received duplicate block 3921292173"
-    ],
-    [
-      6.8999999999999915,
-      "Node 0 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.8999999999999915,
-      "Node 0 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(6, False, False)]"
-    ],
-    [
-      6.8999999999999915,
-      "Node 5 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.8999999999999915,
-      "Node 5 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(4, False, True)]"
-    ],
-    [
-      6.8999999999999915,
-      "Node 6 added block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to the blockchain"
-    ],
-    [
-      6.8999999999999915,
-      "Node 6 broadcasting block Block(id=3921292173, miner=4, weight=1, time=1742826202.517581) to [(1, True, False), (0, False, True)]"
-    ],
-    [
-      6.933723525252804,
-      "Node 4 received duplicate block 3921292173"
-    ],
-    [
-      6.982538737756001,
-      "Node 0 received duplicate block 3921292173"
-    ],
-    [
-      6.9925766962202704,
-      "Node 6 received duplicate block 3921292173"
-    ],
-    [
-      7.929999999999875,
-      "Node 7 mined block 4774621825"
-    ],
-    [
-      7.999999999999988,
-      "Node 7 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      7.999999999999988,
-      "Node 7 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(3, False, False), (5, False, False), (9, False, False), (6, False, False), (1, False, False), (4, False, False), (8, False, False)]"
-    ],
-    [
-      8.099999999999987,
-      "Node 1 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.099999999999987,
-      "Node 1 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(6, False, False), (3, False, False)]"
-    ],
-    [
-      8.099999999999987,
-      "Node 3 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.099999999999987,
-      "Node 3 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(1, False, True), (8, True, False), (2, False, False), (6, False, False), (4, True, False)]"
-    ],
-    [
-      8.099999999999987,
-      "Node 4 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.099999999999987,
-      "Node 4 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(2, True, False), (3, True, True), (9, True, False), (8, False, False), (5, False, False)]"
-    ],
-    [
-      8.099999999999987,
-      "Node 5 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.099999999999987,
-      "Node 5 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(2, False, False), (4, False, True)]"
-    ],
-    [
-      8.099999999999987,
-      "Node 6 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.099999999999987,
-      "Node 6 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(1, False, True), (3, False, True), (0, False, False)]"
-    ],
-    [
-      8.099999999999987,
-      "Node 8 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.099999999999987,
-      "Node 8 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(3, False, True), (4, False, True), (0, False, False)]"
-    ],
-    [
-      8.099999999999987,
-      "Node 9 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.099999999999987,
-      "Node 9 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(4, False, True)]"
-    ],
-    [
-      8.106319429007206,
-      "Node 3 received duplicate block 4774621825"
-    ],
-    [
-      8.106758560520868,
-      "Node 6 received duplicate block 4774621825"
-    ],
-    [
-      8.123232203131446,
-      "Node 5 received duplicate block 4774621825"
-    ],
-    [
-      8.1337235252528,
-      "Node 4 received duplicate block 4774621825"
-    ],
-    [
-      8.140082245070426,
-      "Node 3 received duplicate block 4774621825"
-    ],
-    [
-      8.146258185991693,
-      "Node 3 received duplicate block 4774621825"
-    ],
-    [
-      8.150731786836031,
-      "Node 4 received duplicate block 4774621825"
-    ],
-    [
-      8.156703998928894,
-      "Node 4 received duplicate block 4774621825"
-    ],
-    [
-      8.162799918210142,
-      "Node 1 received duplicate block 4774621825"
-    ],
-    [
-      8.177361101685008,
-      "Node 6 received duplicate block 4774621825"
-    ],
-    [
-      8.17969151141923,
-      "Node 1 received duplicate block 4774621825"
-    ],
-    [
-      8.189629331238095,
-      "Node 8 received duplicate block 4774621825"
-    ],
-    [
-      8.199999999999987,
-      "Node 0 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.199999999999987,
-      "Node 0 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to []"
-    ],
-    [
-      8.199999999999987,
-      "Node 2 added block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to the blockchain"
-    ],
-    [
-      8.199999999999987,
-      "Node 2 broadcasting block Block(id=4774621825, miner=7, weight=1, time=1742826202.517597) to [(4, False, True)]"
-    ],
-    [
-      8.220290198094723,
-      "Node 4 received duplicate block 4774621825"
-    ],
-    [
-      8.537313436438701,
-      "Node 7 mined block 1340928698"
-    ],
-    [
-      8.599999999999985,
-      "Node 7 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
-    ],
-    [
-      8.599999999999985,
-      "Node 7 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(3, False, False), (5, False, False), (9, False, False), (6, False, False), (1, False, False), (4, False, False), (8, False, False)]"
-    ],
-    [
-      8.699999999999985,
-      "Node 1 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
-    ],
-    [
-      8.699999999999985,
-      "Node 1 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(6, True, False), (3, False, False)]"
-    ],
-    [
-      8.699999999999985,
-      "Node 3 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
-    ],
-    [
-      8.699999999999985,
-      "Node 3 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(1, False, True), (8, False, False), (2, False, False), (6, False, False), (4, False, False)]"
-    ],
-    [
-      8.699999999999985,
-      "Node 4 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
-    ],
-    [
-      8.699999999999985,
-      "Node 4 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(2, False, False), (3, False, True), (9, True, False), (8, False, False), (5, False, False)]"
-    ],
-    [
-      8.699999999999985,
-      "Node 5 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
-    ],
-    [
-      8.699999999999985,
-      "Node 5 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(2, False, False), (4, True, True)]"
-    ],
-    [
-      8.699999999999985,
-      "Node 6 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
-    ],
-    [
-      8.699999999999985,
-      "Node 6 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(1, False, True), (3, True, True), (0, True, False)]"
-    ],
-    [
-      8.699999999999985,
-      "Node 8 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
-    ],
-    [
-      8.699999999999985,
-      "Node 8 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(3, False, True), (4, False, True), (0, False, False)]"
-    ],
-    [
-      8.699999999999985,
-      "Node 9 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
-    ],
-    [
-      8.699999999999985,
-      "Node 9 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(4, False, True)]"
-    ],
-    [
-      8.706319429007204,
-      "Node 3 received duplicate block 1340928698"
-    ],
-    [
-      8.706758560520866,
-      "Node 6 received duplicate block 1340928698"
-    ],
-    [
-      8.712594997603828,
-      "Node 4 received duplicate block 1340928698"
-    ],
-    [
-      8.723232203131444,
-      "Node 5 received duplicate block 1340928698"
-    ],
-    [
-      8.73615444601795,
-      "Node 8 received duplicate block 1340928698"
-    ],
-    [
-      8.740082245070424,
-      "Node 3 received duplicate block 1340928698"
-    ],
-    [
-      8.741393687067243,
-      "Node 3 received duplicate block 1340928698"
-    ],
-    [
-      8.75073178683603,
-      "Node 4 received duplicate block 1340928698"
-    ],
-    [
-      8.756703998928892,
-      "Node 4 received duplicate block 1340928698"
-    ],
-    [
-      8.76279991821014,
-      "Node 1 received duplicate block 1340928698"
-    ],
-    [
-      8.779691511419228,
-      "Node 1 received duplicate block 1340928698"
-    ],
-    [
-      8.789629331238093,
-      "Node 8 received duplicate block 1340928698"
+      8.777863239771516,
+      "Node 2 mined block 7860345468"
     ],
     [
       8.799999999999985,
-      "Node 0 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
+      "Node 2 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
     ],
     [
       8.799999999999985,
-      "Node 0 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to [(6, True, True)]"
+      "Node 2 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(1, True, False), (8, False, False), (7, False, False), (5, False, False)]"
     ],
     [
-      8.799999999999985,
-      "Node 2 added block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to the blockchain"
+      8.899999999999984,
+      "Node 5 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
     ],
     [
-      8.799999999999985,
-      "Node 2 broadcasting block Block(id=1340928698, miner=7, weight=1, time=8.237313436438708) to []"
+      8.899999999999984,
+      "Node 5 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(0, True, False), (3, False, False), (7, False, False), (4, True, False), (8, False, False), (9, False, False)]"
     ],
     [
-      8.939999999999854,
-      "Node 9 mined block 9867004656"
+      8.899999999999984,
+      "Node 7 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
+    ],
+    [
+      8.899999999999984,
+      "Node 7 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(5, False, True), (8, False, False)]"
+    ],
+    [
+      8.899999999999984,
+      "Node 8 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
+    ],
+    [
+      8.899999999999984,
+      "Node 8 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(5, False, True), (6, True, False), (7, False, True)]"
+    ],
+    [
+      8.923812939166014,
+      "Node 7 received duplicate block 7860345468"
+    ],
+    [
+      8.941297937960687,
+      "Node 5 received duplicate block 7860345468"
+    ],
+    [
+      8.946607222048772,
+      "Node 5 received duplicate block 7860345468"
+    ],
+    [
+      8.953626374124955,
+      "Node 8 received duplicate block 7860345468"
+    ],
+    [
+      8.986605776411105,
+      "Node 8 received duplicate block 7860345468"
+    ],
+    [
+      8.988402744530905,
+      "Node 7 received duplicate block 7860345468"
     ],
     [
       8.999999999999984,
-      "Node 9 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      "Node 3 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
     ],
     [
       8.999999999999984,
-      "Node 9 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(4, False, False), (7, False, False)]"
+      "Node 3 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(4, False, False), (6, False, False)]"
+    ],
+    [
+      8.999999999999984,
+      "Node 9 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
+    ],
+    [
+      8.999999999999984,
+      "Node 9 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(0, False, False), (6, False, False)]"
     ],
     [
       9.099999999999984,
-      "Node 4 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      "Node 0 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
     ],
     [
       9.099999999999984,
-      "Node 4 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(2, False, False), (3, False, False), (8, False, False), (5, True, False), (7, False, False)]"
+      "Node 0 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(4, True, False), (5, False, True)]"
     ],
     [
       9.099999999999984,
-      "Node 7 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      "Node 4 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
     ],
     [
       9.099999999999984,
-      "Node 7 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(3, False, False), (5, False, False), (6, False, False), (1, False, False), (4, True, True), (8, False, False)]"
+      "Node 4 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(0, False, True), (5, False, True)]"
     ],
     [
-      9.112448354171192,
-      "Node 7 received duplicate block 9867004656"
+      9.099999999999984,
+      "Node 6 added block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to the blockchain"
     ],
     [
-      9.199999999999983,
-      "Node 1 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      9.099999999999984,
+      "Node 6 broadcasting block Block(id=7860345468, miner=2, weight=1, time=1.9278632397716604) to [(8, False, True)]"
     ],
     [
-      9.199999999999983,
-      "Node 1 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(6, False, False), (3, False, False)]"
+      9.141115417627677,
+      "Node 8 received duplicate block 7860345468"
     ],
     [
-      9.199999999999983,
-      "Node 2 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      9.176238832257974,
+      "Node 5 received duplicate block 7860345468"
     ],
     [
-      9.199999999999983,
-      "Node 2 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(3, False, False), (5, False, False)]"
+      9.182913584211109,
+      "Node 0 received duplicate block 7860345468"
     ],
     [
-      9.199999999999983,
-      "Node 3 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      9.189408328247783,
+      "Node 5 received duplicate block 7860345468"
     ],
     [
-      9.199999999999983,
-      "Node 3 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(1, False, True), (8, False, False), (2, False, True), (6, False, False)]"
+      10.48999999999982,
+      "Node 5 mined block 206743833"
     ],
     [
-      9.199999999999983,
-      "Node 5 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      10.499999999999979,
+      "Node 5 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.199999999999983,
-      "Node 5 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(2, False, True), (4, False, True)]"
+      10.499999999999979,
+      "Node 5 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(0, False, False), (3, False, False), (7, True, False), (2, False, False), (4, False, False), (8, False, False), (9, False, False)]"
     ],
     [
-      9.199999999999983,
-      "Node 6 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      10.599999999999978,
+      "Node 0 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.199999999999983,
-      "Node 6 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(1, False, True), (3, True, True), (0, False, False)]"
+      10.599999999999978,
+      "Node 0 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(4, True, False), (9, False, False)]"
     ],
     [
-      9.199999999999983,
-      "Node 8 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      10.599999999999978,
+      "Node 2 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.199999999999983,
-      "Node 8 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to [(3, True, True), (0, False, False)]"
+      10.599999999999978,
+      "Node 2 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(1, False, False), (8, False, False), (7, False, False)]"
     ],
     [
-      9.206319429007202,
-      "Node 3 received duplicate block 9867004656"
+      10.599999999999978,
+      "Node 3 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.206758560520864,
-      "Node 6 received duplicate block 9867004656"
+      10.599999999999978,
+      "Node 3 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(4, False, False), (6, False, False)]"
     ],
     [
-      9.233723525252795,
-      "Node 4 received duplicate block 9867004656"
+      10.599999999999978,
+      "Node 4 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.236154446017949,
-      "Node 8 received duplicate block 9867004656"
+      10.599999999999978,
+      "Node 4 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(0, False, True), (3, True, True)]"
     ],
     [
-      9.25549802197758,
-      "Node 3 received duplicate block 9867004656"
+      10.599999999999978,
+      "Node 8 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.262799918210138,
-      "Node 1 received duplicate block 9867004656"
+      10.599999999999978,
+      "Node 8 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(2, False, True), (6, False, False), (7, False, False)]"
     ],
     [
-      9.277361101685004,
-      "Node 6 received duplicate block 9867004656"
+      10.599999999999978,
+      "Node 9 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.279691511419227,
-      "Node 1 received duplicate block 9867004656"
+      10.599999999999978,
+      "Node 9 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(0, True, True), (6, True, False)]"
     ],
     [
-      9.28412449456841,
-      "Node 2 received duplicate block 9867004656"
+      10.606469491271577,
+      "Node 2 received duplicate block 206743833"
     ],
     [
-      9.298461833740733,
-      "Node 2 received duplicate block 9867004656"
+      10.666579895954607,
+      "Node 9 received duplicate block 206743833"
     ],
     [
-      9.299351187571443,
-      "Node 5 received duplicate block 9867004656"
+      10.667398674106897,
+      "Node 8 received duplicate block 206743833"
     ],
     [
-      9.299999999999983,
-      "Node 0 added block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to the blockchain"
+      10.682913584211104,
+      "Node 0 received duplicate block 206743833"
     ],
     [
-      9.299999999999983,
-      "Node 0 broadcasting block Block(id=9867004656, miner=9, weight=1, time=1742826202.5176058) to []"
+      10.690621446613427,
+      "Node 4 received duplicate block 206743833"
     ],
     [
-      9.446171108913742,
-      "Node 3 mined block 4423198509"
+      10.699999999999978,
+      "Node 1 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.499999999999982,
-      "Node 3 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
+      10.699999999999978,
+      "Node 1 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to []"
     ],
     [
-      9.499999999999982,
-      "Node 3 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to [(1, False, False), (8, False, False), (2, False, False), (6, False, False), (7, False, False), (4, False, False)]"
+      10.699999999999978,
+      "Node 6 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.599999999999982,
-      "Node 1 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
+      10.699999999999978,
+      "Node 6 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(9, False, True)]"
     ],
     [
-      9.599999999999982,
-      "Node 1 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to [(6, False, False), (7, False, False)]"
+      10.699999999999978,
+      "Node 7 added block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to the blockchain"
     ],
     [
-      9.599999999999982,
-      "Node 2 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
+      10.699999999999978,
+      "Node 7 broadcasting block Block(id=206743833, miner=5, weight=1, time=1743103561.1166599) to [(5, False, True)]"
     ],
     [
-      9.599999999999982,
-      "Node 2 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to [(4, False, False), (5, False, False)]"
+      10.741297937960681,
+      "Node 5 received duplicate block 206743833"
     ],
     [
-      9.599999999999982,
-      "Node 4 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
+      10.779394002382764,
+      "Node 9 received duplicate block 206743833"
     ],
     [
-      9.599999999999982,
-      "Node 4 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to [(2, False, True), (9, True, False), (8, False, False), (5, False, False), (7, False, False)]"
-    ],
-    [
-      9.599999999999982,
-      "Node 6 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
-    ],
-    [
-      9.599999999999982,
-      "Node 6 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to [(1, False, True), (0, False, False), (7, False, False)]"
-    ],
-    [
-      9.599999999999982,
-      "Node 7 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
-    ],
-    [
-      9.599999999999982,
-      "Node 7 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to [(5, False, False), (9, False, False), (6, False, True), (1, False, True), (4, False, True), (8, False, False)]"
-    ],
-    [
-      9.599999999999982,
-      "Node 8 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
-    ],
-    [
-      9.599999999999982,
-      "Node 8 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to [(4, False, True), (0, False, False), (7, False, True)]"
-    ],
-    [
-      9.606044816292833,
-      "Node 7 received duplicate block 4423198509"
-    ],
-    [
-      9.61244835417119,
-      "Node 7 received duplicate block 4423198509"
-    ],
-    [
-      9.620290198094718,
-      "Node 4 received duplicate block 4423198509"
-    ],
-    [
-      9.621149199871487,
-      "Node 8 received duplicate block 4423198509"
-    ],
-    [
-      9.624125271068156,
-      "Node 7 received duplicate block 4423198509"
-    ],
-    [
-      9.656703998928888,
-      "Node 4 received duplicate block 4423198509"
-    ],
-    [
-      9.662799918210137,
-      "Node 1 received duplicate block 4423198509"
-    ],
-    [
-      9.66435334719013,
-      "Node 2 received duplicate block 4423198509"
-    ],
-    [
-      9.66478470061203,
-      "Node 1 received duplicate block 4423198509"
-    ],
-    [
-      9.677361101685003,
-      "Node 6 received duplicate block 4423198509"
-    ],
-    [
-      9.686854932356157,
-      "Node 7 received duplicate block 4423198509"
-    ],
-    [
-      9.68694711058688,
-      "Node 4 received duplicate block 4423198509"
-    ],
-    [
-      9.687065608211634,
-      "Node 6 received duplicate block 4423198509"
-    ],
-    [
-      9.68962933123809,
-      "Node 8 received duplicate block 4423198509"
-    ],
-    [
-      9.699999999999982,
-      "Node 0 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
-    ],
-    [
-      9.699999999999982,
-      "Node 0 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to []"
-    ],
-    [
-      9.699999999999982,
-      "Node 5 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
-    ],
-    [
-      9.699999999999982,
-      "Node 5 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to []"
-    ],
-    [
-      9.699999999999982,
-      "Node 9 added block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to the blockchain"
-    ],
-    [
-      9.699999999999982,
-      "Node 9 broadcasting block Block(id=4423198509, miner=3, weight=1, time=3.566171108913867) to [(4, False, True)]"
-    ],
-    [
-      9.750731786836026,
-      "Node 4 received duplicate block 4423198509"
-    ],
-    [
-      10.993867484183186,
-      "Node 6 mined block 8489370694"
-    ],
-    [
-      10.999999999999977,
-      "Node 6 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      10.999999999999977,
-      "Node 6 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(1, False, False), (3, False, False), (0, False, False), (7, False, False)]"
-    ],
-    [
-      11.099999999999977,
-      "Node 0 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      11.099999999999977,
-      "Node 0 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(8, False, False)]"
-    ],
-    [
-      11.099999999999977,
-      "Node 1 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      11.099999999999977,
-      "Node 1 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(3, True, False), (7, False, False)]"
-    ],
-    [
-      11.099999999999977,
-      "Node 3 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      11.099999999999977,
-      "Node 3 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(1, False, True), (8, False, False), (2, False, False), (7, False, False), (4, False, False)]"
-    ],
-    [
-      11.099999999999977,
-      "Node 7 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      11.099999999999977,
-      "Node 7 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(3, True, True), (5, True, False), (9, False, False), (1, False, True), (4, True, False), (8, False, False)]"
-    ],
-    [
-      11.12412527106815,
-      "Node 7 received duplicate block 8489370694"
-    ],
-    [
-      11.164784700612024,
-      "Node 1 received duplicate block 8489370694"
-    ],
-    [
-      11.17969151141922,
-      "Node 1 received duplicate block 8489370694"
-    ],
-    [
-      11.198018852231693,
-      "Node 7 received duplicate block 8489370694"
-    ],
-    [
-      11.199999999999976,
-      "Node 2 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      11.199999999999976,
-      "Node 2 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(4, False, False), (5, False, False)]"
-    ],
-    [
-      11.199999999999976,
-      "Node 4 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      11.199999999999976,
-      "Node 4 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(2, False, True), (9, False, False), (8, False, False), (5, False, False), (7, False, True)]"
-    ],
-    [
-      11.199999999999976,
-      "Node 8 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      11.199999999999976,
-      "Node 8 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(4, False, True)]"
-    ],
-    [
-      11.199999999999976,
-      "Node 9 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
-    ],
-    [
-      11.199999999999976,
-      "Node 9 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(4, False, True)]"
-    ],
-    [
-      11.207179457892298,
-      "Node 9 received duplicate block 8489370694"
-    ],
-    [
-      11.212448354171185,
-      "Node 7 received duplicate block 8489370694"
-    ],
-    [
-      11.220290198094713,
-      "Node 4 received duplicate block 8489370694"
-    ],
-    [
-      11.25073178683602,
-      "Node 4 received duplicate block 8489370694"
-    ],
-    [
-      11.256703998928883,
-      "Node 4 received duplicate block 8489370694"
-    ],
-    [
-      11.264353347190124,
-      "Node 2 received duplicate block 8489370694"
-    ],
-    [
-      11.289629331238084,
-      "Node 8 received duplicate block 8489370694"
+      11.299999999999804,
+      "Node 7 mined block 3483419977"
     ],
     [
       11.299999999999976,
-      "Node 5 added block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to the blockchain"
+      "Node 7 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
       11.299999999999976,
-      "Node 5 broadcasting block Block(id=8489370694, miner=6, weight=1, time=4.953867484183315) to [(7, False, True)]"
+      "Node 7 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(2, False, False), (5, False, False), (8, False, False)]"
     ],
     [
-      11.309000592013108,
-      "Node 7 received duplicate block 8489370694"
+      11.399999999999975,
+      "Node 2 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
-      12.60032863266426,
-      "Node 7 mined block 4565368393"
+      11.399999999999975,
+      "Node 2 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(1, True, False), (8, False, False), (5, False, False)]"
     ],
     [
-      12.69999999999997,
-      "Node 7 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.399999999999975,
+      "Node 5 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
-      12.69999999999997,
-      "Node 7 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(3, False, False), (5, False, False), (9, False, False), (6, False, False), (1, True, False), (4, False, False), (8, False, False)]"
+      11.399999999999975,
+      "Node 5 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(0, True, False), (3, False, False), (2, False, True), (4, False, False), (8, False, False), (9, False, False)]"
     ],
     [
-      12.79999999999997,
-      "Node 3 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.399999999999975,
+      "Node 8 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
-      12.79999999999997,
-      "Node 3 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(1, False, False), (8, False, False), (2, True, False), (6, False, False), (4, False, False)]"
+      11.399999999999975,
+      "Node 8 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(2, False, True), (5, False, True), (6, False, False)]"
     ],
     [
-      12.79999999999997,
-      "Node 4 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.406469491271574,
+      "Node 2 received duplicate block 3483419977"
     ],
     [
-      12.79999999999997,
-      "Node 4 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(2, False, False), (3, False, True), (9, False, False), (8, False, False), (5, True, False)]"
+      11.446607222048764,
+      "Node 5 received duplicate block 3483419977"
     ],
     [
-      12.79999999999997,
-      "Node 5 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.453626374124946,
+      "Node 8 received duplicate block 3483419977"
     ],
     [
-      12.79999999999997,
-      "Node 5 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(2, False, False), (4, True, True)]"
+      11.467398674106894,
+      "Node 8 received duplicate block 3483419977"
     ],
     [
-      12.79999999999997,
-      "Node 6 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.472990464084669,
+      "Node 2 received duplicate block 3483419977"
     ],
     [
-      12.79999999999997,
-      "Node 6 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(1, False, False), (3, True, True), (0, False, False)]"
+      11.483699289420466,
+      "Node 5 received duplicate block 3483419977"
     ],
     [
-      12.79999999999997,
-      "Node 8 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.499999999999975,
+      "Node 3 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
-      12.79999999999997,
-      "Node 8 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(3, False, True), (4, False, True), (0, False, False)]"
+      11.499999999999975,
+      "Node 3 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(4, False, False), (6, False, False)]"
     ],
     [
-      12.79999999999997,
-      "Node 9 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.499999999999975,
+      "Node 4 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
-      12.79999999999997,
-      "Node 9 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(4, True, True)]"
+      11.499999999999975,
+      "Node 4 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(0, False, False), (3, False, True)]"
     ],
     [
-      12.806758560520851,
-      "Node 6 received duplicate block 4565368393"
+      11.499999999999975,
+      "Node 6 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
-      12.807179457892293,
-      "Node 9 received duplicate block 4565368393"
+      11.499999999999975,
+      "Node 6 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(3, False, True), (9, True, False)]"
     ],
     [
-      12.812594997603814,
-      "Node 4 received duplicate block 4565368393"
+      11.499999999999975,
+      "Node 9 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
-      12.836154446017936,
-      "Node 8 received duplicate block 4565368393"
+      11.499999999999975,
+      "Node 9 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(0, False, False), (6, False, True)]"
     ],
     [
-      12.840082245070409,
-      "Node 3 received duplicate block 4565368393"
+      11.503720800242618,
+      "Node 6 received duplicate block 3483419977"
     ],
     [
-      12.841393687067228,
-      "Node 3 received duplicate block 4565368393"
+      11.549770879159771,
+      "Node 3 received duplicate block 3483419977"
     ],
     [
-      12.856703998928877,
-      "Node 4 received duplicate block 4565368393"
+      11.573117768335639,
+      "Node 3 received duplicate block 3483419977"
     ],
     [
-      12.889629331238078,
-      "Node 8 received duplicate block 4565368393"
+      11.574933664260431,
+      "Node 6 received duplicate block 3483419977"
     ],
     [
-      12.89999999999997,
-      "Node 0 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.590621446613424,
+      "Node 4 received duplicate block 3483419977"
     ],
     [
-      12.89999999999997,
-      "Node 0 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to []"
+      11.599999999999975,
+      "Node 0 added block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to the blockchain"
     ],
     [
-      12.89999999999997,
-      "Node 1 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.599999999999975,
+      "Node 0 broadcasting block Block(id=3483419977, miner=7, weight=1, time=1743103561.116678) to [(5, False, True)]"
     ],
     [
-      12.89999999999997,
-      "Node 1 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(7, False, True)]"
+      11.676238832257965,
+      "Node 5 received duplicate block 3483419977"
     ],
     [
-      12.89999999999997,
-      "Node 2 added block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to the blockchain"
+      11.749999999999794,
+      "Node 8 mined block 1993953218"
     ],
     [
-      12.89999999999997,
-      "Node 2 broadcasting block Block(id=4565368393, miner=7, weight=1, time=8.780328632664341) to [(3, True, True)]"
+      11.799999999999974,
+      "Node 8 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      12.924125271068144,
-      "Node 7 received duplicate block 4565368393"
+      11.799999999999974,
+      "Node 8 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(2, False, False), (5, False, False), (6, True, False), (7, False, False)]"
     ],
     [
-      13.649999999999753,
-      "Node 5 mined block 9631566509"
+      11.899999999999974,
+      "Node 2 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.699713472480402,
-      "Node 0 mined block 6808769497"
+      11.899999999999974,
+      "Node 2 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(1, False, False), (7, True, False), (5, False, False)]"
     ],
     [
-      13.699999999999967,
-      "Node 0 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      11.899999999999974,
+      "Node 5 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.699999999999967,
-      "Node 0 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(6, False, False), (8, False, False)]"
+      11.899999999999974,
+      "Node 5 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(0, False, False), (3, False, False), (7, False, False), (2, False, True), (4, True, False), (9, False, False)]"
     ],
     [
-      13.699999999999967,
-      "Node 5 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      11.899999999999974,
+      "Node 7 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.699999999999967,
-      "Node 5 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(2, True, False), (7, False, False), (4, False, False)]"
+      11.899999999999974,
+      "Node 7 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(2, False, True), (5, False, True)]"
     ],
     [
-      13.799999999999967,
-      "Node 4 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      11.916485177200821,
+      "Node 2 received duplicate block 1993953218"
     ],
     [
-      13.799999999999967,
-      "Node 4 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(2, False, False), (3, True, False), (9, False, False), (8, False, False), (7, False, False)]"
+      11.923812939166003,
+      "Node 7 received duplicate block 1993953218"
     ],
     [
-      13.799999999999967,
-      "Node 6 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      11.941297937960677,
+      "Node 5 received duplicate block 1993953218"
     ],
     [
-      13.799999999999967,
-      "Node 6 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(1, False, False), (3, True, False), (7, False, False)]"
+      11.972990464084667,
+      "Node 2 received duplicate block 1993953218"
     ],
     [
-      13.799999999999967,
-      "Node 7 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      11.983699289420464,
+      "Node 5 received duplicate block 1993953218"
     ],
     [
-      13.799999999999967,
-      "Node 7 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(3, True, False), (9, False, False), (6, True, False), (1, False, False), (4, False, True), (8, False, False)]"
+      11.999999999999973,
+      "Node 0 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.799999999999967,
-      "Node 8 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      11.999999999999973,
+      "Node 0 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(4, False, False), (9, False, False)]"
     ],
     [
-      13.799999999999967,
-      "Node 8 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(3, False, False), (4, False, False), (7, False, False)]"
+      11.999999999999973,
+      "Node 1 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.812448354171176,
-      "Node 7 received duplicate block 9631566509"
+      11.999999999999973,
+      "Node 1 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to []"
     ],
     [
-      13.886947110586865,
-      "Node 4 received duplicate block 9631566509"
+      11.999999999999973,
+      "Node 3 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.899999999999967,
-      "Node 1 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      11.999999999999973,
+      "Node 3 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(4, True, False), (6, False, False)]"
     ],
     [
-      13.899999999999967,
-      "Node 1 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(3, False, False), (7, False, False)]"
+      11.999999999999973,
+      "Node 9 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.899999999999967,
-      "Node 1 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      11.999999999999973,
+      "Node 9 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(0, False, True), (6, False, False)]"
     ],
     [
-      13.899999999999967,
-      "Node 1 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(6, False, False), (3, False, False)]"
+      12.035736835639792,
+      "Node 0 received duplicate block 1993953218"
     ],
     [
-      13.899999999999967,
-      "Node 2 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      12.066579895954602,
+      "Node 9 received duplicate block 1993953218"
     ],
     [
-      13.899999999999967,
-      "Node 2 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(3, True, False), (5, True, True)]"
+      12.099999999999973,
+      "Node 4 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.899999999999967,
-      "Node 3 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      12.099999999999973,
+      "Node 4 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(3, False, True), (5, False, True)]"
     ],
     [
-      13.899999999999967,
-      "Node 3 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(1, False, True), (2, True, False), (6, False, True), (7, False, False), (4, True, False)]"
+      12.099999999999973,
+      "Node 6 added block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to the blockchain"
     ],
     [
-      13.899999999999967,
-      "Node 4 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      12.099999999999973,
+      "Node 6 broadcasting block Block(id=1993953218, miner=8, weight=1, time=1743103561.116684) to [(8, False, True)]"
     ],
     [
-      13.899999999999967,
-      "Node 4 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(2, True, False), (3, False, True), (9, False, False), (5, False, False), (7, False, False)]"
+      12.141115417627667,
+      "Node 8 received duplicate block 1993953218"
     ],
     [
-      13.899999999999967,
-      "Node 7 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      12.143523967417815,
+      "Node 3 mined block 5135657940"
     ],
     [
-      13.899999999999967,
-      "Node 7 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(3, False, True), (5, False, False), (9, False, False), (1, False, True), (4, True, True)]"
+      12.173117768335636,
+      "Node 3 received duplicate block 1993953218"
     ],
     [
-      13.899999999999967,
-      "Node 8 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      12.189408328247772,
+      "Node 5 received duplicate block 1993953218"
     ],
     [
-      13.899999999999967,
-      "Node 8 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(3, False, False), (0, False, False)]"
+      12.199999999999973,
+      "Node 3 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      13.899999999999967,
-      "Node 9 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      12.199999999999973,
+      "Node 3 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(5, False, False), (4, False, False), (6, False, False)]"
     ],
     [
-      13.899999999999967,
-      "Node 9 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to []"
+      12.299999999999972,
+      "Node 4 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      13.906319429007185,
-      "Node 3 received duplicate block 6808769497"
+      12.299999999999972,
+      "Node 4 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(0, False, False), (5, False, False)]"
     ],
     [
-      13.906758560520847,
-      "Node 6 received duplicate block 6808769497"
+      12.299999999999972,
+      "Node 5 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      13.912448354171175,
-      "Node 7 received duplicate block 6808769497"
+      12.299999999999972,
+      "Node 5 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(0, False, False), (7, True, False), (2, False, False), (4, False, True), (8, False, False), (9, False, False)]"
     ],
     [
-      13.92412527106814,
-      "Node 7 received duplicate block 6808769497"
+      12.299999999999972,
+      "Node 6 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      13.941393687067224,
-      "Node 3 received duplicate block 6808769497"
+      12.299999999999972,
+      "Node 6 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(8, False, False), (9, True, False)]"
     ],
     [
-      13.963872565748012,
-      "Node 3 received duplicate block 6808769497"
+      12.324778790432143,
+      "Node 4 received duplicate block 5135657940"
     ],
     [
-      13.964784700612014,
-      "Node 1 received duplicate block 6808769497"
+      12.389408328247772,
+      "Node 5 received duplicate block 5135657940"
     ],
     [
-      13.97969151141921,
-      "Node 1 received duplicate block 6808769497"
+      12.399999999999972,
+      "Node 0 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      13.998018852231683,
-      "Node 7 received duplicate block 6808769497"
+      12.399999999999972,
+      "Node 0 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(9, False, False)]"
     ],
     [
-      13.999999999999966,
-      "Node 0 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      12.399999999999972,
+      "Node 2 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      13.999999999999966,
-      "Node 0 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(6, False, False)]"
+      12.399999999999972,
+      "Node 2 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(1, False, False), (8, True, False), (7, False, False)]"
     ],
     [
-      13.999999999999966,
-      "Node 3 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      12.399999999999972,
+      "Node 8 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      13.999999999999966,
-      "Node 3 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(2, False, True), (6, False, False), (7, False, True), (4, False, True)]"
+      12.399999999999972,
+      "Node 8 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(2, False, True), (7, True, False)]"
     ],
     [
-      13.999999999999966,
-      "Node 5 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      12.399999999999972,
+      "Node 9 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      13.999999999999966,
-      "Node 5 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(2, False, False)]"
+      12.399999999999972,
+      "Node 9 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(0, False, True), (6, True, True)]"
     ],
     [
-      13.999999999999966,
-      "Node 6 added block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to the blockchain"
+      12.40646949127157,
+      "Node 2 received duplicate block 5135657940"
     ],
     [
-      13.999999999999966,
-      "Node 6 broadcasting block Block(id=9631566509, miner=5, weight=1, time=1742826202.517586) to [(3, True, True), (0, False, True), (7, False, True)]"
+      12.43573683563979,
+      "Node 0 received duplicate block 5135657940"
     ],
     [
-      13.999999999999966,
-      "Node 9 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      12.4665798959546,
+      "Node 9 received duplicate block 5135657940"
     ],
     [
-      13.999999999999966,
-      "Node 9 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to []"
+      12.499999999999972,
+      "Node 1 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      14.006758560520847,
-      "Node 6 received duplicate block 9631566509"
+      12.499999999999972,
+      "Node 1 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to []"
     ],
     [
-      14.01259499760381,
-      "Node 4 received duplicate block 9631566509"
+      12.499999999999972,
+      "Node 7 added block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to the blockchain"
     ],
     [
-      14.082538737755977,
-      "Node 0 received duplicate block 9631566509"
+      12.499999999999972,
+      "Node 7 broadcasting block Block(id=5135657940, miner=3, weight=1, time=3.1635239674180062) to [(5, False, True), (8, False, True)]"
     ],
     [
-      14.086854932356141,
-      "Node 7 received duplicate block 9631566509"
+      12.541297937960675,
+      "Node 5 received duplicate block 5135657940"
     ],
     [
-      14.092576696220245,
-      "Node 6 received duplicate block 9631566509"
+      12.586605776411092,
+      "Node 8 received duplicate block 5135657940"
     ],
     [
-      14.098018852231682,
-      "Node 7 received duplicate block 9631566509"
+      14.25999999999974,
+      "Node 0 mined block 1613747423"
     ],
     [
-      14.098461833740716,
-      "Node 2 received duplicate block 9631566509"
+      14.299999999999965,
+      "Node 0 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      14.099999999999966,
-      "Node 2 added block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to the blockchain"
+      14.299999999999965,
+      "Node 0 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(4, False, False), (5, False, False), (9, False, False)]"
     ],
     [
-      14.099999999999966,
-      "Node 2 broadcasting block Block(id=6808769497, miner=0, weight=1, time=4.319713472480602) to [(3, False, True), (4, False, True)]"
+      14.399999999999965,
+      "Node 4 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      14.120290198094702,
-      "Node 4 received duplicate block 6808769497"
+      14.399999999999965,
+      "Node 4 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(3, False, False), (5, False, False)]"
     ],
     [
-      14.155498021977563,
-      "Node 3 received duplicate block 6808769497"
+      14.399999999999965,
+      "Node 5 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      14.645529822539157,
-      "Node 9 mined block 1747181236"
+      14.399999999999965,
+      "Node 5 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(3, True, False), (7, False, False), (2, False, False), (4, False, True), (8, False, False), (9, False, False)]"
     ],
     [
-      14.699999999999964,
-      "Node 9 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.399999999999965,
+      "Node 9 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      14.699999999999964,
-      "Node 9 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(4, True, False), (7, False, False)]"
+      14.399999999999965,
+      "Node 9 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(5, False, True), (6, True, False)]"
     ],
     [
-      14.799999999999963,
-      "Node 7 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.419040524784368,
+      "Node 5 received duplicate block 1613747423"
     ],
     [
-      14.799999999999963,
-      "Node 7 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(3, False, False), (5, False, False), (6, True, False), (1, True, False), (4, True, False), (8, False, False)]"
+      14.424778790432136,
+      "Node 4 received duplicate block 1613747423"
     ],
     [
-      14.899999999999963,
-      "Node 3 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.489408328247764,
+      "Node 5 received duplicate block 1613747423"
     ],
     [
-      14.899999999999963,
-      "Node 3 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(1, False, False), (8, True, False), (2, False, False), (6, True, False), (4, False, False)]"
+      14.493048848496358,
+      "Node 9 received duplicate block 1613747423"
     ],
     [
-      14.899999999999963,
-      "Node 5 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.499999999999964,
+      "Node 2 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      14.899999999999963,
-      "Node 5 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(2, False, False), (4, False, False)]"
+      14.499999999999964,
+      "Node 2 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(1, True, False), (8, False, False), (7, False, False)]"
     ],
     [
-      14.899999999999963,
-      "Node 8 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.499999999999964,
+      "Node 3 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      14.899999999999963,
-      "Node 8 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(3, True, True), (4, True, False), (0, False, False)]"
+      14.499999999999964,
+      "Node 3 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(5, True, True), (6, False, False)]"
     ],
     [
-      14.999164932230276,
-      "Node 3 mined block 9271134722"
+      14.499999999999964,
+      "Node 7 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      14.999999999999963,
-      "Node 0 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.499999999999964,
+      "Node 7 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(2, False, True), (8, False, False)]"
     ],
     [
-      14.999999999999963,
-      "Node 0 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(6, True, False)]"
+      14.499999999999964,
+      "Node 8 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      14.999999999999963,
-      "Node 1 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.499999999999964,
+      "Node 8 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(2, False, True), (6, False, False), (7, False, True)]"
     ],
     [
-      14.999999999999963,
-      "Node 1 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(6, False, False), (7, False, True)]"
+      14.506469491271563,
+      "Node 2 received duplicate block 1613747423"
     ],
     [
-      14.999999999999963,
-      "Node 2 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.516485177200812,
+      "Node 2 received duplicate block 1613747423"
     ],
     [
-      14.999999999999963,
-      "Node 2 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(4, False, False)]"
+      14.567398674106883,
+      "Node 8 received duplicate block 1613747423"
     ],
     [
-      14.999999999999963,
-      "Node 3 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
+      14.583313092648337,
+      "Node 7 received duplicate block 1613747423"
     ],
     [
-      14.999999999999963,
-      "Node 3 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(1, False, False), (8, False, False), (2, True, False), (6, False, False), (7, True, False), (4, False, False)]"
+      14.586605776411085,
+      "Node 8 received duplicate block 1613747423"
     ],
     [
-      14.999999999999963,
-      "Node 4 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      14.588402744530885,
+      "Node 7 received duplicate block 1613747423"
     ],
     [
-      14.999999999999963,
-      "Node 4 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(2, False, True), (9, False, True), (8, False, True), (7, False, True)]"
+      14.599999999999964,
+      "Node 6 added block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to the blockchain"
     ],
     [
-      15.007179457892285,
-      "Node 9 received duplicate block 1747181236"
+      14.599999999999964,
+      "Node 6 broadcasting block Block(id=1613747423, miner=0, weight=1, time=1743103561.1166) to [(9, False, True)]"
     ],
     [
-      15.012448354171172,
-      "Node 7 received duplicate block 1747181236"
+      14.67939400238275,
+      "Node 9 received duplicate block 1613747423"
     ],
     [
-      15.020290198094699,
-      "Node 4 received duplicate block 1747181236"
+      17.565129112237095,
+      "Node 2 mined block 4367849751"
     ],
     [
-      15.024125271068137,
-      "Node 7 received duplicate block 1747181236"
+      17.59999999999998,
+      "Node 2 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
     ],
     [
-      15.06435334719011,
-      "Node 2 received duplicate block 1747181236"
+      17.59999999999998,
+      "Node 2 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(1, False, False), (8, False, False), (7, False, False), (5, False, False)]"
     ],
     [
-      15.08962933123807,
-      "Node 8 received duplicate block 1747181236"
+      17.69999999999998,
+      "Node 1 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
     ],
     [
-      15.099999999999962,
-      "Node 1 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
+      17.69999999999998,
+      "Node 1 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to []"
     ],
     [
-      15.099999999999962,
-      "Node 1 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(6, False, False), (7, False, False)]"
+      17.69999999999998,
+      "Node 5 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
     ],
     [
-      15.099999999999962,
-      "Node 4 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
+      17.69999999999998,
+      "Node 5 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(0, True, False), (3, False, False), (7, False, False), (4, False, False), (8, True, False), (9, False, False)]"
     ],
     [
-      15.099999999999962,
-      "Node 4 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(2, False, False), (9, True, False), (8, True, False), (5, False, False), (7, False, False)]"
+      17.69999999999998,
+      "Node 7 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
     ],
     [
-      15.099999999999962,
-      "Node 6 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
+      17.69999999999998,
+      "Node 7 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(5, False, True), (8, False, False)]"
     ],
     [
-      15.099999999999962,
-      "Node 6 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(1, True, True), (0, False, False), (7, False, False)]"
+      17.69999999999998,
+      "Node 8 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
     ],
     [
-      15.099999999999962,
-      "Node 6 added block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to the blockchain"
+      17.69999999999998,
+      "Node 8 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(5, False, True), (6, True, False), (7, False, True)]"
     ],
     [
-      15.099999999999962,
-      "Node 6 broadcasting block Block(id=1747181236, miner=9, weight=1, time=9.275529822539271) to [(3, False, True), (0, False, True), (7, False, True)]"
+      17.723812939166013,
+      "Node 7 received duplicate block 4367849751"
     ],
     [
-      15.099999999999962,
-      "Node 8 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
+      17.741297937960685,
+      "Node 5 received duplicate block 4367849751"
     ],
     [
-      15.099999999999962,
-      "Node 8 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(4, True, True), (0, False, False), (7, False, False)]"
+      17.74660722204877,
+      "Node 5 received duplicate block 4367849751"
     ],
     [
-      15.146258185991668,
-      "Node 3 received duplicate block 1747181236"
+      17.786605776411104,
+      "Node 8 received duplicate block 4367849751"
     ],
     [
-      15.177361101684983,
-      "Node 6 received duplicate block 9271134722"
-    ],
-    [
-      15.182538737755973,
-      "Node 0 received duplicate block 1747181236"
-    ],
-    [
-      15.186854932356137,
-      "Node 7 received duplicate block 1747181236"
-    ],
-    [
-      15.199999999999962,
-      "Node 0 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
-    ],
-    [
-      15.199999999999962,
-      "Node 0 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to []"
-    ],
-    [
-      15.199999999999962,
-      "Node 2 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
-    ],
-    [
-      15.199999999999962,
-      "Node 2 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(3, True, True), (5, True, False)]"
-    ],
-    [
-      15.199999999999962,
-      "Node 5 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
-    ],
-    [
-      15.199999999999962,
-      "Node 5 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(2, False, True), (7, False, False)]"
-    ],
-    [
-      15.199999999999962,
-      "Node 7 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
-    ],
-    [
-      15.199999999999962,
-      "Node 7 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(3, False, True), (5, False, True), (9, False, False)]"
-    ],
-    [
-      15.209000592013094,
-      "Node 7 received duplicate block 9271134722"
-    ],
-    [
-      15.248718788035843,
-      "Node 5 received duplicate block 9271134722"
-    ],
-    [
-      15.263872565748008,
-      "Node 3 received duplicate block 9271134722"
-    ],
-    [
-      15.284124494568388,
-      "Node 2 received duplicate block 9271134722"
-    ],
-    [
-      15.299999999999962,
-      "Node 9 added block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to the blockchain"
-    ],
-    [
-      15.299999999999962,
-      "Node 9 broadcasting block Block(id=9271134722, miner=3, weight=1, time=9.929164932230384) to [(4, True, True)]"
-    ],
-    [
-      17.717298712862974,
-      "Node 1 mined block 593336516"
+      17.788402744530902,
+      "Node 7 received duplicate block 4367849751"
     ],
     [
       17.799999999999983,
-      "Node 1 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      "Node 3 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
     ],
     [
       17.799999999999983,
-      "Node 1 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(6, True, False), (3, False, False), (7, False, False)]"
+      "Node 3 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(4, False, False), (6, False, False)]"
+    ],
+    [
+      17.799999999999983,
+      "Node 4 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
+    ],
+    [
+      17.799999999999983,
+      "Node 4 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(0, False, False), (3, False, True)]"
+    ],
+    [
+      17.799999999999983,
+      "Node 9 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
+    ],
+    [
+      17.799999999999983,
+      "Node 9 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(0, False, False), (6, False, False)]"
+    ],
+    [
+      17.873117768335646,
+      "Node 3 received duplicate block 4367849751"
+    ],
+    [
+      17.89062144661343,
+      "Node 4 received duplicate block 4367849751"
     ],
     [
       17.899999999999984,
-      "Node 3 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      "Node 0 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
     ],
     [
       17.899999999999984,
-      "Node 3 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(8, False, False), (2, False, False), (6, False, False), (7, False, False), (4, False, False)]"
+      "Node 0 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(5, True, True)]"
     ],
     [
       17.899999999999984,
-      "Node 7 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      "Node 6 added block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to the blockchain"
     ],
     [
       17.899999999999984,
-      "Node 7 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(3, False, True), (5, False, False), (9, False, False), (6, False, False), (4, False, False), (8, False, False)]"
+      "Node 6 broadcasting block Block(id=4367849751, miner=2, weight=1, time=9.015129112236998) to [(8, False, True)]"
     ],
     [
-      17.96387256574803,
-      "Node 3 received duplicate block 593336516"
+      17.941115417627678,
+      "Node 8 received duplicate block 4367849751"
     ],
     [
-      17.9980188522317,
-      "Node 7 received duplicate block 593336516"
+      19.514841308565305,
+      "Node 0 mined block 5479120063"
     ],
     [
-      17.999999999999986,
-      "Node 2 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      19.584569647115035,
+      "Node 5 mined block 5993887779"
     ],
     [
-      17.999999999999986,
-      "Node 2 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(4, True, False), (5, False, False)]"
+      19.60000000000001,
+      "Node 0 added block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to the blockchain"
     ],
     [
-      17.999999999999986,
-      "Node 4 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      19.60000000000001,
+      "Node 0 broadcasting block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to [(4, False, False), (5, True, False), (9, False, False)]"
     ],
     [
-      17.999999999999986,
-      "Node 4 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(2, True, True), (9, False, False), (8, False, False), (5, True, False)]"
+      19.60000000000001,
+      "Node 5 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      17.999999999999986,
-      "Node 5 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      19.60000000000001,
+      "Node 5 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to [(0, False, False), (3, False, False), (7, False, False), (2, True, False), (4, False, False), (8, False, False), (9, False, False)]"
     ],
     [
-      17.999999999999986,
-      "Node 5 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(2, False, True), (4, False, True)]"
+      19.70000000000001,
+      "Node 0 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      17.999999999999986,
-      "Node 6 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      19.70000000000001,
+      "Node 0 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to [(4, False, False), (9, True, False)]"
     ],
     [
-      17.999999999999986,
-      "Node 6 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(1, False, True), (0, False, False)]"
+      19.70000000000001,
+      "Node 3 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      17.999999999999986,
-      "Node 8 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      19.70000000000001,
+      "Node 3 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to [(4, False, False), (6, False, False)]"
     ],
     [
-      17.999999999999986,
-      "Node 8 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(4, False, True), (0, True, False)]"
+      19.70000000000001,
+      "Node 4 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      17.999999999999986,
-      "Node 9 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      19.70000000000001,
+      "Node 4 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to [(0, True, True), (3, False, True)]"
     ],
     [
-      17.999999999999986,
-      "Node 9 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(4, True, True)]"
+      19.70000000000001,
+      "Node 4 added block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to the blockchain"
     ],
     [
-      18.00717945789231,
-      "Node 9 received duplicate block 593336516"
+      19.70000000000001,
+      "Node 4 broadcasting block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to [(3, True, False), (5, False, False)]"
     ],
     [
-      18.0337235252528,
-      "Node 4 received duplicate block 593336516"
+      19.70000000000001,
+      "Node 7 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      18.056703998928892,
-      "Node 4 received duplicate block 593336516"
+      19.70000000000001,
+      "Node 7 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to [(2, True, False), (8, False, False)]"
     ],
     [
-      18.06279991821014,
-      "Node 1 received duplicate block 593336516"
+      19.70000000000001,
+      "Node 8 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      18.084124494568414,
-      "Node 2 received duplicate block 593336516"
+      19.70000000000001,
+      "Node 8 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to [(2, False, False), (6, False, False), (7, False, True)]"
     ],
     [
-      18.089629331238093,
-      "Node 8 received duplicate block 593336516"
+      19.70000000000001,
+      "Node 9 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      18.099351187571447,
-      "Node 5 received duplicate block 593336516"
+      19.70000000000001,
+      "Node 9 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to [(0, False, True), (6, False, False)]"
     ],
     [
-      18.099999999999987,
-      "Node 0 added block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to the blockchain"
+      19.70000000000001,
+      "Node 9 added block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to the blockchain"
     ],
     [
-      18.099999999999987,
-      "Node 0 broadcasting block Block(id=593336516, miner=1, weight=1, time=5.96729871286292) to [(8, False, True)]"
+      19.70000000000001,
+      "Node 9 broadcasting block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to [(5, False, False), (6, True, False)]"
     ],
     [
-      18.109931314924538,
-      "Node 8 received duplicate block 593336516"
+      19.70704362635332,
+      "Node 4 received duplicate block 5993887779"
     ],
     [
-      18.633181808889052,
-      "Node 4 mined block 4425645928"
+      19.73573683563983,
+      "Node 0 received duplicate block 5993887779"
     ],
     [
-      18.699999999999996,
-      "Node 4 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
+      19.773117768335673,
+      "Node 3 received duplicate block 5993887779"
     ],
     [
-      18.699999999999996,
-      "Node 4 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(2, True, False), (3, False, False), (9, False, False), (8, True, False), (5, False, False), (7, False, False)]"
+      19.786605776411132,
+      "Node 8 received duplicate block 5993887779"
     ],
     [
-      18.799999999999997,
-      "Node 3 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
+      19.78840274453093,
+      "Node 7 received duplicate block 5993887779"
     ],
     [
-      18.799999999999997,
-      "Node 3 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(1, False, False), (8, False, False), (2, False, False), (6, True, False), (7, False, False)]"
+      19.790621446613457,
+      "Node 4 received duplicate block 5993887779"
     ],
     [
-      18.799999999999997,
-      "Node 5 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
+      19.80000000000001,
+      "Node 2 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      18.799999999999997,
-      "Node 5 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(2, False, False), (7, True, False)]"
+      19.80000000000001,
+      "Node 2 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to [(1, False, False), (7, True, True), (5, False, True)]"
     ],
     [
-      18.799999999999997,
-      "Node 7 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
+      19.80000000000001,
+      "Node 5 added block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to the blockchain"
     ],
     [
-      18.799999999999997,
-      "Node 7 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(3, True, True), (5, True, True), (9, False, False), (6, False, False), (1, True, False), (8, True, False)]"
+      19.80000000000001,
+      "Node 5 broadcasting block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to [(0, False, True), (3, False, False), (7, True, False), (2, True, False), (8, False, False)]"
     ],
     [
-      18.799999999999997,
-      "Node 9 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
+      19.80000000000001,
+      "Node 6 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
-      18.799999999999997,
-      "Node 9 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(7, False, True)]"
+      19.80000000000001,
+      "Node 6 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to []"
     ],
     [
-      18.85504022482535,
-      "Node 7 received duplicate block 4425645928"
+      19.850878688188093,
+      "Node 0 received duplicate block 5479120063"
     ],
     [
-      18.875453420570974,
-      "Node 9 received duplicate block 4425645928"
-    ],
-    [
-      18.89801885223171,
-      "Node 7 received duplicate block 4425645928"
-    ],
-    [
-      18.9,
-      "Node 1 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
-    ],
-    [
-      18.9,
-      "Node 1 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(6, False, False), (7, False, True)]"
-    ],
-    [
-      18.9,
-      "Node 2 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
-    ],
-    [
-      18.9,
-      "Node 2 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(4, False, True)]"
-    ],
-    [
-      18.9,
-      "Node 6 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
-    ],
-    [
-      18.9,
-      "Node 6 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(1, True, True), (3, False, True), (0, False, False)]"
-    ],
-    [
-      18.9,
-      "Node 8 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
-    ],
-    [
-      18.9,
-      "Node 8 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to [(4, False, True), (0, False, False), (7, True, True)]"
-    ],
-    [
-      18.920290198094737,
-      "Node 4 received duplicate block 4425645928"
-    ],
-    [
-      18.92412527106817,
-      "Node 7 received duplicate block 4425645928"
-    ],
-    [
-      18.946258185991702,
-      "Node 3 received duplicate block 4425645928"
-    ],
-    [
-      18.956703998928905,
-      "Node 4 received duplicate block 4425645928"
-    ],
-    [
-      18.97736110168502,
-      "Node 6 received duplicate block 4425645928"
-    ],
-    [
-      19.0,
-      "Node 0 added block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to the blockchain"
-    ],
-    [
-      19.0,
-      "Node 0 broadcasting block Block(id=4425645928, miner=4, weight=1, time=7.183181808888826) to []"
-    ],
-    [
-      19.814234210640826,
-      "Node 9 mined block 2981717157"
+      19.883699289420502,
+      "Node 5 received duplicate block 5993887779"
     ],
     [
       19.900000000000013,
-      "Node 9 added block Block(id=2981717157, miner=9, weight=1, time=14.764234210640256) to the blockchain"
+      "Node 1 added block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to the blockchain"
     ],
     [
       19.900000000000013,
-      "Node 9 broadcasting block Block(id=2981717157, miner=9, weight=1, time=14.764234210640256) to [(4, False, False), (7, False, False)]"
+      "Node 1 broadcasting block Block(id=5993887779, miner=5, weight=1, time=10.934569647114582) to []"
+    ],
+    [
+      19.900000000000013,
+      "Node 3 added block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to the blockchain"
+    ],
+    [
+      19.900000000000013,
+      "Node 3 broadcasting block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to [(4, False, True), (6, False, False)]"
+    ],
+    [
+      19.900000000000013,
+      "Node 8 added block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to the blockchain"
+    ],
+    [
+      19.900000000000013,
+      "Node 8 broadcasting block Block(id=5479120063, miner=0, weight=1, time=14.534841308564788) to [(2, False, False), (6, False, False), (7, True, False)]"
+    ],
+    [
+      19.99062144661346,
+      "Node 4 received duplicate block 5479120063"
     ]
   ],
   "peers": {
     "0": [
-      6,
-      8
+      4,
+      5,
+      9
     ],
     "1": [
-      6,
-      3,
-      7
+      2
     ],
     "2": [
-      3,
-      4,
+      1,
+      8,
+      7,
       5
     ],
     "3": [
-      1,
-      8,
-      2,
-      6,
-      7,
-      4
+      5,
+      4,
+      6
     ],
     "4": [
-      2,
+      0,
       3,
-      9,
-      8,
-      5,
-      7
+      5
     ],
     "5": [
-      2,
+      0,
+      3,
       7,
-      4
+      2,
+      4,
+      8,
+      9
     ],
     "6": [
-      1,
       3,
-      0,
-      7
+      8,
+      9
     ],
     "7": [
-      3,
+      2,
       5,
-      9,
-      6,
-      1,
-      4,
       8
     ],
     "8": [
-      3,
-      4,
-      0,
+      2,
+      5,
+      6,
       7
     ],
     "9": [
-      4,
-      7
+      0,
+      5,
+      6
     ]
   }
 }

@@ -293,7 +293,7 @@ class BlockchainSimulator:
             scene_class = "BlockchainAnimation"
             self.animator.save("animation_events.json")
             # run the subprocess to render the animation
-            subprocess.run(["manim", "-pql", manim_file, scene_class, "-o", "network_activity.mp4"])        
+            subprocess.run(["manim", "-pqh", manim_file, scene_class, "-o", "network_activity.mp4"])        
             
         # Validate the simulation
         validation_results = self.validate_simulation()
@@ -356,7 +356,7 @@ class BlockchainSimulator:
         if node is None:
             node = self.nodes[0]  # Select the first node for consistency
         print(f"\n📜 Blockchain Tree for Node {node.node_id}\n")
-        print(f"\033[94m{"Blue is the main chain"}\033[0m")
+        print(f"\033[94m{'Blue is the main chain'}\033[0m")
 
         # Get all block_ids on the main chain
         main_chain_ids = set()
@@ -395,7 +395,7 @@ class BlockchainSimulator:
         
         print(f"🔹 Consensus Executions: {self.metrics['consensus_executions']}")
         print(f"🔹 Fork Resolutions: {self.metrics['forks']}")
-        print(f"🔹 Longest Chain Length: {max(self.metrics["chain_lengths"])}")
+        print(f"🔹 Longest Chain Length: {max(self.metrics['chain_lengths'])}")
         
         # Calculate average number of orphaned blocks
         if self.metrics["orphaned_blocks"]:

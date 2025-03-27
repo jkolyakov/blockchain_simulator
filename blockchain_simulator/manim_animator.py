@@ -343,11 +343,12 @@ class BlockchainAnimation(Scene):
             return None
         return AnimationGroup(*anims, lag_ratio=0)
 
-    def construct(self):
+    def construct(self, max_timestep=100):
         # Entry point:
         # - Load events
         # - Add visuals (nodes, edges, timeline)
         # - Play animations in order with delay/timeline update
+        # max_timestep: maximum number of timesteps to animate
         events = self.setup_from_json("animation_events.json")
         title = Text("Blockchain Network Animation", font_size=36).to_edge(UP)
         self.add(title)
@@ -359,10 +360,12 @@ class BlockchainAnimation(Scene):
         animations = []
         
         # Play animations based on events
+        timestep_counter = 0
         for timestamp, event in tqdm(events):
+            timestep_counter += 1
             print(timestamp, event)
             delay = timestamp - current_time
-            if timestamp > 1:
+            if timestep_counter > max_timestep:
                 break
             if delay > 0:
                 # animations.append(Wait(delay))
@@ -392,4 +395,4 @@ class BlockchainAnimation(Scene):
                 continue
             animations.append(group)
         print(len(animations))
-        self.play(Succession(*animations))
+        self.play(Succession(*animations, run_time=20))

@@ -1,8 +1,10 @@
 simpy
 pandas
 matplotlib
+numpy
 rich
 tdqm
 plotly
 pydot
 manim
+plotly
