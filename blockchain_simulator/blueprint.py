@@ -274,7 +274,6 @@ class NetworkTopologyBase(ABC):
 
         self.create_network_topology(self.node_list)
         self.delay_matrix:Dict[int, Dict[int, float]] = delay_matrix
-        self._generate_symmetric_delay_matrix()
     
     @abstractmethod
     def create_network_topology(self) -> None:
