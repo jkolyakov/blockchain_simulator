@@ -37,14 +37,6 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         self.nodes: List[NodeBase] = self._create_nodes(consensus_protocol_class, blockchain_class, broadcast_protocol_class)
         self._create_network_topology(self.network_topology)
         self.animator = AnimationLogger()
-        self.input_pipe: Dict[int, simpy.Store] = {}
-        self.request_backtrack: Dict[tuple[int, int], int] = {}  # (block_id, current_node) -> previous_node
-
-        # Create message pipes for each node and start the message consumer
-        for node in self.nodes:
-            self.input_pipe[node.get_node_id()] = simpy.Store(self.env)
-            self.env.process(self._message_consumer(self.env, node))
-    
     
     def _create_nodes(self, consensus_protocol_class: Type[ConsensusProtocolBase], blockchain_class: Type[BlockchainBase], broadcast_protocol_class: Type[BroadcastProtocolBase]) -> List[NodeBase]:    
         return [self.node_class(self.env, i, self, consensus_protocol_class, blockchain_class, broadcast_protocol_class, self.block_class, self.mining_difficulty)
@@ -93,27 +85,3 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         print("\n📊 Simulation Results:")
         for node in self.nodes:
             print(node.blockchain)
-    
-    def send_block_to_node(self, sender: NodeBase, recipient: NodeBase, block: BlockBase):
-            yield self.env.timeout(self.network_topology.get_delay_between_nodes(sender, recipient))
-            yield self.input_pipe[recipient.get_node_id()].put((block, sender))
-    
-    def register_request_origin(self, block_id: int, current_node: NodeBase, origin_node: NodeBase):
-        """Register the origin of the request for backtracking."""
-        self.request_backtrack[(block_id, current_node.get_node_id())] = origin_node.get_node_id()
-    
-    def get_request_origin(self, block_id: int, current_node: NodeBase) -> Optional[NodeBase]:
-        """Get the origin of the request for backtracking."""
-        node_id = self.request_backtrack.get((block_id, current_node.get_node_id()), None)
-        if node_id is not None:
-            return self.nodes[node_id]
-        return None
-            
-    def _message_consumer(self, env: simpy.Environment, node: NodeBase):
-        while True:
-            # Get block from the message from the input pipe
-            block, sender = yield self.input_pipe[node.get_node_id()].get()
-            
-            # Process message from the other block
-            node.broadcast_protocol.process_block(node, sender, block)
-            yield env.timeout(0)

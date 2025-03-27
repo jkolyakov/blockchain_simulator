@@ -7,28 +7,31 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from blockchain_simulator.block import BasicBlock, PoWBlock
-from blockchain_simulator.blockchain import BasicBlockchain
-from blockchain_simulator.node import BasicNode
+from blockchain_simulator.block import  PoWBlock
+from blockchain_simulator.blockchain import Blockchain
+from blockchain_simulator.node import Node
 from blockchain_simulator.simulator import BlockchainSimulator
 from blockchain_simulator.consensus import GHOSTProtocol
+from blockchain_simulator.network_topology import SimpleRandomTopology, StarTopology, FullyConnectedTopology, RingTopology
+from blockchain_simulator.broadcast import GossipProtocol
 
 if __name__ == "__main__":
     sim = BlockchainSimulator(
-        num_nodes=10,  # Increased node count for a larger simulation
-        avg_peers=4,
-        max_delay=0,
-        consensus_protocol=GHOSTProtocol,
-        blockchain_impl=BasicBlockchain,
-        block_class=PoWBlock,
-        node_class=BasicNode,
-        network_topology="random",
-        drop_rate=20,
-        interactive_visualization=True,
-        num_visualization_nodes=1,
-        render_animation=True,
+        network_topology_class = SimpleRandomTopology, 
+        consensus_protocol_class= GHOSTProtocol, 
+        blockchain_class= Blockchain, 
+        broadcast_protocol_class= GossipProtocol,
+        node_class= Node,
+        block_class= PoWBlock,
+        num_nodes=10,
+        mining_difficulty=2,
+        render_animation= True,
+        min_delay= 0.1,
+        max_delay= 0.5,
+        consensus_interval= 0.1,
+        drop_rate= 20
     )
 
     print("🚀 Starting Blockchain Simulation...")
-    sim.start_mining()  # Start mining on multiple nodes
+    sim.start_mining(10)  # Start mining on multiple nodes
     sim.run(duration=20)  # Run the simulation for 50 seconds

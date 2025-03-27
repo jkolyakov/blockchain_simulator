@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Type, Dict, Set, Optional, Generator
 import simpy, random
-
+from blockchain_simulator.manim_animator import AnimationLogger
 # Griffin
 class BlockBase(ABC):
     def __init__(self):
@@ -55,7 +55,7 @@ class BlockBase(ABC):
     
     def __repr__(self) -> str:
         """Returns the string representation of the block"""
-        return f"Block(id={self.block_id}, miner={self.miner_id}, parent={self.parent_id})"
+        return f"Block(id={self.block_id}, miner={self.miner_id}, parent={self.parent_id}, children={self.children_ids}, time={self.timestamp})"
 
 # Jacob
 class BlockchainBase(ABC):
@@ -105,9 +105,13 @@ class BlockchainBase(ABC):
         """Returns the genesis block of the blockchain."""
         return self.genesis
     
+    def is_parent_missing(self, block: BlockBase) -> bool:
+        """Checks if the parent block is missing from the blockchain."""
+        return not self.contains_block(block.get_parent_id())
+    
     def __repr__(self) -> str:
         """Returns the string representation of the blockchain"""
-        return f"Blockchain(blocks={len(self.blocks)}, head={self.head.get_block_id()}, genesis={self.genesis.get_block_id}, block_class={self.block_class.__name__})"
+        return f"Blockchain(blocks={len(self.blocks)}, head={self.head.get_block_id()}, genesis={self.genesis.get_block_id()}, block_class={self.block_class.__name__})"
 
 # Griffin
 class ConsensusProtocolBase(ABC):
@@ -139,8 +143,8 @@ class BroadcastProtocolBase(ABC):
         raise NotImplementedError("broadcast_block method is not implemented")
     
     @abstractmethod
-    def receive_block(self, recipient: 'NodeBase', block: BlockBase) -> None:
-        """Receives a block from a peer."""
+    def process_block(self, recipient: 'NodeBase', block: BlockBase) -> None:
+        """Processes a block from a peer."""
         raise NotImplementedError("receive_block method is not implemented")
 
 # Jacob    
@@ -149,10 +153,11 @@ class NodeBase(ABC):
     def __init__(self,
                  env: simpy.Environment,
                  node_id: int,
+                 network: 'BlockchainSimulatorBase',
                  consensus_protocol_class: Type[ConsensusProtocolBase],
                  blockchain_class: Type[BlockchainBase],
                  broadcast_protocol_class: Type[BroadcastProtocolBase],
-                 network: 'BlockchainSimulatorBase',
+                 block_class: Type[BlockBase],
                  mining_difficulty: int = 0,
                  ):
         """" Abstract class for defining a node in the network.
@@ -170,14 +175,16 @@ class NodeBase(ABC):
         self.node_id = node_id
         self.network = network
         self.consensus = consensus_protocol_class()
-        self.blockchain = blockchain_class()
+        self.blockchain = blockchain_class(block_class)
         self.broadcast_protocol = broadcast_protocol_class()
         self.mining_difficulty = mining_difficulty
         self.peers: Set['NodeBase'] = set()
         self.is_mining = False
         self.recent_senders: Set[tuple[int, int]] = set()  # Set of (block_id, sender_id) tuples for recent senders. Needs to be reset periodically
         self.pending_blocks: Dict[int, Set[BlockBase]] = {}
-        self.proposed_blocks: set[BlockBase] = set() # Blocks that have been proposed by this node, either through mining or receiving
+        self.proposed_blocks: List[BlockBase] = [] # Blocks that have been proposed by this node, either through mining or receiving
+        self.env.process(self.step()) # Start the node process
+        self.block_class: Type[BlockBase] = block_class
     
     def get_peers(self) -> Set['NodeBase']:
         """Returns the peers of the node."""
@@ -207,13 +214,13 @@ class NodeBase(ABC):
             yield self.env.process(self.mine_block())
             yield self.env.timeout(random.uniform(0.1, 0.5))
             
-    def get_proposed_blocks(self) -> Set[BlockBase]:
+    def get_proposed_blocks(self) -> List[BlockBase]:
         """Returns the proposed blocks of the node."""
         return self.proposed_blocks
 
     def add_proposed_block(self, block: BlockBase) -> None:
         """Adds a block to the proposed blocks of the node."""
-        self.proposed_blocks.add(block)
+        self.proposed_blocks.append(block)
     
     @abstractmethod
     def step(self) -> None:
@@ -236,7 +243,9 @@ class NodeBase(ABC):
     
     def get_pending_for_parent(self, parent_id: int) -> Set[BlockBase]:
         """Returns the pending blocks for a parent block."""
-        return self.pending_blocks[parent_id]
+        if parent_id in self.pending_blocks:
+            return self.pending_blocks[parent_id]
+        return set()
     
     def get_env(self) -> simpy.Environment:
         """Returns the simulation environment."""
@@ -279,7 +288,7 @@ class BlockchainSimulatorBase(ABC):
     @abstractmethod
     def __init__(self, 
                  network_topology_class: Type[NetworkTopologyBase], 
-                 consensus_protocol_class: Optional[Type[ConsensusProtocolBase]], 
+                 consensus_protocol_class: Type[ConsensusProtocolBase], 
                  blockchain_class: Type[BlockchainBase], 
                  broadcast_protocol_class: Type[BroadcastProtocolBase],
                  node_class: Type[NodeBase],
@@ -310,15 +319,24 @@ class BlockchainSimulatorBase(ABC):
         
         Note that this shold create a simpy.Environment object and store it in the self.env attribute.   
         """
+        self.network_topology: NetworkTopologyBase = network_topology_class()
+        self.drop_rate: int = drop_rate # Between 0 and 100
+        self.consensus_interval: float = consensus_interval
+        self.nodes: List[NodeBase] = []
+        self._create_nodes(consensus_protocol_class, blockchain_class, broadcast_protocol_class)
+        self._create_network_topology(network_topology_class)
+        self.animator = AnimationLogger()
+        self.input_pipe: Dict[int, simpy.Store] = {}
+        
         raise NotImplementedError("BlockchainSimulatorBase class is not implemented")
     
     @abstractmethod
-    def __create_network_topology(self, topology: NetworkTopologyBase) -> None:
+    def _create_network_topology(self, topology: NetworkTopologyBase) -> None:
         """Calls the create_network_topology method of the NetworkTopology object."""
         raise NotImplementedError("__create_network_topology method is not implemented")
     
     @abstractmethod
-    def __create_nodes(self, consensus_protocol: ConsensusProtocolBase, blockchain: BlockchainBase, broadcast_protocol: BroadcastProtocolBase) -> None:
+    def _create_nodes(self, consensus_protocol: ConsensusProtocolBase, blockchain: BlockchainBase, broadcast_protocol: BroadcastProtocolBase) -> None:
         """Creates the nodes in the network."""
         raise NotImplementedError("__create_nodes method is not implemented")
     
@@ -328,7 +346,7 @@ class BlockchainSimulatorBase(ABC):
         raise NotImplementedError("start_mining method is not implemented")
     
     @abstractmethod
-    def __stop_mining(self) -> None:
+    def _stop_mining(self) -> None:
         """Loops through all the nodes and stops all of them from mining."""
         raise NotImplementedError("__stop_mining method is not implemented")
     
@@ -337,7 +355,15 @@ class BlockchainSimulatorBase(ABC):
         """Runs the simulation for the given duration."""
         raise NotImplementedError("run method is not implemented")
     
-    @abstractmethod
     def get_consensus_interval(self) -> float:
         """Returns how long to wait before running consensus again."""
-        raise NotImplementedError("get_consensus_interval method is not implemented")
+        return self.consensus_interval
+    
+    def get_drop_rate(self) -> int:
+        """Returns the drop rate for messages."""
+        return self.drop_rate
+    
+    def send_block_to_node(self, sender: NodeBase, recipient: NodeBase, block: BlockBase):
+        """Sends a block to a node meant to used by broadcast protocol"""
+        raise NotImplementedError("send_block_to_node method is not implemented")
+    

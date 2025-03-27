@@ -1,5 +1,5 @@
 from blockchain_simulator.blueprint import BlockchainBase, BlockBase, NodeBase, ConsensusProtocolBase, BroadcastProtocolBase, BlockchainSimulatorBase
-from blockchain_simulator.block import PoWBlock
+from blockchain_simulator.block_refactor import PoWBlock
 from typing import Set, List
 class GHOSTProtocol(ConsensusProtocolBase):        
     def update_main_chain(self, blockchain: BlockchainBase):
@@ -39,7 +39,7 @@ class GHOSTProtocol(ConsensusProtocolBase):
         
         block.set_weight(weight)
         
-        if block.get_block_id() == node.blockchain.get_genesis().get_block_id(): # Genesis block
+        if block.get_block_id() == 0: # Genesis block
             return
         parent_id = block.get_parent_id()
         parent: PoWBlock = node.blockchain.get_block(parent_id)

@@ -6,6 +6,7 @@ class PoWBlock(BlockBase):
         super().__init__()
         self.nonce: int
         self.weight: int
+        self.hash: Optional[str] = None
 
     @staticmethod
     def create_block(parent: BlockBase, time_stamp: float, miner: NodeBase) -> Generator[None, None, BlockBase]:
@@ -17,6 +18,7 @@ class PoWBlock(BlockBase):
         block.weight = 1
         block.children_ids = set()
         block.nonce = 0
+        block.hash = None
         block.block_id = block.generate_block_id()
 
         if miner.get_mining_difficulty() > 0:
@@ -34,6 +36,7 @@ class PoWBlock(BlockBase):
         block.weight = 1
         block.children_ids = set()
         block.nonce = 0
+        block.hash = None
         return block
     
     def clone(self) -> BlockBase:
@@ -54,21 +57,22 @@ class PoWBlock(BlockBase):
         hash_attempts = 0
         target_prefix = "0" * difficulty
         while node.get_is_mining():
-            hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
+            self.hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
             hash_attempts += 1
-            if hash.startswith(target_prefix):
+            if self.hash.startswith(target_prefix):
                 break
             self.nonce += 1
             if hash_attempts % 1000 == 0:
                 yield node.get_env().timeout(0.01)
+        print(f"⛏️  Mined Block {self.block_id} with nonce {self.nonce} in {hash_attempts} attempts")
                 
     def verify_block(self, owner: NodeBase) -> bool:
         """ Abstract method to verify block validity"""
         if self.nonce is None:
             return False
         
-        hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
-        return hash.startswith("0" * owner.get_mining_difficulty())
+        block_hash = block_hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
+        return block_hash.startswith("0" * owner.get_mining_difficulty())
     
     def generate_block_id(self) -> int:
         """Generates a unique block ID using SHA-256."""
