@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Type, Dict, Set, Optional, Generator
+import numpy as np
 import simpy, random
-from blockchain_simulator.broadcast_pipe import BroadcastPipe
 
 # Griffin
 class BlockBase(ABC):
@@ -260,23 +260,32 @@ class NodeBase(ABC):
 
 # Siddarth
 class NetworkTopologyBase(ABC):
-    @abstractmethod
+    
     def __init__(self, 
                  max_delay: float = 0.5,
                  min_delay: float = 0.1,
-                 nodes: List[NodeBase] = [],
+                 expected_peers: int = 3,
+                 delay_matrix: Dict[int, Dict[int, float]] = None,
                  ):
-        raise NotImplementedError("NetworkTopologyBase class is not implemented")
+        self.max_delay = max_delay
+        self.min_delay = min_delay
+        self.expected_peers = expected_peers
+
+
+        self.create_network_topology(self.node_list)
+        self.delay_matrix:Dict[int, Dict[int, float]] = delay_matrix
+        self._generate_symmetric_delay_matrix()
     
     @abstractmethod
-    def create_network_topology(self, nodes: List[NodeBase]) -> None:
+    def create_network_topology(self) -> None:
         """Creates the network topology. Adds peers to each node accordingly."""
         raise NotImplementedError("create_network_topology method is not implemented")
     
-    @abstractmethod
-    def get_delay_between_nodes(self, node1: NodeBase, node2: NodeBase) -> float:
-        """Returns the delay between two nodes. Should be between min_delay and max_delay"""
-        raise NotImplementedError("get_delay_between_nodes method is not implemented")
+    def get_network_delay(self, from_node: NodeBase, to_node: NodeBase) -> float:
+        """Get the network delay between two nodes."""
+        return float(self.delay_matrix[from_node.node_id][to_node.node_id])
+    
+    
 
 # Jacob
 class BlockchainSimulatorBase(ABC):
