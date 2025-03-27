@@ -1,110 +1,119 @@
-import simpy
-import random
-import logging
-import pandas as pd
-import matplotlib.pyplot as plt
-from typing import Type, Optional, List, Dict, TYPE_CHECKING
-if TYPE_CHECKING:
-    from blockchain_simulator.node import NodeBase
-    from blockchain_simulator.blockchain import BlockchainBase
-    from blockchain_simulator.block import BlockBase
-    from blockchain_simulator.consensus import ConsensusProtocol
+from blockchain_simulator.blueprint import BlockchainBase, BlockBase, NodeBase, ConsensusProtocolBase, BroadcastProtocolBase, BlockchainSimulatorBase, NetworkTopologyBase
+from typing import List, Type, Dict, Set, Optional
+import simpy, random, subprocess
+from tqdm import tqdm
 
-from blockchain_simulator.node import BasicNode
-# Configure logging
-logging.basicConfig(filename="blockchain_simulation.log", level=logging.INFO, format="%(message)s")
+from blockchain_simulator.manim_animator import AnimationLogger
 
-class BlockchainSimulator:
-    """API for running blockchain network simulations with custom implementations."""
-
-    def __init__(
-        self,
-        num_nodes: int = 10,
-        avg_peers: int = 3,
-        max_delay: int = 5,
-        consensus_after_delay: int = 5,
-        consensus_protocol: Optional[Type['ConsensusProtocol']] = None,
-        blockchain_impl: Optional[Type['BlockchainBase']] = None,
-        block_class: Optional[Type['BlockBase']] = None,
-        node_class: Type['NodeBase'] = BasicNode
-    ):
-        """
-        Initializes the blockchain simulator.
-
-        :param num_nodes: Number of nodes in the simulation
-        :param avg_peers: Average number of peers per node
-        :param max_delay: Maximum network delay in seconds
-        :param consensus_protocol: Consensus protocol class
-        :param blockchain_impl: Blockchain implementation class
-        :param block_class: Block class
-        :param node_class: Node class (default: BasicNode)
-        """
-        self.env: simpy.Environment = simpy.Environment()
+class BlockchainSimulator(BlockchainSimulatorBase):
+    def __init__(self, 
+                 network_topology_class: Type[NetworkTopologyBase], 
+                 consensus_protocol_class: Type[ConsensusProtocolBase], 
+                 blockchain_class: Type[BlockchainBase], 
+                 broadcast_protocol_class: Type[BroadcastProtocolBase],
+                 node_class: Type[NodeBase],
+                 block_class: Type[BlockBase],
+                 num_nodes: int,
+                 mining_difficulty: int,
+                 render_animation: bool = False,
+                 min_delay: float = 0.1,
+                 max_delay: float = 0.5,
+                 consensus_interval: float = 0.1,
+                 drop_rate: int = 0):
+        self.network_topology: NetworkTopologyBase = network_topology_class()
+        self.consensus_protocol_class: Type[ConsensusProtocolBase] = consensus_protocol_class
+        self.blockchain_class: Type[BlockchainBase] = blockchain_class
+        self.broadcast_protocol_class: Type[BroadcastProtocolBase] = broadcast_protocol_class
+        self.node_class: Type[NodeBase] = node_class
+        self.block_class: Type[BlockBase] = block_class
         self.num_nodes: int = num_nodes
-        self.max_delay: int = max_delay
-        self.consensus_after_delay: int = consensus_after_delay
-        self.consensus_protocol: Optional['ConsensusProtocol'] = consensus_protocol() if consensus_protocol else None
-        self.blockchain: Optional['BlockchainBase'] = blockchain_impl(block_class) if blockchain_impl else None
-        self.nodes: List['NodeBase'] = [
-            node_class(self.env, i, self, self.consensus_protocol, self.blockchain)
-            for i in range(num_nodes)
-        ]
-        self.metrics: Dict[str, List[float]] = {
-            "total_blocks_mined": [],
-            "block_propagation_times": []
-        }
+        self.mining_difficulty: int = mining_difficulty
+        self.render_animation: bool = render_animation
+        self.min_delay: float = min_delay
+        self.max_delay: float = max_delay
+        self.consensus_interval: float = consensus_interval
+        self.drop_rate: int = drop_rate
+        self.env = simpy.Environment()
+        self.nodes: List[NodeBase] = self._create_nodes(consensus_protocol_class, blockchain_class, broadcast_protocol_class)
+        self._create_network_topology(self.network_topology)
+        self.animator = AnimationLogger()
+        self.input_pipe: Dict[int, simpy.Store] = {}
+        self.request_backtrack: Dict[tuple[int, int], int] = {}  # (block_id, current_node) -> previous_node
 
-        self.create_random_topology(avg_peers)
-
-    def create_random_topology(self, avg_peers: int):
-        """
-        Randomly connects nodes to form a network.
-
-        :param avg_peers: Average number of peers per node.
-        """
+        # Create message pipes for each node and start the message consumer
         for node in self.nodes:
-            num_peers: int = min(random.randint(1, avg_peers), self.num_nodes - 1)
-            possible_peers: List['NodeBase'] = [n for n in self.nodes if n != node]
-            connected_peers: List['NodeBase'] = random.sample(possible_peers, num_peers)
-            for peer in connected_peers:
-                node.add_peer(peer)
-                peer.add_peer(node)
-
-    def start_mining(self, node_id: int) -> None:
-        """
-        Triggers mining at a specific node.
-
-        :param node_id: The ID of the node that will start mining.
-        """
-        if 0 <= node_id < self.num_nodes:
-            self.env.process(self.nodes[node_id].mine_block())
-
-    def run(self, duration: int = 20) -> None:
-        """
-        Runs the simulation for a given duration.
-
-        :param duration: Duration of the simulation in seconds.
-        """
+            self.input_pipe[node.get_node_id()] = simpy.Store(self.env)
+            self.env.process(self._message_consumer(self.env, node))
+    
+    
+    def _create_nodes(self, consensus_protocol_class: Type[ConsensusProtocolBase], blockchain_class: Type[BlockchainBase], broadcast_protocol_class: Type[BroadcastProtocolBase]) -> List[NodeBase]:    
+        return [self.node_class(self.env, i, self, consensus_protocol_class, blockchain_class, broadcast_protocol_class, self.block_class, self.mining_difficulty)
+                for i in range(self.num_nodes)]   
+    
+    def _create_network_topology(self, topology: NetworkTopologyBase):
+        topology.create_network_topology(self.nodes)
+    
+    def get_consensus_interval(self):
+        return self.consensus_interval
+    
+    def start_mining(self, num_miners: int = 0):
+        node_ids = random.sample(range(self.num_nodes), num_miners)
+        [self.nodes[node_id].start_mining() for node_id in node_ids]
+    
+    def _stop_mining(self):
+        [node.stop_mining() for node in self.nodes]
+    
+    def get_drop_rate(self):
+        return self.drop_rate
+        
+    def run(self, duration: float = 100):
         print(f"🚀 Running blockchain simulation for {duration} seconds...\n")
-        self.env.run(until=duration)
+        with tqdm(total=duration, desc="⏳ Simulation Progress", unit="s", ascii=" ▖▘▝▗▚▞█") as pbar:
+            last_time = self.env.now 
+            while self.env.now < duration:
+                self.env.step()
+                # Update pbar with the actual time that has passed
+                time_advanced = self.env.now - last_time
+                pbar.update(time_advanced)
+                last_time = self.env.now  # Update last_time to current time
+            self._stop_mining()
+        self._print_simulation_results()
+        
+        if self.render_animation:
+            self.animator.set_num_nodes(self.num_nodes)
+            self.animator.set_peers({n.node_id: [p.node_id for p in n.peers] for n in self.nodes})
+            manim_file = "./blockchain_simulator/manim_animator.py"
+            scene_class = "BlockchainAnimation"
+            self.animator.save("animation_events.json")
+            # run the subprocess to render the animation
+            subprocess.run(["manim", "-pql", manim_file, scene_class, "-o", "network_activity.mp4"])        
 
-        # Display results
-        self.display_metrics()
-
-    def display_metrics(self) -> None:
-        """
-        Prints a summary of blockchain metrics after the simulation.
-        """
-        print("\n📊 Blockchain Simulation Summary")
-        print("-" * 40)
-        print(f"🔹 Total Blocks Mined: {len(self.metrics['total_blocks_mined'])}")
-        print(f"🔹 Average Block Propagation Time: {self.get_average_propagation_time():.2f} seconds\n")
-
-    def get_average_propagation_time(self) -> float:
-        """
-        Calculates the average block propagation time.
-
-        :return: The average block propagation time.
-        """
-        times: List[float] = self.metrics["block_propagation_times"]
-        return sum(times) / len(times) if times else 0
+    
+    def _print_simulation_results(self):
+        print("\n📊 Simulation Results:")
+        for node in self.nodes:
+            print(node.blockchain)
+    
+    def send_block_to_node(self, sender: NodeBase, recipient: NodeBase, block: BlockBase):
+            yield self.env.timeout(self.network_topology.get_delay_between_nodes(sender, recipient))
+            yield self.input_pipe[recipient.get_node_id()].put((block, sender))
+    
+    def register_request_origin(self, block_id: int, current_node: NodeBase, origin_node: NodeBase):
+        """Register the origin of the request for backtracking."""
+        self.request_backtrack[(block_id, current_node.get_node_id())] = origin_node.get_node_id()
+    
+    def get_request_origin(self, block_id: int, current_node: NodeBase) -> Optional[NodeBase]:
+        """Get the origin of the request for backtracking."""
+        node_id = self.request_backtrack.get((block_id, current_node.get_node_id()), None)
+        if node_id is not None:
+            return self.nodes[node_id]
+        return None
+            
+    def _message_consumer(self, env: simpy.Environment, node: NodeBase):
+        while True:
+            # Get block from the message from the input pipe
+            block, sender = yield self.input_pipe[node.get_node_id()].get()
+            
+            # Process message from the other block
+            node.broadcast_protocol.process_block(node, sender, block)
+            yield env.timeout(0)

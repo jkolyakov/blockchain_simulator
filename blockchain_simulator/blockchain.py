@@ -1,52 +1,25 @@
-from __future__ import annotations
-from abc import ABC, abstractmethod
-from typing import Dict, Type, TYPE_CHECKING
+from blockchain_simulator.blueprint import BlockchainBase, BlockBase, NodeBase
+from typing import List, Type, Dict, Set, Optional
 
-if TYPE_CHECKING:
-    from blockchain_simulator.block import BlockBase
-    from blockchain_simulator.node import NodeBase
-
-# ============================
-# BLOCKCHAIN ABSTRACT CLASS
-# ============================
-
-class BlockchainBase(ABC):
-    """Abstract class for defining custom blockchain implementations."""
-    
-    def __init__(self, block_class: Type['BlockBase']):
-        self.blocks: Dict[int, 'BlockBase'] = {}  # Maps block_id to Block object
-        self.block_class: Type['BlockBase'] = block_class
-        self.genesis: 'BlockBase' = self.create_genesis_block()
-        
-    @abstractmethod
-    def create_genesis_block(self) -> 'BlockBase':
-        """Creates the genesis block."""
-        pass
-
-    @abstractmethod
-    def add_block(self, block: 'BlockBase', node: 'NodeBase'):
-        """Adds a block to the blockchain."""
-        pass
-
-# ============================
-# BLOCKCHAIN IMPLEMENTATION
-# ============================
-
-class BasicBlockchain(BlockchainBase):
-    """Basic blockchain implementation."""
-
-    def __init__(self, block_class: Type['BlockBase']):
+class Blockchain(BlockchainBase):
+    def __init__(self, block_class: Type[BlockBase]):
         super().__init__(block_class)
+        
+    def add_block(self, block: BlockBase, node: NodeBase) -> bool:
+        if not self.authorize_block(block, node):
+            return False
+        
+        parent = self.get_block(block.get_parent_id())
 
-    def create_genesis_block(self) -> 'BlockBase':
-        """Creates a genesis block."""
-        genesis = self.block_class(block_id=0, miner_id=1, timestamp=0)
-        self.blocks[0] = genesis
-        return genesis
-
-    def add_block(self, block: 'BlockBase', node: 'NodeBase'):
-        """Adds a block and updates the weight.
-        Assumes parents are properly linked to block
-        """
-        self.blocks[block.block_id] = block
-        block.parent.children.append(block) # Assume all parents have blocks because genesis block must have been created already
+        # Add the block to the local blockchain
+        self.blocks[block.get_block_id()] = block
+        parent.add_child(block.get_block_id())
+        return True
+    
+    def authorize_block(self, block: BlockBase, node: NodeBase):
+        if not self.contains_block(block.get_parent_id()) or not block.verify_block(node):
+            return False
+        return True
+    
+    def is_parent_missing(self, block: BlockBase):
+        return not self.contains_block(block.get_parent_id())
