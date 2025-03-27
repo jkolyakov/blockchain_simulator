@@ -4,13 +4,12 @@ from typing import Type, Set, TYPE_CHECKING
 import random
 
 if TYPE_CHECKING:
-    from blockchain_simulator.node import NodeBase
-    from blockchain_simulator.block import BlockBase
-    from blockchain_simulator.blockchain import BlockchainBase
+    from blockchain_simulator.blueprint import NodeBase,BlockBase,BlockchainBase,BroadcastProtocolBase
+    from blockchain_simulator.broadcast_pipe import BroadcastPipe
 import logging
 
 
-class BroadcastProtocol(ABC):
+class BroadcastProtocol(BroadcastProtocolBase):
     def __init__(self, node: "NodeBase"):
         self.node = node  # The node running the protocol
 
@@ -80,14 +79,10 @@ class BroadcastProtocol(ABC):
 # ============================
 # BROADCAST PROTOCOL IMPLEMENTATION
 # ============================
-class GossipProtocol(BroadcastProtocol):
+class GossipProtocol(BroadcastProtocolBase):
     """Implements a gossip protocol for broadcasting messages."""
 
-    def __init__(self, node: "NodeBase"):
-        super().__init__(node)
-        self.seen_requests: Set[tuple[int, int]] = (
-            set()
-        )  # Track block requests to prevent cycles, (request_origin, block_id)
+        
 
     def broadcast_block(self, block: "BlockBase"):
         """Broadcasts a block to all peers using gossip with random drops"""

@@ -86,6 +86,8 @@ class BlockchainSimulator:
         self.interactive_visualization: bool = interactive_visualization
         self.num_visualization_nodes: int = num_visualization_nodes
         self.animator: AnimationLogger = AnimationLogger()
+
+        self.input_pipe: Dict[int, simpy.Store] = {}
         
         # Ensure proper delay matrix setup
         self.delay_matrix = self._generate_symmetric_delay_matrix()
@@ -111,6 +113,11 @@ class BlockchainSimulator:
             node_class(self.env, i, self, self.consensus_protocol, blockchain_impl(block_class, genesis_block=copy.deepcopy(self.genesis_block)), broadcast_protocol)
             for i in range(num_nodes)
         ]
+
+        #Create message pipes for each node
+
+        for node in self.nodes:
+            self.input_pipe[node.node_id] = simpy.Store(self.env)
         
         # Create network topology
         self._create_network_topology() # TODO: Make this extendable

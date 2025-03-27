@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Type, Dict, Set, Optional, Generator
 import simpy, random
+from blockchain_simulator.broadcast_pipe import BroadcastPipe
 
 # Griffin
 class BlockBase(ABC):
@@ -129,9 +130,12 @@ class ConsensusProtocolBase(ABC):
 # Siddarth
 class BroadcastProtocolBase(ABC):
     @abstractmethod
-    def __init__(self):
+    def __init__(self, node: 'NodeBase'):
         """Initializes the broadcast protocol."""
-        raise NotImplementedError("BroadcastProtocolBase class is not implemented")
+        self.node = node
+        
+
+        self.seen_requests: Set[tuple[int, int]] =  set()  # Track block requests to prevent cycles, (request_origin, block_id)
     
     @abstractmethod
     def broadcast_block(self, sender: 'NodeBase', block: BlockBase) -> None:
