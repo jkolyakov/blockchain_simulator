@@ -6,6 +6,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from typing import Type, Optional, List, Dict, Any, TYPE_CHECKING
+
+from blueprint import NetworkTopologyBase
 if TYPE_CHECKING:
     from blockchain_simulator.node import NodeBase
     from blockchain_simulator.blockchain import BlockchainBase
@@ -50,7 +52,7 @@ class BlockchainSimulator:
         blockchain_impl: Optional[Type['BlockchainBase']] = 'BlockchainBase',
         block_class: Optional[Type['BlockBase']] = 'PoWBlock',
         node_class: Type['NodeBase'] = 'BasicNode',
-        network_topology: str = "random",
+        network_topology: Type[NetworkTopologyBase] = 'RandomTopology',
         stakes: Optional[Dict[int, float]] = None,
         drop_rate: int = 0,
         broadcast_protocol: Optional[Type['BroadcastProtocol']] = GossipProtocol,
@@ -80,12 +82,13 @@ class BlockchainSimulator:
         self.consensus_interval: int = consensus_interval
         self.consensus_protocol: Optional['ConsensusProtocol'] = consensus_protocol() if consensus_protocol else None
         self.genesis_block: 'BlockBase' = block_class(parent=None, miner_id=-1, timestamp=0) if block_class else None
-        self.network_topology: str = network_topology
         self.stakes: Dict[int, float] = stakes or {i: 1.0 for i in range(num_nodes)}
         self.drop_rate: int = drop_rate
         self.interactive_visualization: bool = interactive_visualization
         self.num_visualization_nodes: int = num_visualization_nodes
         self.animator: AnimationLogger = AnimationLogger()
+
+        self.input_pipe: Dict[int, simpy.Store] = {}
         
         # Ensure proper delay matrix setup
         self.delay_matrix = self._generate_symmetric_delay_matrix()
@@ -111,9 +114,20 @@ class BlockchainSimulator:
             node_class(self.env, i, self, self.consensus_protocol, blockchain_impl(block_class, genesis_block=copy.deepcopy(self.genesis_block)), broadcast_protocol)
             for i in range(num_nodes)
         ]
+
+        self.network_topology: NetworkTopologyBase = network_topology(max_delay=max_delay, min_delay=min_delay, expected_peers=avg_peers, delay_matrix=self.delay_matrix)
+
+        #Create message pipes for each node
+
+        for node in self.nodes:
+            self.input_pipe[node.node_id] = simpy.Store(self.env)
+
+        #Initialise the process of receiving messages
+        for node in self.nodes:
+            self.env.process(self.message_consumer(self.env, node))
         
         # Create network topology
-        self._create_network_topology() # TODO: Make this extendable
+        network_topology.create_network_topology() # TODO: Make this extendable
         
         self._visualize_network_topology(self.nodes)
         
@@ -160,18 +174,18 @@ class BlockchainSimulator:
         plt.title("Blockchain Network Topology")
         plt.show()
 
-    def _create_network_topology(self):
-        """Creates the network topology based on the specified type."""
-        if self.network_topology == "random":
-            self._create_random_topology()
-        elif self.network_topology == "ring":
-            self._create_ring_topology()
-        elif self.network_topology == "star":
-            self._create_star_topology()
-        elif self.network_topology == "fully_connected":
-            self._create_fully_connected_topology()
-        else:
-            raise ValueError(f"Unknown network topology: {self.network_topology}")
+    # def _create_network_topology(self):
+    #     """Creates the network topology based on the specified type."""
+    #     if self.network_topology == "random":
+    #         self._create_random_topology()
+    #     elif self.network_topology == "ring":
+    #         self._create_ring_topology()
+    #     elif self.network_topology == "star":
+    #         self._create_star_topology()
+    #     elif self.network_topology == "fully_connected":
+    #         self._create_fully_connected_topology()
+    #     else:
+    #         raise ValueError(f"Unknown network topology: {self.network_topology}")
 
     def _create_random_topology(self):
         """Creates a random network topology where each node has a random number of peers."""
@@ -217,6 +231,8 @@ class BlockchainSimulator:
     def get_network_delay(self, from_node: 'BasicNode', to_node: 'BasicNode') -> float:
         """Get the network delay between two nodes."""
         return float(self.delay_matrix[from_node.node_id][to_node.node_id])  # Use list-of-lists indexing
+    
+    
 
 
     def start_mining(self, num_miners: Optional[int] = None) -> None:
@@ -451,3 +467,17 @@ class BlockchainSimulator:
         :return: Convergence percentage (0.0-1.0).
         """
         return self.validator._measure_convergence()
+    
+    def message_consumer(self, env: simpy.Environment, node: 'NodeBase'):
+        """A process which consumes messages."""
+        while True:
+            # Get event for message pipe
+            block = yield self.input_pipe[node.node_id].get()
+
+            # Process the message
+            if block:
+                # Process the block
+                node.broadcast_protocol.receive_block(block)
+
+            # Process does some other work, which may result in missing messages
+            yield env.timeout(random.randint(4, 8))
