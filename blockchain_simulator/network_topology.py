@@ -40,32 +40,12 @@ class SimpleRandomTopology(NetworkTopologyBase):
                 chosen_peer = random.choice(other_nodes)
                 node.add_peer(chosen_peer)
                 chosen_peer.add_peer(node)
-        # for i, node in enumerate(nodes):
-        #    # Determine number of peers for this node
-        #    num_peers = min(random.randint(1, int(len(nodes)/2)), len(nodes) - 1)
-           
-        #    # Select random peers
-        #    possible_peers = [n for n in nodes if n.node_id != i]
-        #    selected_peers = random.sample(possible_peers, min(num_peers, len(possible_peers)))           
-        #    # Connect peers bidirectionally
-        #    for peer in selected_peers:
-        #        node.add_peer(peer)
-        #        peer.add_peer(node)
 
     def get_delay_between_nodes(self, node1: NodeBase, node2: NodeBase) -> float:
         return random.uniform(self.min_delay, self.max_delay)
     
-class FullyConnectedTopology(NetworkTopologyBase):
-    def __init__(self, 
-                 max_delay: float = 0.5,
-                 min_delay: float = 0.1,
-                 nodes: List[NodeBase] = []):
-        self.max_delay = max_delay
-        self.min_delay = min_delay
-        self.nodes = nodes
 
-        if nodes:
-            self.create_network_topology(nodes)
+class FullyConnectedTopology(SimpleRandomTopology):
     
     def create_network_topology(self, node_list: List[NodeBase]) -> None:
         """Creates a fully connected network where every node is connected to every other node."""
@@ -74,20 +54,8 @@ class FullyConnectedTopology(NetworkTopologyBase):
                 if node.node_id != peer.node_id:  # Don't connect to self
                     node.add_peer(peer)
     
-    def get_delay_between_nodes(self, node1: NodeBase, node2: NodeBase) -> float:
-        return random.uniform(self.min_delay, self.max_delay)
 
-class StarTopology(NetworkTopologyBase): 
-    def __init__(self, 
-                 max_delay: float = 0.5,
-                 min_delay: float = 0.1,
-                 nodes: List[NodeBase] = []):
-        self.max_delay = max_delay
-        self.min_delay = min_delay
-        self.nodes = nodes
-
-        if nodes:
-            self.create_network_topology(nodes)
+class StarTopology(SimpleRandomTopology): 
     
     def create_network_topology(self, node_list: List[NodeBase]) -> None:
         """Creates a star network where every node is connected to a central node."""
@@ -97,21 +65,7 @@ class StarTopology(NetworkTopologyBase):
                 node.add_peer(central_node)
                 central_node.add_peer(node)
     
-    def get_delay_between_nodes(self, node1: NodeBase, node2: NodeBase) -> float:
-        return random.uniform(self.min_delay, self.max_delay)
-
-                
-class RingTopology(NetworkTopologyBase):
-    def __init__(self, 
-                 max_delay: float = 0.5,
-                 min_delay: float = 0.1,
-                 nodes: List[NodeBase] = []):
-        self.max_delay = max_delay
-        self.min_delay = min_delay
-        self.nodes = nodes
-
-        if nodes:
-            self.create_network_topology(nodes)
+class RingTopology(SimpleRandomTopology):
         
     def create_network_topology(self, node_list: List[NodeBase]) -> None:
         """Creates a ring network where each node is connected to two other nodes."""
@@ -120,6 +74,23 @@ class RingTopology(NetworkTopologyBase):
             next_node = node_list[(i + 1) % len(node_list)]
             node.add_peer(prev_node)
             node.add_peer(next_node)
-    
-    def get_delay_between_nodes(self, node1: NodeBase, node2: NodeBase) -> float:
-        return random.uniform(self.min_delay, self.max_delay)
+
+class LineTopology(SimpleRandomTopology):
+    def create_network_topology(self, nodes):
+        for i in range(len(nodes) - 1):
+            nodes[i].add_peer(nodes[i + 1])
+            nodes[(i + 1) % len(nodes)].add_peer(nodes[i])
+            
+class TreeTopology(SimpleRandomTopology):
+    def __init__(self):
+        super().__init__()
+        self.branching_factor = 2
+
+    def create_network_topology(self, nodes):
+        for i, parent in enumerate(nodes):
+            for j in range(1, self.branching_factor + 1):
+                child_index = self.branching_factor * i + j
+                if child_index < len(nodes):
+                    child = nodes[child_index]
+                    parent.add_peer(child)
+                    child.add_peer(parent)

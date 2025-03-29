@@ -383,7 +383,7 @@ class BlockchainAnimation(Scene):
             target_node = self.visualizer.nodes[target_id]
             anims = []
             
-            triangle = Triangle(color=YELLOW_D).move_to(source_node.position).set_opacity(0)
+            triangle = Triangle(color=YELLOW_D).scale(0.25).move_to(source_node.position).set_opacity(0)
             triangle_text = Text(f"TTL={ttl}", font_size=14).next_to(triangle, UP, buff=0.1).set_opacity(0)
             block_id_text = Text(f"B{block_id[-4:]}", font_size=14).next_to(triangle, DOWN, buff=0.1).set_opacity(0)
             anims.append(Succession(
@@ -404,7 +404,7 @@ class BlockchainAnimation(Scene):
         return AnimationGroup(*anims, lag_ratio=0)
     
 
-    def construct(self, max_events: int = 25):
+    def construct(self, min_events: int = 0, max_events: int = 50):
         # Entry point:
         # - Load events
         # - Add visuals (nodes, edges, timeline)

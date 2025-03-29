@@ -1,6 +1,6 @@
 from blockchain_simulator.blueprint import BlockchainBase, BlockBase, NodeBase, ConsensusProtocolBase, BroadcastProtocolBase, BlockchainSimulatorBase, NetworkTopologyBase
 from typing import List, Type, Dict, Set, Optional
-import simpy, random, subprocess
+import simpy, random, subprocess, math
 from tqdm import tqdm
 
 from blockchain_simulator.manim_animator import AnimationLogger
@@ -19,7 +19,12 @@ class BlockchainSimulator(BlockchainSimulatorBase):
                  min_delay: float = 0.1,
                  max_delay: float = 0.5,
                  consensus_interval: float = 0.1,
-                 drop_rate: int = 0):
+                 drop_rate: int = 0,
+                 set_bandwidth: bool = False,
+                 bandwidth: int = 1_000_000, # 1 Gbps
+                 packet_size: int = 1500, # 1 KB
+                 block_size: int = 1_000_000, # 1 MB
+                 ):
         self.network_topology: NetworkTopologyBase = network_topology_class()
         self.consensus_protocol_class: Type[ConsensusProtocolBase] = consensus_protocol_class
         self.blockchain_class: Type[BlockchainBase] = blockchain_class
@@ -39,12 +44,16 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         self.animator = AnimationLogger()
         self.input_pipe: Dict[int, simpy.Store] = {}
         self.request_backtrack: Dict[tuple[int, int], int] = {}  # (block_id, current_node) -> previous_node
+        self.bandwidth: simpy.Resource = simpy.Resource(self.env, capacity=bandwidth)
+        self.packet_size: int = packet_size
+        self.block_size: int = block_size
+        self.set_bandwidth: bool = set_bandwidth
 
+        assert self.packet_size < bandwidth, "Packet size must be less than bandwidth"
         # Create message pipes for each node and start the message consumer
         for node in self.nodes:
             self.input_pipe[node.get_node_id()] = simpy.Store(self.env)
             self.env.process(self._message_consumer(self.env, node))
-    
     
     def _create_nodes(self, consensus_protocol_class: Type[ConsensusProtocolBase], blockchain_class: Type[BlockchainBase], broadcast_protocol_class: Type[BroadcastProtocolBase]) -> List[NodeBase]:    
         return [self.node_class(self.env, i, self, consensus_protocol_class, blockchain_class, broadcast_protocol_class, self.block_class, self.mining_difficulty)
@@ -95,8 +104,21 @@ class BlockchainSimulator(BlockchainSimulatorBase):
             print(node.blockchain)
     
     def send_block_to_node(self, sender: NodeBase, recipient: NodeBase, block: BlockBase):
+        if not self.set_bandwidth:
             yield self.env.timeout(self.network_topology.get_delay_between_nodes(sender, recipient))
             yield self.input_pipe[recipient.get_node_id()].put((block, sender))
+            return
+
+        for _ in range(math.ceil(self.block_size / self.packet_size)):
+            with self.bandwidth.request() as req:
+                yield req
+                # Log if bandwidth was contended for debugging purposes
+                if self.bandwidth.count >= self.bandwidth.capacity:
+                    print(f"\033[91m[Bandwidth Wait] Node {sender.node_id} waited for bandwidth at time {self.env.now}\033[0m")
+
+                yield self.env.timeout(self.network_topology.get_delay_between_nodes(sender, recipient))
+        
+        yield self.input_pipe[recipient.get_node_id()].put((block, sender))
     
     def register_request_origin(self, block_id: int, current_node: NodeBase, origin_node: NodeBase):
         """Register the origin of the request for backtracking."""

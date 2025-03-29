@@ -12,7 +12,7 @@ from blockchain_simulator.blockchain import Blockchain
 from blockchain_simulator.node import Node
 from blockchain_simulator.simulator import BlockchainSimulator
 from blockchain_simulator.consensus import GHOSTProtocol
-from blockchain_simulator.network_topology import SimpleRandomTopology, StarTopology, FullyConnectedTopology, RingTopology
+from blockchain_simulator.network_topology import SimpleRandomTopology, StarTopology, FullyConnectedTopology, RingTopology, TreeTopology
 from blockchain_simulator.broadcast import GossipProtocol
 
 if __name__ == "__main__":
@@ -24,14 +24,15 @@ if __name__ == "__main__":
         node_class= Node,
         block_class= PoWBlock,
         num_nodes=10,
-        mining_difficulty=2,
+        mining_difficulty=1,
         render_animation= True,
-        min_delay= 0.1,
+        min_delay= 0.5,
         max_delay= 0.5,
         consensus_interval= 0.1,
-        drop_rate= 20
+        drop_rate= 0,
+        set_bandwidth= True,
     )
 
     print("🚀 Starting Blockchain Simulation...")
     sim.start_mining(10)  # Start mining on multiple nodes
-    sim.run(duration=20)  # Run the simulation for 50 seconds
+    sim.run(duration=10)  # Run the simulation for 50 seconds
