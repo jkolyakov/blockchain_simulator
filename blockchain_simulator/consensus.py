@@ -1,14 +1,24 @@
 from blockchain_simulator.blueprint import BlockchainBase, BlockBase, NodeBase, ConsensusProtocolBase, BroadcastProtocolBase, BlockchainSimulatorBase
 from blockchain_simulator.block import PoWBlock
-from typing import Set, List
+from typing import Set, List, Dict, Any
+
 class GHOSTProtocol(ConsensusProtocolBase):        
-    def update_main_chain(self, blockchain: BlockchainBase):
+    def __init__(self):
+        self.metrics: Dict[str, Any] = {
+            "consensus_executions": 0,
+            "broadcasts": 0,
+            "fork_resolutions": 0,
+        }
+
+    def update_main_chain(self, blockchain: BlockchainBase, node_id: int):
         head = blockchain.get_genesis()
-        
         while len(head.get_children_ids()) > 0:
             children_ids: Set[PoWBlock] = head.get_children_ids()
-            children: List[PoWBlock] =[blockchain.get_block(child_id) for child_id in children_ids]
+            children: List[PoWBlock] = [blockchain.get_block(child_id) for child_id in children_ids]
             head = max(children, key=lambda b: (b.get_weight(), -b.get_block_id()))
+            if head.get_block_id() != blockchain.get_current_head().get_block_id():
+                self.metrics["fork_resolutions"] += 1
+    
         blockchain.update_head(head)
     
     def propose_block(self, node: NodeBase, block: PoWBlock):
@@ -21,11 +31,19 @@ class GHOSTProtocol(ConsensusProtocolBase):
         
         for block in node.get_proposed_blocks():
             block_clone: PoWBlock = block.clone()
+            #print(f'block has parent {block.get_parent_id()} clone has parent {block_clone.get_parent_id()}')
             if node.blockchain.add_block(block_clone, node):
                 self._update_weights(block_clone, node)
-                self.update_main_chain(node.blockchain)
+                self.update_main_chain(node.blockchain, node.node_id)
+
+                head = node.blockchain.get_current_head()
+                #print(f"Fetched head {head} Fork resolution: {node.blockchain.head.block_id} -> {block.block_id}")
+                if not head.block_id == block.block_id:
+                    self.metrics["fork_resolutions"] += 1
+                    
                 self._process_pending_blocks(node, block.get_block_id())
                 node.broadcast_protocol.broadcast_block(node, block)
+        # Update the main chain
                 
         node.get_proposed_blocks().clear()
     
@@ -36,7 +54,6 @@ class GHOSTProtocol(ConsensusProtocolBase):
             child: PoWBlock = node.blockchain.get_block(child_id)
             assert(isinstance(child_id, int))
             weight += child.get_weight()
-        
         block.set_weight(weight)
         
         if block.get_block_id() == node.blockchain.get_genesis().get_block_id(): # Genesis block

@@ -3,7 +3,8 @@ from typing import List, Type, Dict, Set, Optional
 import simpy, random, subprocess, math
 from tqdm import tqdm
 
-from blockchain_simulator.manim_animator import AnimationLogger
+#from blockchain_simulator.manim_animator import AnimationLogger
+from blockchain_simulator.examples.blockchain_simulator.manim_animator import AnimationLogger
 
 class BlockchainSimulator(BlockchainSimulatorBase):
     def __init__(self, 
@@ -54,10 +55,10 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         for node in self.nodes:
             self.input_pipe[node.get_node_id()] = simpy.Store(self.env)
             self.env.process(self._message_consumer(self.env, node))
-    
+
     def _create_nodes(self, consensus_protocol_class: Type[ConsensusProtocolBase], blockchain_class: Type[BlockchainBase], broadcast_protocol_class: Type[BroadcastProtocolBase]) -> List[NodeBase]:    
         return [self.node_class(self.env, i, self, consensus_protocol_class, blockchain_class, broadcast_protocol_class, self.block_class, self.mining_difficulty)
-                for i in range(self.num_nodes)]   
+                for i in range(self.num_nodes)]  
     
     def _create_network_topology(self, topology: NetworkTopologyBase):
         topology.create_network_topology(self.nodes)
@@ -74,6 +75,89 @@ class BlockchainSimulator(BlockchainSimulatorBase):
     
     def get_drop_rate(self):
         return self.drop_rate
+    
+
+    def find_main_chain(self,node) -> set:
+        """Finds the main chain by backtracking from the current head."""
+        main_chain = set()
+        block = node.blockchain.head
+        while block:
+            main_chain.add(block.block_id)
+            # return main_chain
+            # block = block.get_parent()  # Move up the chain
+            block = node.blockchain.get_block(block.get_parent_id())  # Move up the chain
+
+        return main_chain
+    
+
+    def collect_metrics(self):
+        """Collect metrics from the simulation."""
+        # Access the consensus protocol instance
+        consensus_protocol = self.nodes[0].get_consensus_protocol()  # Assuming all nodes share the same protocol instance
+
+        # Collect metrics from the protocol
+        protocol_metrics = consensus_protocol.metrics if hasattr(consensus_protocol, "metrics") else {}
+
+        blockchain_metrics = self.nodes[0].blockchain.metrics if hasattr(self.nodes[0].blockchain, "metrics") else {}
+        # Collect blockchain-specific metrics
+
+        total_orphans = 0
+        for node in self.nodes:
+            main_chain = self.find_main_chain(node)
+            block_list = node.blockchain.blocks
+
+            print(f'Node {node.node_id} main chain length = {len(main_chain)} total blocks {len(block_list)}')
+
+            for block_id in block_list:
+                if block_id not in main_chain:
+                    total_orphans += 1
+                    print(f"Orphaned block: {block_id} from node {node.node_id}")
+                #else:
+                    #print(f"Main chain block")
+        # Combine simulator and protocol metrics
+        metrics = {
+            "num_nodes": self.num_nodes,
+            "mining_difficulty": self.mining_difficulty,
+            "drop_rate": self.drop_rate,
+            "consensus_interval": self.consensus_interval,
+            "chain_length": {node.get_node_id(): node.blockchain.get_chain_length() for node in self.nodes},
+            "longest_chain_length": max(node.blockchain.get_chain_length() for node in self.nodes),
+            "total_blocks_mined": sum(node.num_mined_blocks for node in self.nodes),
+            #"total_blocks_mined": sum(node.blockchain.get_chain_length() for node in self.nodes),
+            #"blocks_per_node": {node.get_node_id(): node.get_num_mined() for node in self.nodes},
+
+            "fork resolutions": sum(node.consensus.metrics["fork_resolutions"] for node in self.nodes),
+            "broadcasts": sum(node.consensus.metrics["broadcasts"] for node in self.nodes),
+            "consensus_executions": sum(node.consensus.metrics["consensus_executions"] for node in self.nodes),
+
+
+            #"broadcasts": sum(node.broadcast_protocol.broadcasts for node in self.nodes),
+            #"consensus_executions": sum(node.consensus.consensus_executions for node in self.nodes),
+            #"broadcasts": sum(node.metrics["broadcasts"] for node in self.nodes),
+            #"consensus_executions": sum(node.metrics["consensus_executions"] for node in self.nodes),
+            
+            "network_topology": self.network_topology.__class__.__name__,
+            "orphaned_blocks": total_orphans,
+            #**protocol_metrics,  # Merge protocol metrics
+            #**blockchain_metrics,  # Merge blockchain metrics
+        }
+        return metrics
+
+    def display_metrics(self):
+        """Display collected metrics in a readable format."""
+        metrics = self.collect_metrics()
+        print("\n📈 Simulation Metrics:")
+        print(f"Number of Nodes: {metrics['num_nodes']}")
+        print(f"Mining Difficulty: {metrics['mining_difficulty']}")
+        print(f"Drop Rate: {metrics['drop_rate']}%")
+        print(f"Consensus Interval: {metrics['consensus_interval']} seconds")
+        average_chain_length = sum(metrics['chain_length'].values()) / metrics['num_nodes']
+        print(f"Average Chain Length: {average_chain_length:.2f} blocks")
+        print(f"Total Blocks Mined: {metrics['total_blocks_mined']}")
+        print(f"Network Topology: {metrics['network_topology']}")
+        print(f"Orphaned Blocks: {metrics['orphaned_blocks']}")
+        print(f"Fork Resolutions: {metrics['fork resolutions']}")
+
         
     def run(self, duration: float = 100):
         print(f"🚀 Running blockchain simulation for {duration} seconds...\n")
@@ -86,7 +170,8 @@ class BlockchainSimulator(BlockchainSimulatorBase):
                 pbar.update(time_advanced)
                 last_time = self.env.now  # Update last_time to current time
             self._stop_mining()
-        self._print_simulation_results()
+        print("\n✅ Simulation completed.")
+        self.display_metrics()
         
         if self.render_animation:
             self.animator.set_num_nodes(self.num_nodes)
@@ -97,11 +182,6 @@ class BlockchainSimulator(BlockchainSimulatorBase):
             # run the subprocess to render the animation
             subprocess.run(["manim", "-pql", manim_file, scene_class, "-o", "network_activity.mp4"])        
 
-    
-    def _print_simulation_results(self):
-        print("\n📊 Simulation Results:")
-        for node in self.nodes:
-            print(node.blockchain)
     
     def send_block_to_node(self, sender: NodeBase, recipient: NodeBase, block: BlockBase):
         if not self.set_bandwidth:
