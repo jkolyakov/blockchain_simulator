@@ -130,6 +130,9 @@ class BlockchainSimulator(BlockchainSimulatorBase):
             "broadcasts": sum(node.consensus.metrics["broadcasts"] for node in self.nodes),
             "consensus_executions": sum(node.consensus.metrics["consensus_executions"] for node in self.nodes),
 
+            "average_fork_resolutions": sum(node.consensus.metrics["fork_resolutions"] for node in self.nodes) / self.num_nodes,
+
+            "throughput (blocks/s)": sum(node.blockchain.get_chain_length() for node in self.nodes) / self.env.now,
 
             #"broadcasts": sum(node.broadcast_protocol.broadcasts for node in self.nodes),
             #"consensus_executions": sum(node.consensus.consensus_executions for node in self.nodes),
@@ -152,12 +155,13 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         print(f"Drop Rate: {metrics['drop_rate']}%")
         print(f"Consensus Interval: {metrics['consensus_interval']} seconds")
         average_chain_length = sum(metrics['chain_length'].values()) / metrics['num_nodes']
-        print(f"Average Chain Length: {average_chain_length:.2f} blocks")
+        print(f"Average MainChain Length: {average_chain_length:.2f} blocks")
         print(f"Total Blocks Mined: {metrics['total_blocks_mined']}")
         print(f"Network Topology: {metrics['network_topology']}")
         print(f"Orphaned Blocks: {metrics['orphaned_blocks']}")
         print(f"Fork Resolutions: {metrics['fork resolutions']}")
-
+        print(f"Average Fork Resolutions: {metrics['average_fork_resolutions']}")
+        print(f"Throughput (blocks/s): {metrics['throughput (blocks/s)']:.2f} blocks/s")
         
     def run(self, duration: float = 100):
         print(f"🚀 Running blockchain simulation for {duration} seconds...\n")
