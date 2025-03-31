@@ -90,17 +90,31 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         return main_chain
     
 
+    def _measure_convergence(self) -> float:
+        """Measure the percentage of nodes that agree on the same chain."""
+        heads = {}
+        # Count occurrences of each head block
+        for node in self.nodes:
+            head_id = node.blockchain.get_current_head().block_id
+            if head_id in heads:
+                heads[head_id] += 1
+            else:
+                heads[head_id] = 1
+        
+        # Find the most common head
+        if not heads:
+            return 0.0
+            
+        most_common_head, count = max(heads.items(), key=lambda x: x[1])
+        
+        # Calculate the percentage of nodes with this head
+        return most_common_head, count / len(self.nodes) * 100
+    
+
+    
+
     def collect_metrics(self):
         """Collect metrics from the simulation."""
-        # Access the consensus protocol instance
-        consensus_protocol = self.nodes[0].get_consensus_protocol()  # Assuming all nodes share the same protocol instance
-
-        # Collect metrics from the protocol
-        protocol_metrics = consensus_protocol.metrics if hasattr(consensus_protocol, "metrics") else {}
-
-        blockchain_metrics = self.nodes[0].blockchain.metrics if hasattr(self.nodes[0].blockchain, "metrics") else {}
-        # Collect blockchain-specific metrics
-
         total_orphans = 0
         for node in self.nodes:
             main_chain = self.find_main_chain(node)
@@ -121,9 +135,10 @@ class BlockchainSimulator(BlockchainSimulatorBase):
             "total_blocks_mined": sum(node.num_mined_blocks for node in self.nodes),
             "fork resolutions": sum(node.consensus.metrics["fork_resolutions"] for node in self.nodes),
             "average_fork_resolutions": sum(node.consensus.metrics["fork_resolutions"] for node in self.nodes) / self.num_nodes,
-            "throughput (blocks/s)": sum(node.blockchain.get_chain_length() for node in self.nodes) / self.env.now,
+            "throughput (blocks/s)": (sum(node.blockchain.get_chain_length() for node in self.nodes) / self.num_nodes) / self.env.now,
             "network_topology": self.network_topology.__class__.__name__,
             "orphaned_blocks": total_orphans,
+            "convergence": self._measure_convergence(),
         }
         return metrics
 
@@ -138,14 +153,16 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         print(f"Drop Rate: {metrics['drop_rate']}%")
         print(f"Consensus Interval: {metrics['consensus_interval']} seconds")
         average_chain_length = sum(metrics['chain_length'].values()) / metrics['num_nodes']
-        print(f"Average MainChain Length: {average_chain_length:.2f} blocks")
+        print(f"Average Length: {average_chain_length:.2f} blocks")
         print(f"Total Blocks Mined: {metrics['total_blocks_mined']}")
         print(f"Orphaned Blocks: {metrics['orphaned_blocks']}")
         print(f"Fork Resolutions: {metrics['fork resolutions']}")
         print(f"Average Fork Resolutions: {metrics['average_fork_resolutions']}")
         print(f"Throughput (blocks/s): {metrics['throughput (blocks/s)']:.2f} blocks/s")
-        print(f"*************************************************")
-        print("Animating the simulation...")
+        print(f"Convergence: {metrics['convergence'][1]:.2f}% of nodes agreeing on the same chain")
+        print(f"😊😊😊😊😊😊😊😊😊😊😊😊😊😊😊😊")
+        print(f"Animating the simulation...")
+
         
     def run(self, duration: float = 100):
         print(f"🚀 Running blockchain simulation for {duration} seconds...\n")
@@ -158,7 +175,7 @@ class BlockchainSimulator(BlockchainSimulatorBase):
                 pbar.update(time_advanced)
                 last_time = self.env.now  # Update last_time to current time
             self._stop_mining()
-        print("\n✅ Simulation completed.")
+        print("\n✅ Simulation complete!!")
         self.display_metrics()
         
         if self.render_animation:
