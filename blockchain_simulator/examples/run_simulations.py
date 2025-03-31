@@ -36,7 +36,7 @@ if __name__ == "__main__":
         block_class= PoWBlock,
         num_nodes=25,
         mining_difficulty=0,
-        render_animation= True,
+        render_animation= False,
         min_delay= 0.5,
         max_delay= 0.5,
         consensus_interval= 0.15,
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         block_class= PoWBlock,
         num_nodes=25,
         mining_difficulty=5,
-        render_animation= True,
+        render_animation= False,
         min_delay= 0.5,
         max_delay= 0.5,
         consensus_interval= 0.15,
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         block_class= PoWBlock,
         num_nodes=25,
         mining_difficulty=3,
-        render_animation= True,
+        render_animation= False,
         min_delay= 0.5,
         max_delay= 0.5,
         consensus_interval= 0.15,
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         block_class= PoWBlock,
         num_nodes=25,
         mining_difficulty=3,
-        render_animation= True,
+        render_animation= False,
         min_delay= 0.5,
         max_delay= 0.5,
         consensus_interval= 0.15,
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         block_class= PoWBlock,
         num_nodes=25,
         mining_difficulty=3,
-        render_animation= True,
+        render_animation= False,
         min_delay= 0.5,
         max_delay= 0.5,
         consensus_interval= 0.15,
@@ -173,7 +173,7 @@ if __name__ == "__main__":
         block_class= PoWBlock,
         num_nodes=25,
         mining_difficulty=3,
-        render_animation= True,
+        render_animation= False,
         min_delay= 0.5,
         max_delay= 0.5,
         consensus_interval= 0.15,
@@ -189,7 +189,10 @@ if __name__ == "__main__":
 
 
 '''
-# with 
+# with bandwidth on
+
+
+
 
 
 '''
@@ -204,8 +207,8 @@ if __name__ == "__main__":
         node_class= Node,
         block_class= PoWBlock,
         num_nodes=25,
-        mining_difficulty=5,
-        render_animation= True,
+        mining_difficulty=0,
+        render_animation= False,
         min_delay= 0.5,
         max_delay= 0.5,
         consensus_interval= 0.15,

@@ -161,7 +161,6 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         print(f"Throughput (blocks/s): {metrics['throughput (blocks/s)']:.2f} blocks/s")
         print(f"Convergence: {metrics['convergence'][1]:.2f}% of nodes agreeing on the same chain")
         print(f"😊😊😊😊😊😊😊😊😊😊😊😊😊😊😊😊")
-        print(f"Animating the simulation...")
 
         
     def run(self, duration: float = 100):
