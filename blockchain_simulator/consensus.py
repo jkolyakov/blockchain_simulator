@@ -17,7 +17,6 @@ class GHOSTProtocol(ConsensusProtocolBase):
             children_ids: Set[PoWBlock] = head.get_children_ids()
             children: List[PoWBlock] = [blockchain.get_block(child_id) for child_id in children_ids]
             head = max(children, key=lambda b: (b.get_weight(), -b.get_block_id()))
-            previous_head = blockchain.get_current_head().block_id
         blockchain.update_head(head)
         if previous_head != blockchain.get_current_head().get_parent_id():
             self.metrics["fork_resolutions"] += 1
