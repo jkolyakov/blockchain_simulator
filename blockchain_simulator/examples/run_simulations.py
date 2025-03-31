@@ -24,15 +24,15 @@ if __name__ == "__main__":
         node_class= Node,
         block_class= PoWBlock,
         num_nodes=50,
-        mining_difficulty=0,
+        mining_difficulty=1,
         render_animation= True,
         min_delay= 0.5,
         max_delay= 1.0,
-        consensus_interval= 0.5,
+        consensus_interval= 0.2,
         drop_rate= 0,
         set_bandwidth= True,
     )
 
     print("🚀 Starting Blockchain Simulation...")
-    sim.start_mining(50)  # Start mining on multiple nodes
+    sim.start_mining(25)  # Start mining on multiple nodes
     sim.run(duration=10)  # Run the simulation for 50 seconds

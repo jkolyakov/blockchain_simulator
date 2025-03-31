@@ -5,8 +5,6 @@ from typing import Set, List, Dict, Any
 class GHOSTProtocol(ConsensusProtocolBase):        
     def __init__(self):
         self.metrics: Dict[str, Any] = {
-            "consensus_executions": 0,
-            "broadcasts": 0,
             "fork_resolutions": 0,
         }
 
@@ -31,20 +29,12 @@ class GHOSTProtocol(ConsensusProtocolBase):
         
         for block in node.get_proposed_blocks():
             block_clone: PoWBlock = block.clone()
-            #print(f'block has parent {block.get_parent_id()} clone has parent {block_clone.get_parent_id()}')
             if node.blockchain.add_block(block_clone, node):
                 self._update_weights(block_clone, node)
-                self.update_main_chain(node.blockchain, node.node_id)
-
-                head = node.blockchain.get_current_head()
-                #print(f"Fetched head {head} Fork resolution: {node.blockchain.head.block_id} -> {block.block_id}")
-                if not head.block_id == block.block_id:
-                    self.metrics["fork_resolutions"] += 1
-                    
+                self.update_main_chain(node.blockchain, node.node_id)               
                 self._process_pending_blocks(node, block.get_block_id())
                 node.broadcast_protocol.broadcast_block(node, block)
         # Update the main chain
-                
         node.get_proposed_blocks().clear()
     
     def _update_weights(self, block: PoWBlock, node: NodeBase):
