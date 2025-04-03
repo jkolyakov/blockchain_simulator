@@ -1,6 +1,6 @@
 from manim import *
 from typing import List, Dict, Tuple, Any
-import json
+import json, re
 import numpy as np
 from tqdm import tqdm
 
@@ -156,8 +156,35 @@ class BlockchainAnimation(Scene):
                 "block_info": block_info
             }
         
-        # TODO: Parse and implement discarding duplicate blocks (e.g. already in blockchain upon receipt. It's already being logged)
-        
+        elif "sending requested parent block" in event_text:
+            parts = event_text.split()
+            sender_id = int(parts[1])
+            block_info = event_text.split("Block(")[1].split(")")[0]
+            targets_json = event_text.split("to ")[-1]
+            targets = eval(targets_json)
+            return "send_parent", {
+                "source_node": sender_id,
+                "block_info": block_info,
+                "targets": targets
+            }
+            
+        elif "requested parent block" in event_text: # Needs to be after the sending requested parent block
+            # Example: Node 2 requested parent block 3594946583, from: [Node(node_id=4,...), Node(node_id=5,...)] with ttl: 3
+            parts = event_text.split()
+            node_id = int(parts[1])
+            block_id = parts[5].strip(",")
+
+            # Extract all node_id=X values from the "from: [...]" section
+            peer_id_matches = re.findall(r'node_id=(\d+)', event_text)
+            peer_ids = [int(pid) for pid in peer_id_matches]
+            # print(parts)
+            return "request_parent", {
+                "node_id": node_id,
+                "block_id": block_id,
+                "targets": peer_ids,
+                "ttl": int(parts[-1])
+            }
+                
         # Default case
         return "unknown", {"text": event_text}
 
@@ -209,6 +236,7 @@ class BlockchainAnimation(Scene):
     def create_broadcasting_animation(self, params: Dict[str, Any]) -> Animation:
         source_node = self.visualizer.nodes[params["source_node"]]
         block_id = params["block_info"].split(",")[0].split("=")[-1]
+        
         anims = []
 
         for target_id, dropped, duplicate in params["targets"]:
@@ -342,13 +370,45 @@ class BlockchainAnimation(Scene):
         if len(anims) == 0:
             return None
         return AnimationGroup(*anims, lag_ratio=0)
+    
+    def create_request_parent_animation(self, params: Dict[str, Any]) -> Animation:
+        node_id = params["node_id"]
+        block_id = params["block_id"]
+        peer_ids = params["targets"]
+        ttl = params["ttl"]
+        source_node = self.visualizer.nodes[node_id]
+        for target_id in peer_ids:
+            edge_key = tuple(sorted((node_id, target_id)))
+            edge = self.visualizer.edges[edge_key].line
+            target_node = self.visualizer.nodes[target_id]
+            anims = []
+            
+            triangle = Triangle(color=YELLOW_D).scale(0.25).move_to(source_node.position).set_opacity(0)
+            triangle_text = Text(f"TTL={ttl}", font_size=14).next_to(triangle, UP, buff=0.1).set_opacity(0)
+            block_id_text = Text(f"B{block_id[-4:]}", font_size=14).next_to(triangle, DOWN, buff=0.1).set_opacity(0)
+            anims.append(Succession(
+                AnimationGroup(ApplyMethod(triangle.set_opacity, 1),
+                            ApplyMethod(triangle_text.set_opacity, 1),
+                            ApplyMethod(block_id_text.set_opacity, 1),
+                            edge.animate.set_stroke(color = YELLOW_D, opacity=1.0, width=4)),
+                AnimationGroup(triangle.animate.move_to(target_node.position),
+                            triangle_text.animate.move_to(target_node.position + UP * 0.15),
+                            block_id_text.animate.move_to(target_node.position + DOWN * 0.15),),
+                AnimationGroup(FadeOut(triangle),
+                            FadeOut(triangle_text),
+                            FadeOut(block_id_text),
+                            edge.animate.set_stroke(color = WHITE, opacity=0.3, width=2))
+            ))
+        if len(anims) == 0:
+            return None
+        return AnimationGroup(*anims, lag_ratio=0)
+    
 
-    def construct(self, max_timestep=100):
+    def construct(self, min_events: int = 0, max_events: int = 50):
         # Entry point:
         # - Load events
         # - Add visuals (nodes, edges, timeline)
         # - Play animations in order with delay/timeline update
-        # max_timestep: maximum number of timesteps to animate
         events = self.setup_from_json("animation_events.json")
         title = Text("Blockchain Network Animation", font_size=36).to_edge(UP)
         self.add(title)
@@ -360,12 +420,11 @@ class BlockchainAnimation(Scene):
         animations = []
         
         # Play animations based on events
-        timestep_counter = 0
-        for timestamp, event in tqdm(events):
-            timestep_counter += 1
-            print(timestamp, event)
+        event_counter = 0
+        for timestamp, event in tqdm(events, total=min(len(events), max_events)):
+            event_counter += 1
             delay = timestamp - current_time
-            if timestep_counter > max_timestep:
+            if event_counter > max_events:
                 break
             if delay > 0:
                 # animations.append(Wait(delay))
@@ -386,11 +445,17 @@ class BlockchainAnimation(Scene):
                 group = animation
                 if cleanup is not None:
                     group = Succession(animation, cleanup, run_time = 2)
-            elif event_type == "broadcast":
+            elif event_type == "broadcast" or event_type == "send_parent":
                 animation = self.create_broadcasting_animation(params)
                 if animation is None:
                     continue
                 group = animation
+            elif event_type == "request_parent":
+                animation = self.create_request_parent_animation(params)
+                if animation is None:
+                    continue
+                group = animation
+                
             else:
                 continue
             animations.append(group)

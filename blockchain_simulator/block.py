@@ -1,142 +1,88 @@
-from __future__ import annotations
-from abc import ABC, abstractmethod
-from typing import List, Optional, TYPE_CHECKING
-if TYPE_CHECKING:
-    from blockchain_simulator.block import BlockBase
-    from blockchain_simulator.node import NodeBase
-
+from blockchain_simulator.blueprint import NodeBase, BlockBase
+from typing import Set, Optional, Generator
 import hashlib
-import time
+class PoWBlock(BlockBase):
+    def __init__(self):
+        super().__init__()
+        self.nonce: int
+        self.weight: int
 
+    @staticmethod
+    def create_block(parent: BlockBase, time_stamp: float, miner: NodeBase) -> Generator[None, None, BlockBase]:
+        """Creates a new block based on the defined block type. Mines if it needs to and only returns upon completion."""
+        block = PoWBlock()
+        block.parent_id = parent.get_block_id()
+        block.miner_id = miner.get_node_id()
+        block.timestamp = time_stamp
+        block.weight = 1
+        block.children_ids = set()
+        block.nonce = 0
+        block.block_id = block.generate_block_id()
 
-
-# ============================
-# BLOCK ABSTRACT CLASS
-# ============================
-
-class BlockBase(ABC):
-    """Abstract base class for defining a custom block structure."""
-
-    def __init__(self, parent: Optional[BlockBase], miner_id: int, timestamp: Optional[float] = None):
-        self.parent: Optional[BlockBase] = parent  # Supports DAG & Chain
-        self.miner_id: int = miner_id
-        self.children: List[BlockBase] = []
-        self.timestamp: float = timestamp if timestamp else time.time()  # Block creation time
-        self.block_id: int = self.generate_block_id()  # Auto-generated block ID
-        self.weight: int = 1  # Default weight
-        self.nodes_seen: set[int] = set()  # Nodes that have seen this block
-
-    def generate_block_id(self) -> int:
-        """Generates a unique block ID using SHA-256."""
-        block_data = f"{self.parent.block_id if self.parent else 'genesis'}-{self.miner_id}-{self.timestamp}"
-        return int(hashlib.sha256(block_data.encode()).hexdigest(), 16) % (10**10)  # Mod to keep ID readable
-
-    @abstractmethod
-    def update_weight(self) -> None:
-        """Abstract method to update block weight based on consensus rules."""
-        pass
-
-    @abstractmethod
-    def verify_block(self) -> bool:
-        """Abstract method to update block weight based on consensus rules."""
-        pass
+        if miner.get_mining_difficulty() > 0:
+            yield miner.get_env().process(block.mine(miner, miner.get_mining_difficulty()))
+        return block
     
-    @abstractmethod
-    def mine(self, difficulty: int = 4) -> None:
-        """Abstract method to mine the block based on consensus rules."""
-        pass
+    @staticmethod
+    def create_genesis_block()->BlockBase:
+        """Creates a genesis block based on the defined block type."""
+        block = PoWBlock()
+        block.parent_id = -1
+        block.miner_id = -1
+        block.timestamp = 0
+        block.block_id = 0
+        block.weight = 1
+        block.children_ids = set()
+        block.nonce = 0
+        return block
     
-    @abstractmethod
     def clone(self) -> BlockBase:
         """Clone the block. Should be overridden by subclasses to copy specific attributes. Meant for sending copy of blocks to other nodes instead of the original block."""
-        raise NotImplementedError("Subclasses must implement the clone() method.")
-
-    def __repr__(self):
-        return f"Block(id={self.block_id}, miner={self.miner_id}, weight={self.weight}, time={self.timestamp})"
-
-
-# ============================
-# BLOCK IMPLEMENTATIONS
-# ============================
-
-class BasicBlock(BlockBase):
-    """A simple block structure with basic weight calculation."""
-
-    def __init__(self, parent: Optional[BlockBase], miner_id: int, timestamp: Optional[float] = None):
-        super().__init__(parent, miner_id, timestamp)
-
-    def update_weight(self) -> None:
-        """Updates weight based on the number of children."""
-        self.weight = 1 + sum(child.weight for child in self.children)
-
-    def clone(self) -> BasicBlock:
-        copy = BasicBlock.__new__(BasicBlock)  # Bypass __init__
-        copy.parent = self.parent
-        copy.miner_id = self.miner_id
-        copy.timestamp = self.timestamp
-        copy.block_id = self.block_id  # Preserve block ID
-        copy.weight = self.weight
-        copy.children = list(self.children)
-        copy.nodes_seen = set(self.nodes_seen)
+        copy = self.__class__.__new__(self.__class__)
+        for key, value in self.__dict__.items():
+            if key == "weight":
+                setattr(copy, key, 1)
+            elif key == "children_ids":
+                setattr(copy, key, set())
+            else:
+                setattr(copy, key, value)
         return copy
-
-class PoWBlock(BlockBase):
-    """A proof-of-work block structure with mining and weight calculation."""
-
-    def __init__(self, parent: Optional[BlockBase], miner_id: int, timestamp: Optional[float] = None):
-        super().__init__(parent, miner_id, timestamp)
-        self.nonce: Optional[int] = None  # Stores the successful nonce
-        self.hash: Optional[str] = None  # Hash of the block
         
     def mine(self, node: 'NodeBase', difficulty: int = 4):
         """Proof-of-work mining algorithm."""
         self.nonce = 0
         hash_attempts = 0
         target_prefix = "0" * difficulty
-        while node.is_mining:
-            self.hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
+        while node.get_is_mining():
+            hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
             hash_attempts += 1
-            if self.hash.startswith(target_prefix):
+            if hash.startswith(target_prefix):
                 break
             self.nonce += 1
             if hash_attempts % 1000 == 0:
-                yield node.env.timeout(0.01)
-        # assert self.verify_block(difficulty), f"Block {self.block_id} was not mined correctly!"
-        # print(f"⛏️  Mined Block {self.block_id} with nonce {self.nonce} in {hash_attempts} attempts")
-
-    def update_weight(self) -> None:
-        """Updates weight based on mining difficulty."""
-        self.weight = 1 + sum(child.weight for child in self.children)
-
-    def verify_block(self, difficulty: int) -> bool:
-        """Verifies that the block was mined correctly."""
+                yield node.get_env().timeout(0.01)
+                
+    def verify_block(self, owner: NodeBase) -> bool:
+        """ Abstract method to verify block validity"""
         if self.nonce is None:
-            return False  # No nonce means it wasn't mined
-        # Check if the stored hash is valid
-        block_hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
-        return block_hash.startswith("0" * difficulty) and block_hash == self.hash
-
-    def clone(self) -> PoWBlock:
-        """ Clones the block, resetting the weight and children. Meant for sending copy of blocks to other nodes instead of the original block."""
-        copy = PoWBlock.__new__(PoWBlock)
-        copy.parent = self.parent
-        copy.miner_id = self.miner_id
-        copy.timestamp = self.timestamp
-        copy.block_id = self.block_id
-        copy.weight = 1 # Reset weight to 1 
-        copy.children = [] # Reset children
-        copy.nodes_seen = set(self.nodes_seen)
-        copy.nonce = self.nonce
-        copy.hash = self.hash
-        return copy
+            return False
+        
+        hash = hashlib.sha256(f"{self.block_id}{self.nonce}".encode()).hexdigest()
+        return hash.startswith("0" * owner.get_mining_difficulty())
     
-class PoSBlock(BlockBase):
-    """A proof-of-stake block structure where weight depends on stake."""
-
-    def __init__(self, parent: Optional[BlockBase], miner_id: int, stake: float, timestamp: Optional[float] = None):
-        super().__init__(parent, miner_id, timestamp)
-        self.stake = stake  # Stake value for the miner
-
-    def update_weight(self) -> None:
-        """Updates weight based on stake contribution."""
-        self.weight = self.stake + sum(child.weight for child in self.children)
+    def generate_block_id(self) -> int:
+        """Generates a unique block ID using SHA-256."""
+        block_data = f"{self.get_parent_id()}-{self.miner_id}-{self.timestamp}"
+        return int(hashlib.sha256(block_data.encode()).hexdigest(), 16) % (10**10)  # Mod to keep ID readable
+    
+    def get_weight(self) -> int:
+        """Returns the weight of the block."""
+        return self.weight
+    
+    def set_weight(self, weight: int):
+        """Sets the weight of the block."""
+        self.weight = weight
+        
+    def __repr__(self) -> str:
+        """Returns the string representation of the block"""
+        return f"Block(id={self.block_id}, miner={self.miner_id}, parent={self.parent_id}, children={self.children_ids}, time={self.timestamp})"
