@@ -395,4 +395,4 @@ class BlockchainAnimation(Scene):
                 continue
             animations.append(group)
         print(len(animations))
-        self.play(Succession(*animations, run_time=20))
+        self.play(Succession(*animations, run_time=120))
