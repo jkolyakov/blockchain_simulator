@@ -39,4 +39,4 @@ pip install -r requirements.txt
 
 ## Usage
 
-If you've installed it via cloning, take a look at the run_simulations.py example for an example of a file you can make
+An example is provided in ``blockchain_simulator/examples/run_simulations.py``. 
