@@ -26,7 +26,6 @@ class BlockchainSimulator(BlockchainSimulatorBase):
                  packet_size: int = 1500, # 1 KB
                  block_size: int = 1_000_000, # 1 MB
                  ):
-        self.network_topology: NetworkTopologyBase = network_topology_class()
         self.consensus_protocol_class: Type[ConsensusProtocolBase] = consensus_protocol_class
         self.blockchain_class: Type[BlockchainBase] = blockchain_class
         self.broadcast_protocol_class: Type[BroadcastProtocolBase] = broadcast_protocol_class
@@ -41,6 +40,7 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         self.drop_rate: int = drop_rate
         self.env = simpy.Environment()
         self.nodes: List[NodeBase] = self._create_nodes(consensus_protocol_class, blockchain_class, broadcast_protocol_class)
+        self.network_topology: NetworkTopologyBase = network_topology_class(self.min_delay, self.max_delay, self.nodes)
         self._create_network_topology(self.network_topology)
         self.animator = AnimationLogger()
         self.input_pipe: Dict[int, simpy.Store] = {}
