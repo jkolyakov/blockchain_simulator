@@ -23,7 +23,13 @@ Via cloning the repo
 
 ## 📦 Installation
 
-Ensure you have **Python 3.8+** installed. Then, clone this repository and install the required dependencies:
+The recommended way to install ``blockchain_simulator`` is to grab the latest release from PyPI:
+
+```
+pip install blockchain_simulator
+```
+
+Building the latest nightly version of this repository is also possible. Ensure you have **Python 3.11+** installed. Then, clone this repository and install the required dependencies:
 
 ```sh
 git clone https://github.com/your-repo/blockchain-simulator.git
