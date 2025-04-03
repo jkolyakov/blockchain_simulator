@@ -39,4 +39,5 @@ pip install -r requirements.txt
 
 ## Usage
 
-An example is provided in ``blockchain_simulator/examples/run_simulations.py``. 
+An example is provided in ``blockchain_simulator/examples/run_simulations.py``. Once the simulation completes, the stats for the simulated run are displayed and the animation rendering module will start. 
+
