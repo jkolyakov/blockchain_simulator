@@ -41,7 +41,6 @@ class BlockchainSimulator(BlockchainSimulatorBase):
         self.env = simpy.Environment()
         self.nodes: List[NodeBase] = self._create_nodes(consensus_protocol_class, blockchain_class, broadcast_protocol_class)
         self.network_topology: NetworkTopologyBase = network_topology_class(self.min_delay, self.max_delay, self.nodes)
-        self._create_network_topology(self.network_topology)
         self.animator = AnimationLogger()
         self.input_pipe: Dict[int, simpy.Store] = {}
         self.request_backtrack: Dict[tuple[int, int], int] = {}  # (block_id, current_node) -> previous_node

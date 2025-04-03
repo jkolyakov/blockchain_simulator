@@ -4,8 +4,8 @@ from blockchain_simulator.blueprint import NodeBase, NetworkTopologyBase
 
 class SimpleRandomTopology(NetworkTopologyBase):
     def __init__(self, 
-                 max_delay: float = 0.5,
-                 min_delay: float = 0.1,
+                 min_delay: float = 0.5,
+                 max_delay: float = 0.1,
                  nodes: List[NodeBase] = []):
         self.max_delay = max_delay
         self.min_delay = min_delay
@@ -82,9 +82,9 @@ class LineTopology(SimpleRandomTopology):
             nodes[(i + 1) % len(nodes)].add_peer(nodes[i])
             
 class TreeTopology(SimpleRandomTopology):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, min_delay, max_delay, nodes):
         self.branching_factor = 2
+        super().__init__(min_delay, max_delay, nodes)
 
     def create_network_topology(self, nodes):
         for i, parent in enumerate(nodes):
