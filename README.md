@@ -32,9 +32,15 @@ pip install blockchain_simulator
 Building the latest nightly version of this repository is also possible. Ensure you have **Python 3.11+** installed. Then, clone this repository and install the required dependencies:
 
 ```sh
+# Clone the repo
 git clone https://github.com/your-repo/blockchain-simulator.git
+
+# Enter the repo's root directory
 cd blockchain-simulator
+
+# Install required dependencies and packafge
 pip install -r requirements.txt
+pip install -e . 
 ```
 
 ## Usage
