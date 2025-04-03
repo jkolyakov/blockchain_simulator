@@ -1,0 +1,5 @@
+__author__ = "Jacob Kolyakov"
+__email__ = "jacobkolyakov@gmail.com"
+__license__ = "MIT"
+__url__ = "https://github.com/jkolyakov/blockchain_simulator/"
+__description__ = "A network simulator that helps simulate different network scenarios for different blockchain consensus protocols"
