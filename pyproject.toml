@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "blockchain_simulator"
+version = "0.1.0"
+description = "A network simulator that helps simulate different network scenarios for different blockchain consensus protocols."
+authors = ["Jacob Kolyakov <jacob.kolyakov@mail.utoronto.ca>", "Griffin Heyrich <griffin.heyrich@mail.utoronto.ca>", "Siddarth Agarwal <siddarth.agarwal@mail.utoronto.ca>", "Viet Nguyen <viet@cs.toronto.edu>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+simpy = "*"
+pandas = "*"
+matplotlib = "*"
+numpy = "*"
+rich = "*"
+tqdm = "*"
+plotly = "*"
+pydot = "*"
+manim = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
